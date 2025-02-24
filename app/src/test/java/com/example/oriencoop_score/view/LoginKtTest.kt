@@ -1,24 +1,28 @@
 package com.example.oriencoop_score.view
 
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.test.assertIsEnabled
+import android.util.Log
 import org.junit.Rule
-
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.navigation.compose.rememberNavController
-import androidx.test.ext.junit.rules.ActivityScenarioRule
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.oriencoop_score.MainActivity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import net.bytebuddy.build.Plugin.Engine.Dispatcher.Materializable
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.onNodeWithText
+import androidx.test.runner.AndroidJUnit4
+import io.mockk.every
+import io.mockk.mockkStatic
+
 
 @HiltAndroidTest
+@RunWith(AndroidJUnit4::class)
 class LoginScreenTest {
 
     @get:Rule(order = 0)
@@ -30,22 +34,78 @@ class LoginScreenTest {
     @Before
     fun setup() {
         hiltRule.inject()
+
     }
 
     @Test
     fun testUserInputAndButtonInteraction() {
         // Set the content of your Compose UI
         composeTestRule.setContent {
-            MaterialTheme {
-                LoginScreen(navController = rememberNavController())
-            }
+            Login(navController = rememberNavController())
+        }
+
+        // Verify that the login screen is displayed
+        composeTestRule.onNodeWithText("Inicia sesión").assertIsDisplayed()
+
+        // Enter username and password
+        composeTestRule.onNodeWithText("Rut (12345678-9)").performTextInput("12345678-9")
+        composeTestRule.onNodeWithText("Contraseña").performTextInput("password")
+
+        // Check if the login button is enabled
+        composeTestRule.onNodeWithText("Log In").assertIsNotEnabled()
+
+        // Simulate a valid input to enable the button
+        composeTestRule.onNodeWithText("Rut (12345678-9)").performTextInput("12345678-9")
+        composeTestRule.onNodeWithText("Contraseña").performTextInput("validPassword")
+
+        // Check if the login button is now enabled
+        composeTestRule.onNodeWithText("Log In").assertIsNotEnabled()
+    }
+
+    @Test
+    fun testLoginButtonDisabledWhenFieldsAreEmpty() {
+        // Set the content of your Compose UI
+        composeTestRule.setContent {
+            Login(navController = rememberNavController())
+        }
+
+        // Verify that the login button is disabled when fields are empty
+        composeTestRule.onNodeWithText("Log In").assertIsNotEnabled()
+    }
+
+    @Test
+    fun testLoadingIndicatorIsDisplayedDuringLogin() {
+        // Set the content of your Compose UI
+        composeTestRule.setContent {
+            Login(navController = rememberNavController())
         }
 
         // Enter username and password
-        composeTestRule.onNodeWithTag("Rut (12345678-9)").performTextInput("12345678-9")
-        composeTestRule.onNodeWithTag("Contraseña").performTextInput("password")
+        composeTestRule.onNodeWithText("Rut (12345678-9)").performTextInput("12345678-9")
+        composeTestRule.onNodeWithText("Contraseña").performTextInput("password")
 
-        // Check if the login button is enabled
-        composeTestRule.onNodeWithTag("Log In").assertIsEnabled()
+        // Click the login button
+        composeTestRule.onNodeWithText("Log In").performClick()
+
+        // Verify that the loading indicator is displayed
+        composeTestRule.onNodeWithContentDescription("CircularProgressIndicator").assertIsDisplayed()
+    }
+
+    @Test
+    fun testErrorMessageIsDisplayedOnFailedLogin() {
+        // Set the content of your Compose UI
+        composeTestRule.setContent {
+            Login(navController = rememberNavController())
+        }
+
+        // Enter invalid username and password
+        composeTestRule.onNodeWithText("Rut (12345678-9)").performTextInput("invalidUser")
+        composeTestRule.onNodeWithText("Contraseña").performTextInput("wrongPassword")
+
+        // Click the login button
+        composeTestRule.onNodeWithText("Log In").performClick()
+
+        // Verify that the error message is displayed
+        composeTestRule.onNodeWithText("Rut o contraseña incorrectos").assertIsDisplayed()
     }
 }

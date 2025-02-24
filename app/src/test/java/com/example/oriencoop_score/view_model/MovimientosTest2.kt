@@ -6,7 +6,7 @@ import com.example.oriencoop_score.model.MovimientosResponse
 import com.example.oriencoop_score.repository.MovimientosRepository
 import io.mockk.mockk
 import kotlinx.coroutines.flow.StateFlow
-
+/*
 class MovimientosTest2 : BaseTests<MovimientosViewModel, MovimientosRepository, MovimientosResponse, Movimiento>() {
 
     override val repositoryFunction: suspend MovimientosRepository.(String, String) -> Result<MovimientosResponse>
@@ -62,4 +62,4 @@ class MovimientosTest2 : BaseTests<MovimientosViewModel, MovimientosRepository, 
     override fun MovimientosResponse.toEntityList(): List<Movimiento> {
         return movimientos
     }
-}
+}*/

@@ -22,6 +22,7 @@ import com.example.oriencoop_score.Result
 import com.example.oriencoop_score.SessionManager
 import io.mockk.coVerify
 import io.mockk.mockk
+import io.mockk.unmockkAll
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -49,6 +50,7 @@ class LoginViewModelTest {
     @After
     fun tearDown() {
         Dispatchers.resetMain()
+        unmockkAll()
     }
 
     @Test
