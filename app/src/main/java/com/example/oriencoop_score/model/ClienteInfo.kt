@@ -1,0 +1,30 @@
+package com.example.oriencoop_score.model
+
+data class ClienteInfoResponse(
+    val apellidoMaterno: String?,
+    val apellidoPaterno: String?,
+    val areaProfesional: Int?,
+    val descAreaProfesional: String?,
+    val descEstado: String?,
+    val descEstadoCivil: String?,
+    val descNacionalidad: String?,
+    val descNivelEduc: String?,
+    val descProfesion: String?,
+    val descRegMatrimonial: String?,
+    val descSexo: String?,
+    val dv: String?,
+    val edad: Int?,
+    val email: String?,
+    val estado: Int?,
+    val estadoCivil: Int?,
+    val fechaNacimiento: String?,
+    val nacionalidad: Int?,
+    val nivelEducacional: Int?,
+    val nombres: String?,
+    val numCargasFamiliares: Int?,
+    val profesion: Int?,
+    val regimenMatrimonial: Int?,
+    val reuConyuge: Int?,
+    val sexo: Int?,
+    val socio: String?
+)
