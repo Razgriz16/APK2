@@ -1,4 +1,4 @@
-package com.example.oriencoop_score.view
+package com.example.oriencoop_score.view.mis_productos
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,11 +15,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.oriencoop_score.navigation.Pantalla
 import com.example.oriencoop_score.R
 import com.example.oriencoop_score.ui.theme.AppTheme
+import com.example.oriencoop_score.view.pantalla_principal.BottomBar
+import com.example.oriencoop_score.view.pantalla_principal.LoadingScreen
 import com.example.oriencoop_score.view_model.MisProductosViewModel
 
 //*****Pantalla Principal*****

@@ -1,4 +1,4 @@
-package com.example.oriencoop_score.view
+package com.example.oriencoop_score.view.mis_productos
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column

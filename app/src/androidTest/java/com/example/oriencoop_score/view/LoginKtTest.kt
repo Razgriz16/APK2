@@ -17,13 +17,12 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.runner.AndroidJUnit4
-import io.mockk.every
-import io.mockk.mockkStatic
+import org.junit.runners.JUnit4
 
 
 @HiltAndroidTest
-@RunWith(AndroidJUnit4::class)
-class LoginScreenTest {
+@RunWith(JUnit4::class)
+class LoginScreenTest            {
 
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)

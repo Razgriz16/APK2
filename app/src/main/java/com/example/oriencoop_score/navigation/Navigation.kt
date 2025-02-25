@@ -1,17 +1,17 @@
 package com.example.oriencoop_score.navigation
 
-import com.example.oriencoop_score.view_model.login.LoginViewModel
-import com.example.oriencoop_score.view.PantallaPrincipal
+import com.example.oriencoop_score.view.pantalla_principal.PantallaPrincipal
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.oriencoop_score.view.Login
-import com.example.oriencoop_score.view.MisProductos
+import com.example.oriencoop_score.view.mis_productos.MisProductos
 import com.example.oriencoop_score.view.mis_productos.credito_cuotas.CreditoCuotas
 import com.example.oriencoop_score.view.mis_productos.cuenta_ahorro.CuentaAhorro
 import com.example.oriencoop_score.view.mis_productos.cuenta_cap.CuentaCap
 import com.example.oriencoop_score.view.mis_productos.lcc.Lcc
+import com.example.oriencoop_score.view.pantalla_principal.ClienteInfo
 
 @Composable
 fun Navigation() {
@@ -43,6 +43,10 @@ fun Navigation() {
 
         composable(route = Pantalla.Lcc.route) {
             Lcc(navController = navController) /*, viewModel = harryPotterViewModel*/
+        }
+
+        composable(route = Pantalla.ClienteInfo.route) {
+            ClienteInfo(navController = navController) /*, viewModel = harryPotterViewModel*/
         }
 
 

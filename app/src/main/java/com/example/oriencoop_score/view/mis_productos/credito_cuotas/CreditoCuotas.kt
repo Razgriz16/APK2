@@ -25,10 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.oriencoop_score.ui.theme.AppTheme
-import com.example.oriencoop_score.view.BottomBar
+import com.example.oriencoop_score.view.pantalla_principal.BottomBar
 import com.example.oriencoop_score.view_model.CreditoCuotasViewModel
 import com.example.oriencoop_score.view_model.MovimientosCreditosViewModel
 import kotlinx.coroutines.launch

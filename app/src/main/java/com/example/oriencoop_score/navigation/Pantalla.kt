@@ -11,4 +11,5 @@ sealed class Pantalla (val route: String) {
     object CuentaAhorro : Pantalla("CuentaAhorro")
     object CreditoCuotas : Pantalla("CreditoCuotas")
     object Lcc : Pantalla("Lcc")
+    object ClienteInfo : Pantalla("ClienteInfo")
     }

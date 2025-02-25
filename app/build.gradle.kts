@@ -67,10 +67,10 @@ dependencies {
     implementation(libs.androidx.ui.test.junit4.android)
 
     testImplementation("app.cash.turbine:turbine:1.0.0")
-    testImplementation(libs.junit) // Check if libs.junit is correctly defined in your dependencies.toml or gradle.properties
-    testImplementation("junit:junit:4.13.2") // Explicit JUnit 4 dependency
+    testImplementation(libs.junit)
+    testImplementation("junit:junit:4.13.2")
     testImplementation("io.mockk:mockk:1.13.9")
-    testImplementation ("net.bytebuddy:byte-buddy-agent:1.14.11")// MockK dependency
+    testImplementation ("net.bytebuddy:byte-buddy-agent:1.14.11")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
     testImplementation(libs.hilt.android.testing)
     androidTestImplementation(libs.androidx.junit)

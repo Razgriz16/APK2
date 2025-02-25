@@ -52,10 +52,11 @@ class LoginViewModel @Inject constructor(
     }
 
     fun performLogin(username: String, password: String) {
+        /*
         if (isLoggingIn) {
             Log.d("LoginViewModel", "Login already in progress, skipping call")
             return
-        }
+        }*/
         Log.d("LoginViewModel", "performLogin called with username: $username")
         isLoggingIn = true
         viewModelScope.launch {

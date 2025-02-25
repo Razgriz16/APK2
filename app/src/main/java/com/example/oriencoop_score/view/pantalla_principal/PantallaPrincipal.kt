@@ -1,4 +1,4 @@
-package com.example.oriencoop_score.view
+package com.example.oriencoop_score.view.pantalla_principal
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,7 +16,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.oriencoop_score.R
@@ -38,6 +37,9 @@ fun PantallaPrincipal(
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val drawerWidth = screenWidth * 0.5f // 50% of screen width
 
+    // State to control the visibility of the notification dialog
+    var showNotificationDialog by remember { mutableStateOf(false) }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -47,7 +49,7 @@ fun PantallaPrincipal(
                 drawerWidth = drawerWidth
             )
         },
-        gesturesEnabled = true // Enable swipe gestures to open/close drawer (optional)
+        //gesturesEnabled = true // Enable swipe gestures to open/close drawer (optional)
     ) { // Enable swipe gestures to open/close drawer
         Scaffold(
             topBar = {
@@ -56,6 +58,11 @@ fun PantallaPrincipal(
                         coroutineScope.launch {
                             drawerState.open()
                         }
+                    },
+                    onAlertClick = {
+                        showNotificationDialog = true // Show dialog on alert click
+                        // Show the dialog when showNotificationDialog is true
+
                     },
                 )
             },
@@ -79,7 +86,11 @@ fun PantallaPrincipal(
                     // Saldo
                     Saldo(navController = navController)
 
-                    Text(text  = "Acciones rápidas", fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = Color.Black)
+                    Text(
+                        text = "Acciones rápidas",
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                        color = Color.Black
+                    )
 
                     AccionesRapidas(
                         productos = productos,
@@ -101,6 +112,11 @@ fun PantallaPrincipal(
             }
         )
 
+    }
+    if (showNotificationDialog) {
+        NotificationDialog(
+            onDismiss = { showNotificationDialog = false } // Close dialog
+        )
     }
 }
 

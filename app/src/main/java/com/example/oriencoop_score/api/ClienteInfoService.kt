@@ -7,7 +7,7 @@ import retrofit2.http.Header
 import retrofit2.http.Path
 
 interface ClienteInfoService {
-    @GET("cliente/{rut}")
+    @GET("info/{rut}")
     suspend fun getClienteInfo(
         @Header("Authorization") token: String,
         @Path("rut") rut: String

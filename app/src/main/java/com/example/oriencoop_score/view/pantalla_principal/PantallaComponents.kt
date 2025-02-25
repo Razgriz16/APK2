@@ -1,7 +1,6 @@
-package com.example.oriencoop_score.view
+package com.example.oriencoop_score.view.pantalla_principal
 
 import MindicatorsViewModel
-import android.os.SystemClock.sleep
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -11,205 +10,41 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.oriencoop_score.navigation.Pantalla
 import com.example.oriencoop_score.R
 import com.example.oriencoop_score.Result
-import com.example.oriencoop_score.SessionManager
 import com.example.oriencoop_score.api.ManageMindicatorsApi
-import com.example.oriencoop_score.repository.CuentaCapRepository
 import com.example.oriencoop_score.repository.MindicatorsRepository
 import com.example.oriencoop_score.ui.theme.AppTheme
+import com.example.oriencoop_score.view.mis_productos.ProductButton
 import com.example.oriencoop_score.view_model.CuentaCapViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.time.delay
-
-// Función trata la fila superior de la app
-@Composable
-fun HeaderRow(
-    onMenuClick: () -> Unit = {},
-    onLogoClick: () -> Unit = {},
-    onAlertClick: () -> Unit = {}
-) {
-    Column { // Wrap in a column to include the separator line below the Row
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(80.dp)
-                .padding(top = 15.dp)
-                .background(Color.White),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.icon_button_menuicon_top),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(60.dp)
-                    .padding(start = 25.dp)
-                    .clickable { onMenuClick() }
-            )
-            Image(
-                painter = painterResource(id = R.drawable.logooriencoop),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(120.dp)
-                    .clickable { onLogoClick() }
-            )
-            Image(
-                painter = painterResource(id = R.drawable.icon_alert_bellicon_top),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(60.dp)
-                    .padding(end = 25.dp)
-                    .clickable { onAlertClick() }
-            )
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(2.5.dp)
-                .background(Color(0xFFf49600))
-        )
-    }
-}
-
-
-@Composable
-fun DrawerContent(onCloseDrawer: () -> Unit, navController: NavController, drawerWidth: Dp) { // Added drawerWidth parameter
-
-    Column(
-        modifier = Modifier
-            .fillMaxHeight()
-            .width(drawerWidth)// Set the width to the calculated drawerWidth
-            .background(AppTheme.colors.azul)
-    ) {
-        // Back Arrow (only visible when drawer is open)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-                .align(Alignment.CenterHorizontally),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            IconButton(onClick = onCloseDrawer) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = AppTheme.colors.amarillo
-                )
-            }
-        }
-
-        // Profile Section
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .padding(bottom = 24.dp)
-                .align(Alignment.CenterHorizontally)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.profilepng), // Replace with your profile icon
-                contentDescription = "Profile",
-                modifier = Modifier.size(80.dp)
-            )
-            //Text(text = "Enzo Norambuena", style = AppTheme.typography.titulos)
-        }
-
-        // Menu Items (using LazyColumn for scrollable content)
-        LazyColumn(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-            item {
-                //DrawerMenuItem(iconId = R.drawable.folders, text = "Mis Datos") { /* TODO: Handle click */ }
-                //DrawerMenuItem(iconId = R.drawable.clave, text = "Cambiar Clave") { /* TODO: Handle click */ }
-                //DrawerMenuItem(iconId = R.drawable.soporte, text = "Contacto con ejecutivo") { /* TODO: Handle click */ }
-                //DrawerMenuItem(iconId = R.drawable.ubicacion, text = "Sucursales") { /* TODO: Handle click */ }
-                //DrawerMenuItem(iconId = R.drawable.mensaje, text = "Preguntas Frecuentes") { /* TODO: Handle click */ }
-                DrawerMenuItem(iconId = R.drawable.salir, text = "Cerrar Sesión", sessionManager = { SessionManager().clearSession() }) {
-                    navController.navigate(
-                        Pantalla.Login.route
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun DrawerMenuItem(
-    iconId: Int,
-    text: String,
-    sessionManager: (() -> Unit)? = null, // Optional sessionManager lambda
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            //.clickable(onClick = onClick) // Make the row clickable
-            .clickable {
-                onClick()
-                sessionManager?.invoke() // Invoke sessionManager if provided
-            },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            painter = painterResource(id = iconId),
-            contentDescription = text,
-            tint = Color.White, // Adjust color as needed
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(text = text, style = MaterialTheme.typography.bodyMedium, color = Color.White) // Use MaterialTheme typography
-    }
-}
 
 // *****Saldo que se muestra*****
-
 @Composable
 fun Saldo(navController: NavController) {
 /*
@@ -225,11 +60,11 @@ fun Saldo(navController: NavController) {
     val error by cuentaCapViewModel.error.collectAsState()
 
     when {
-        isLoadingSaldo == true -> {
+        isLoadingSaldo -> {
             LoadingScreen() // Reemplaza con tu composable de pantalla de carga
         }
         error != null -> {
-            Text("Error: ${error}")
+            Text("Error: $error")
         }
         cuentaCapData != null -> {
             // Asumiendo que tu backend provee un valor para "Monto ahorrado a la fecha"
@@ -559,57 +394,4 @@ fun LoadingScreen() {
         CircularProgressIndicator()
     }
 }
-/*
-@Composable
-fun MindicatorsScreen(viewModel: MindicatorsViewModel) {
-    // Observe the LiveData as Compose state
-    val indicadoresState by viewModel.indicadores.observeAsState()
-    val isLoading by viewModel.isLoading.observeAsState(false)
-
-    // Handle loading state
-    if (isLoading) {
-        LoadingScreen()
-    } else {
-        // Handle the result state
-        when (val result = indicadoresState) {
-            is Result.Success -> {
-                val indicador = result.data
-                SuccessScreen(indicador)
-
-            }
-            is Result.Error -> {
-                ErrorScreen(result.exception)
-            }
-            else -> {
-                // Initial state or loading
-            }
-        }
-    }
-}
-*/
-
-/*
-@Composable
-fun SuccessScreen(indicador: Indicador) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Dolar: ${indicador.Dolar}", style = AppTheme.typography.normal)
-        Text(text = "Euro: ${indicador.Euro}", style = AppTheme.typography.normal)
-        Text(text = "UF: ${indicador.UF}", style = AppTheme.typography.normal)
-        Text(text = "U.T.M: ${indicador.UTM}", style = AppTheme.typography.normal)
-
-    }
-}
- */
-
-
-
-
-
-
 

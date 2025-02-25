@@ -50,7 +50,7 @@ fun cleanRut(rut: String): String {
 fun main() {
     val rut = cleanRut("6.600.427-9")
     println(rut)
-    if (!rut.matches(regex = """^0*(\d{1,3}(\.?\d{3})*)-?([\dkK])$""".toRegex())!!) {
+    if (!rut.matches(regex = """^0*(\d{1,3}(\.?\d{3})*)-?([\dkK])$""".toRegex())) {
         println("rut invalido")
     } else {
         println("rut correcto")
