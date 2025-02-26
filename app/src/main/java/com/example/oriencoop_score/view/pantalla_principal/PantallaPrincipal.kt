@@ -16,10 +16,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.oriencoop_score.R
+import com.example.oriencoop_score.model.Notifications
+import com.example.oriencoop_score.navigation.Pantalla
 import com.example.oriencoop_score.view_model.MisProductosViewModel
+import com.example.oriencoop_score.view_model.NotificationViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -37,8 +42,21 @@ fun PantallaPrincipal(
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val drawerWidth = screenWidth * 0.5f // 50% of screen width
 
-    // State to control the visibility of the notification dialog
-    var showNotificationDialog by remember { mutableStateOf(false) }
+    val viewModel: NotificationViewModel = hiltViewModel()
+
+    LaunchedEffect(Unit) {
+        delay(1500)
+        viewModel.sendNotification(
+            Notifications(
+                TITULO = "Test Title",
+                DESCRIPCION = "Dummy Notification Content",
+                DATE = "2024-04-30",
+                TIME = "12:00 PM"
+            )
+        )
+    }
+
+
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -60,8 +78,6 @@ fun PantallaPrincipal(
                         }
                     },
                     onAlertClick = {
-                        showNotificationDialog = true // Show dialog on alert click
-                        // Show the dialog when showNotificationDialog is true
 
                     },
                 )
@@ -112,11 +128,6 @@ fun PantallaPrincipal(
             }
         )
 
-    }
-    if (showNotificationDialog) {
-        NotificationDialog(
-            onDismiss = { showNotificationDialog = false } // Close dialog
-        )
     }
 }
 

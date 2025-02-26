@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.oriencoop_score.model.Notifications
 import com.example.oriencoop_score.view.Login
 import com.example.oriencoop_score.view.mis_productos.MisProductos
 import com.example.oriencoop_score.view.mis_productos.credito_cuotas.CreditoCuotas
@@ -48,6 +49,8 @@ fun Navigation() {
         composable(route = Pantalla.ClienteInfo.route) {
             ClienteInfo(navController = navController) /*, viewModel = harryPotterViewModel*/
         }
+
+
 
 
     }

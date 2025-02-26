@@ -37,6 +37,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.oriencoop_score.model.ClienteInfoResponse
+import com.example.oriencoop_score.navigation.Pantalla
 import com.example.oriencoop_score.ui.theme.AppTheme
 import com.example.oriencoop_score.view.LoginScreen
 import com.example.oriencoop_score.view_model.ClienteInfoViewModel
@@ -46,8 +47,7 @@ import com.example.oriencoop_score.view_model.ClienteInfoViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClienteInfo(
-    navController: NavController,
-    onBackClick: () -> Unit = {}
+    navController: NavController
 ) {
     val clienteInfoViewModel: ClienteInfoViewModel = hiltViewModel()
     val clienteInfo = clienteInfoViewModel.clienteInfo.value
@@ -70,7 +70,7 @@ fun ClienteInfo(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
+                    IconButton(onClick = { navController.navigate(Pantalla.PantallaPrincipal.route) }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",

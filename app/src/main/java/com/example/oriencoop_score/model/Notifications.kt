@@ -1,7 +1,8 @@
 package com.example.oriencoop_score.model
 
 data class Notifications(
-    val description: String,
-    val date: String,
-    val time: String
+    val TITULO: String,
+    val DESCRIPCION: String,
+    val DATE: String,
+    val TIME: String
 )
