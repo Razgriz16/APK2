@@ -1,5 +1,4 @@
-package com.example.oriencoop_score
-import com.example.oriencoop_score.model.HiddenLoginResponse
+package com.example.oriencoop_score.utility
 import com.example.oriencoop_score.model.UserLoginResponse
 
 // Sealed class to represent different states of the login process

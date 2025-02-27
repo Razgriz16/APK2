@@ -1,16 +1,11 @@
 package com.example.oriencoop_score.view_model
 
 import android.util.Log
-import androidx.collection.emptyIntList
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.oriencoop_score.Result
-import com.example.oriencoop_score.SessionManager
-import com.example.oriencoop_score.model.CuentaCapResponse
+import com.example.oriencoop_score.utility.Result
+import com.example.oriencoop_score.utility.SessionManager
 import com.example.oriencoop_score.model.LccResponse
-import com.example.oriencoop_score.repository.CuentaCapRepository
 import com.example.oriencoop_score.repository.LccRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

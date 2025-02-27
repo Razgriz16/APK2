@@ -1,11 +1,9 @@
 package com.example.oriencoop_score.repository
 
 import android.util.Log
-import com.example.oriencoop_score.Result
-import com.example.oriencoop_score.SessionManager
-import com.example.oriencoop_score.api.CuentaCapService
+import com.example.oriencoop_score.utility.Result
+import com.example.oriencoop_score.utility.SessionManager
 import com.example.oriencoop_score.api.MisProductosService
-import com.example.oriencoop_score.model.CuentaCapResponse
 import com.example.oriencoop_score.model.MisProductosResponse
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery

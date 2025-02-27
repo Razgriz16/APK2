@@ -37,7 +37,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.oriencoop_score.navigation.Pantalla
 import com.example.oriencoop_score.R
-import com.example.oriencoop_score.Result
+import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.api.ManageMindicatorsApi
 import com.example.oriencoop_score.repository.MindicatorsRepository
 import com.example.oriencoop_score.ui.theme.AppTheme

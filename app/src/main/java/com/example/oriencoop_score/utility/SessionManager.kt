@@ -1,4 +1,4 @@
-package com.example.oriencoop_score
+package com.example.oriencoop_score.utility
 
 import android.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow

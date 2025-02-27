@@ -1,16 +1,12 @@
 package com.example.oriencoop_score.repository
 
 import android.util.Log
-import com.example.oriencoop_score.api.ManageMindicatorsApi
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.Response
-import com.example.oriencoop_score.Result
+import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.api.MindicatorInterface
 import com.example.oriencoop_score.model.Indicador
-import javax.inject.Inject
-import javax.inject.Singleton
 
 
 class MindicatorsRepository (private val mindicatorsApi: MindicatorInterface){

@@ -1,6 +1,6 @@
 package com.example.oriencoop_score.view_model
 
-import com.example.oriencoop_score.SessionManager
+import com.example.oriencoop_score.utility.SessionManager
 import com.example.oriencoop_score.model.MisProductosResponse
 import com.example.oriencoop_score.repository.MisProductosRepository
 import io.mockk.coEvery
@@ -22,7 +22,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import com.example.oriencoop_score.Result
+import com.example.oriencoop_score.utility.Result
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalCoroutinesApi::class)

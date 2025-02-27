@@ -1,7 +1,7 @@
 package com.example.oriencoop_score.repository
 
 import android.util.Log
-import com.example.oriencoop_score.Result
+import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.api.ClienteInfoService
 import com.example.oriencoop_score.model.ClienteInfoResponse
 import kotlinx.coroutines.Dispatchers

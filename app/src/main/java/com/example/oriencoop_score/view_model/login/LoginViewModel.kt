@@ -2,17 +2,14 @@ package com.example.oriencoop_score.view_model.login
 
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cleanRut
-import com.example.oriencoop_score.LoginState
+import com.example.oriencoop_score.utility.LoginState
 import com.example.oriencoop_score.repository.LoginRepository
 import kotlinx.coroutines.launch
-import com.example.oriencoop_score.Result
-import com.example.oriencoop_score.SessionManager
+import com.example.oriencoop_score.utility.Result
+import com.example.oriencoop_score.utility.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import getClaveSHA1
 import kotlinx.coroutines.flow.MutableStateFlow

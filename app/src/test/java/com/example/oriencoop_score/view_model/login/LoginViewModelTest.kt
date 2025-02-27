@@ -1,7 +1,7 @@
 package com.example.oriencoop_score.view_model.login
 
 import android.util.Log
-import com.example.oriencoop_score.LoginState
+import com.example.oriencoop_score.utility.LoginState
 import com.example.oriencoop_score.model.HiddenLoginResponse
 import com.example.oriencoop_score.model.UserLoginResponse
 import com.example.oriencoop_score.repository.LoginRepository
@@ -18,8 +18,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.Assert.*
-import com.example.oriencoop_score.Result
-import com.example.oriencoop_score.SessionManager
+import com.example.oriencoop_score.utility.Result
+import com.example.oriencoop_score.utility.SessionManager
 import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.unmockkAll

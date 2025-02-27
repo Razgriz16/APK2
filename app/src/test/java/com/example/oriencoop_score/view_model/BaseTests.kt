@@ -1,34 +1,5 @@
 package com.example.oriencoop_score.view_model
 
-import android.util.Log
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import app.cash.turbine.test
-import com.example.oriencoop_score.SessionManager
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertFalse
-import junit.framework.TestCase.assertNull
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import com.example.oriencoop_score.Result
-import com.example.oriencoop_score.ui.theme.amarillo
-import junit.framework.TestCase.assertTrue
-import kotlin.coroutines.Continuation
 /*
 @OptIn(ExperimentalCoroutinesApi::class)
 abstract class BaseTests<

@@ -3,10 +3,9 @@ package com.example.oriencoop_score.view_model
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.oriencoop_score.Result
-import com.example.oriencoop_score.SessionManager
+import com.example.oriencoop_score.utility.Result
+import com.example.oriencoop_score.utility.SessionManager
 import com.example.oriencoop_score.model.MovimientosLcc
-import com.example.oriencoop_score.model.MovimientosLccResponse
 import com.example.oriencoop_score.repository.MovimientosLccRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -10,8 +10,7 @@ import com.example.oriencoop_score.model.UserLoginRequest
 import com.example.oriencoop_score.model.UserLoginResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.Response
-import com.example.oriencoop_score.Result
+import com.example.oriencoop_score.utility.Result
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton

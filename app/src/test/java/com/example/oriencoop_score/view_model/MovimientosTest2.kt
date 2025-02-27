@@ -1,11 +1,5 @@
 package com.example.oriencoop_score.view_model
 
-import com.example.oriencoop_score.Result
-import com.example.oriencoop_score.model.Movimiento
-import com.example.oriencoop_score.model.MovimientosResponse
-import com.example.oriencoop_score.repository.MovimientosRepository
-import io.mockk.mockk
-import kotlinx.coroutines.flow.StateFlow
 /*
 class MovimientosTest2 : BaseTests<MovimientosViewModel, MovimientosRepository, MovimientosResponse, Movimiento>() {
 

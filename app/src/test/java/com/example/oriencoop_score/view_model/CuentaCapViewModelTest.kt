@@ -2,9 +2,8 @@ package com.example.oriencoop_score.view_model
 
 import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.Observer
 import app.cash.turbine.test
-import com.example.oriencoop_score.SessionManager
+import com.example.oriencoop_score.utility.SessionManager
 import com.example.oriencoop_score.model.CuentaCapResponse
 import com.example.oriencoop_score.repository.CuentaCapRepository
 import io.mockk.coEvery
@@ -12,7 +11,6 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import io.mockk.verify
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNull
 import kotlinx.coroutines.Dispatchers
@@ -26,11 +24,10 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import com.example.oriencoop_score.Result
+import com.example.oriencoop_score.utility.Result
 import io.mockk.unmockkAll
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
-import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalCoroutinesApi::class)

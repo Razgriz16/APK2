@@ -101,11 +101,12 @@ object NetworkModule {
     fun provideClienteInfoService(@Named("MainApi")retrofit: Retrofit): ClienteInfoService { // Function to provide MovimientosLccService, injects Retrofit
         return retrofit.create(ClienteInfoService::class.java)
     }
-    /*
+
     @Provides
     @Singleton
-    fun provideClienteInfoService(retrofit: Retrofit): ClienteInfoService {
-        return retrofit.create(ClienteInfoService::class.java)
+    fun provideDapService(@Named("MainApi")retrofit: Retrofit): DapService { // Function to provide MovimientosLccService, injects Retrofit
+        return retrofit.create(DapService::class.java)
     }
-    */
+
+
 }

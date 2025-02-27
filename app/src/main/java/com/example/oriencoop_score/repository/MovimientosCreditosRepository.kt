@@ -1,10 +1,9 @@
 package com.example.oriencoop_score.repository
 
 import android.util.Log
-import com.example.oriencoop_score.Result
+import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.api.MovimientosCreditos
 import com.example.oriencoop_score.model.MovimientosCreditosResponse
-import com.example.oriencoop_score.model.RutRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

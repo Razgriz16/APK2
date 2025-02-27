@@ -169,7 +169,7 @@ fun ProductsScreen(
                 ProductButton(
                     icon = R.drawable.deposito,
                     text = "Depósito a\nplazo",
-                    onClick = { /* Handle click */ },
+                    onClick = { navController.navigate(Pantalla.Dap.route) },
                     isVisible = productos["DEPOSTO"] ?: false
                 )
             }

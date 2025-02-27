@@ -3,10 +3,9 @@ package com.example.oriencoop_score.view_model
 import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
-import com.example.oriencoop_score.Result
-import com.example.oriencoop_score.SessionManager
+import com.example.oriencoop_score.utility.Result
+import com.example.oriencoop_score.utility.SessionManager
 import com.example.oriencoop_score.model.MovimientosAhorro
-import com.example.oriencoop_score.model.MovimientosCreditos
 import com.example.oriencoop_score.model.MovimientosAhorroResponse
 import com.example.oriencoop_score.repository.MovimientosAhorroRepository
 import io.mockk.coEvery

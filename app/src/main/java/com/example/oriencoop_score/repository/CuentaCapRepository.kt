@@ -1,14 +1,11 @@
 package com.example.oriencoop_score.repository
 
-import android.media.AudioRecord.OnRecordPositionUpdateListener
 import android.util.Log
-import com.example.oriencoop_score.Result
+import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.api.CuentaCapService
 import com.example.oriencoop_score.model.CuentaCapResponse
-import com.example.oriencoop_score.model.RutRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,7 +18,7 @@ class CuentaCapRepository @Inject constructor(private val cuentaCapService: Cuen
                 val response = cuentaCapService.getCuentaCap(token, rut)
                 if (response.isSuccessful) {
                     Log.d("CuentaCapRepository", "llamada api exitosa. BODY: ${response.body()}")
-                    response.body()?.let{Result.Success(it)}?: Result.Error(Exception("Respuesta vacía"))
+                    response.body()?.let{ Result.Success(it)}?: Result.Error(Exception("Respuesta vacía"))
                 } else {
                     Log.e("CuentaCapRepository", "Llamada fallida. Error: ${response.code()} ${response.message()}")
                     Result.Error(Exception("Error: ${response.code()} ${response.message()}"))

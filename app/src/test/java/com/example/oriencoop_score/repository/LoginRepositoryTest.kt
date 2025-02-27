@@ -1,8 +1,6 @@
 package com.example.oriencoop_score.repository
 
 import android.util.Log
-import androidx.compose.runtime.LaunchedEffect
-import com.example.oriencoop_score.api.CuentaCapService
 import com.example.oriencoop_score.api.LoginService
 import com.example.oriencoop_score.model.HiddenLoginResponse
 import io.mockk.MockKAnnotations
@@ -18,9 +16,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
-import com.example.oriencoop_score.Result
+import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.model.UserLoginResponse
-import org.junit.Assert.assertThrows
 import java.io.IOException
 
 

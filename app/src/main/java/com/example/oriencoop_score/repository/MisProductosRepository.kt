@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.oriencoop_score.model.MisProductosResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import com.example.oriencoop_score.Result
+import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.api.MisProductosService
 import javax.inject.Inject
 import javax.inject.Singleton

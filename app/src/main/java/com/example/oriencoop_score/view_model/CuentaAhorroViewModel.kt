@@ -1,12 +1,10 @@
 package com.example.oriencoop_score.view_model
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.oriencoop_score.Result
-import com.example.oriencoop_score.SessionManager
+import com.example.oriencoop_score.utility.Result
+import com.example.oriencoop_score.utility.SessionManager
 import com.example.oriencoop_score.model.CuentaAhorro
 import com.example.oriencoop_score.model.CuentaAhorroResponse
 import com.example.oriencoop_score.repository.CuentaAhorroRepository
