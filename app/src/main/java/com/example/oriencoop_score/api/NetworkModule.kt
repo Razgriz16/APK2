@@ -27,10 +27,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    @Named("MainApi") // Qualifier for the banking API
+    @Named("MainApi")
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://192.168.120.8:5000/") // Banking API URL
+            .baseUrl("http://192.168.120.8:5000/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -94,6 +94,12 @@ object NetworkModule {
     @Singleton
     fun provideMovimientosLccService(@Named("MainApi")retrofit: Retrofit): MovimientosLccService { // Function to provide MovimientosLccService, injects Retrofit
         return retrofit.create(MovimientosLccService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLcrService(@Named("MainApi")retrofit: Retrofit): LcrService { // Function to provide LccService, injects Retrofit
+        return retrofit.create(LcrService::class.java)
     }
 
     @Provides

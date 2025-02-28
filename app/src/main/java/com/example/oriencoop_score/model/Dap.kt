@@ -1,6 +1,6 @@
 import com.google.gson.annotations.SerializedName
 
-data class Dap(
+data class DapResponse(
     @SerializedName("CATEGORIA") val categoria: Int,
     @SerializedName("CODIGO") val codigo: Long,
     @SerializedName("DIRECCIONENVIO") val direccionEnvio: Int,
@@ -58,6 +58,5 @@ data class Dap(
     @SerializedName("USUARIOMODIFICACION") val usuarioModificacion: String?
 )
 
-data class DapResponse(
-    val dapResponse: List<Dap>
-)
+
+

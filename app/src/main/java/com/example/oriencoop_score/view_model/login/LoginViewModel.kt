@@ -69,14 +69,14 @@ class LoginViewModel @Inject constructor(
                     Log.d("Login", "Realizando Login Cliente (User Login) con token: $token")
                     val rut = cleanRut(username)
                     val clave = getClaveSHA1(rut, password)
-                    val userLoginResult = loginRepository.performUserLogin(token, "5980334", "CFC253C1E446785B61AB66ACA3D2A36C332463C2")
+                    val userLoginResult = loginRepository.performUserLogin(token, "8373229", "5EF322F0FE24EA246B1BD8FF3EEAE732225E6886")
                         //clave?.let { loginRepository.performUserLogin(token, rut, it) }
                     if (userLoginResult is Result.Success) {
                         Log.d("Login", "Login Cliente Exitoso")
                         _username.value = username
                         _password.value = password // Guardar el nombre de usuario
                         _loginState.value = LoginState.Success(userLoginResult.data)
-                        sessionManager.saveSession(token, "5980334")
+                        sessionManager.saveSession(token, "8373229")
                     } else if (userLoginResult is Result.Error) {
                         _loginState.value = LoginState.Error(
                             userLoginResult.exception.message ?: "User login failed"
@@ -109,5 +109,11 @@ DF60F113C0F65E52B746558911CC0059E083BE09
 13793E4CEB511A3F9BD9BC5AEC29851697CF7E3C
 21186098 (21.186.098-7)
 6117B8AEAA2327F9E05202EF3C8FC0C6F5556353 (Forest28)
+
+6814361
+2B08CE9284F126C397B47DEBA547EBE0C2B2FE87
+
+8373229
+5EF322F0FE24EA246B1BD8FF3EEAE732225E6886
 */
 

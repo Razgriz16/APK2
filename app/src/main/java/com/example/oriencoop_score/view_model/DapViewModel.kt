@@ -1,6 +1,5 @@
 package com.example.oriencoop_score.view_model
 
-import Dap
 import DapResponse
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -22,8 +21,8 @@ class DapViewModel @Inject constructor(
     private val sessionManager: SessionManager
 ) : ViewModel() {
 
-    private val _dapData = MutableStateFlow<DapResponse?>(null)
-    val dapData: StateFlow<DapResponse?> = _dapData
+    private val _dapData = MutableStateFlow<List<DapResponse?>>(emptyList())
+    val dapData: StateFlow<List<DapResponse?>> = _dapData
 
     // Estado de error
     private val _error = MutableStateFlow<String?>(null)
@@ -33,8 +32,8 @@ class DapViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    private val _cuentaSeleccionada = MutableStateFlow<Dap?>(null)
-    val cuentaSeleccionada: StateFlow<Dap?> = _cuentaSeleccionada
+    private val _cuentaSeleccionada = MutableStateFlow<DapResponse?>(null)
+    val cuentaSeleccionada: StateFlow<DapResponse?> = _cuentaSeleccionada
 
 
     init {
@@ -77,7 +76,7 @@ class DapViewModel @Inject constructor(
         }
     }
 
-    fun selectCuenta(cuenta: Dap) {
+    fun selectCuenta(cuenta: DapResponse) {
         // Si se toca la misma cuenta, se oculta la vista de detalles (toggle)
         if (_cuentaSeleccionada.value?.numeroDeposito == cuenta.numeroDeposito) {
             _cuentaSeleccionada.value = null

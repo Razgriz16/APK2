@@ -1,16 +1,15 @@
 package com.example.oriencoop_score.api
 
-import DapResponse
-import com.example.oriencoop_score.model.ClienteInfoResponse
+import com.example.oriencoop_score.model.LcrResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
 
-interface DapService {
-    @GET("dap/{rut}")
-    suspend fun getDap(
+interface LcrService {
+    @GET("lcr/{rut}")
+    suspend fun getLcr(
         @Header("Authorization") token: String,
         @Path("rut") rut: String
-    ): Response<List<DapResponse>>
+    ): Response<LcrResponse>
 }

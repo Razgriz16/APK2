@@ -162,7 +162,7 @@ fun ProductsScreen(
                 ProductButton(
                     icon = R.drawable.lcr,
                     text = "Línea de crédito\nrotativa",
-                    onClick = { /* Handle click */ },
+                    onClick = { navController.navigate(Pantalla.Lcr.route) },
                     isVisible = productos["LCR"] ?: false
                 )
 

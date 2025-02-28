@@ -4,37 +4,35 @@ import DapResponse
 import android.util.Log
 import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.api.DapService
-import com.example.oriencoop_score.utility.toFormattedDate
+import com.example.oriencoop_score.utility.customDateFormat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
-
+// DapRepository.kt
 @Singleton
-class DapRepository @Inject constructor(private val dapService: DapService){
-    suspend fun getDap(token: String, rut: String): Result<DapResponse> {
+class DapRepository @Inject constructor(private val dapService: DapService) {
+    suspend fun getDap(token: String, rut: String): Result<List<DapResponse>> { // Return Result<List<DapResponse>>
         return withContext(Dispatchers.IO) {
             try {
-                Log.d("DapRepository", "llamando función getAhorro")
+                Log.d("DapRepository", "llamando función getDap")
                 val response = dapService.getDap(token, rut)
                 if (response.isSuccessful) {
-                    val formattedDates = response.body()?.dapResponse?.map { dap -> // Access the list within DapResponse
-                        dap.copy(
-                            fechaActivacion = dap.fechaActivacion.toFormattedDate(),
-                            fechaCreacion = dap.fechaCreacion.toFormattedDate(),
-                            fechaLiquidacion = dap.fechaLiquidacion.toFormattedDate(),
-                            fechaModificacion = dap.fechaModificacion.toFormattedDate(),
-                            fechaRenovacion = dap.fechaRenovacion.toFormattedDate(),
-                            fechaVencimiento = dap.fechaVencimiento.toFormattedDate()
+                    
+                    val formattedDaps = response.body()?.map { dapResponse -> // Use map on the list
+                        dapResponse.copy( // Use .copy on each DapResponse object
+                            fechaActivacion = customDateFormat(dapResponse.fechaActivacion),
+                            fechaCreacion = customDateFormat(dapResponse.fechaCreacion),
+                            fechaLiquidacion = customDateFormat(dapResponse.fechaLiquidacion),
+                            fechaModificacion = customDateFormat(dapResponse.fechaModificacion),
+                            fechaRenovacion = customDateFormat(dapResponse.fechaRenovacion),
+                            fechaVencimiento = customDateFormat(dapResponse.fechaVencimiento)
                         )
                     }
                     Log.d("DapRepository", "Llamada exitosa. BODY " + response.body())
-                    // Wrap the transformed list in a DapResponse object
-                    Result.Success(DapResponse(formattedDates ?: emptyList()))
+                    Result.Success(formattedDaps ?: emptyList()) // Return the formatted list
                 } else {
-                    Log.e(
-                        "DapRepository",
-                        "Llamada fallida. Error: ${response.code()} ${response.message()}"
+                    Log.e("DapRepository", "Llamada fallida. Error: ${response.code()} ${response.message()}"
                     )
                     Result.Error(Exception("Error: ${response.code()} ${response.message()}"))
                 }

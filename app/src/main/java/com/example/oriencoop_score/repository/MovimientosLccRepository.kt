@@ -14,7 +14,7 @@ class MovimientosLccRepository @Inject constructor(private val movimientosLccSer
     suspend fun getMovimientosLcc(token: String, rut: String): Result<MovimientosLccResponse> {
         return withContext(Dispatchers.IO) {
             try {
-                Log.d("MovimientoLccRepository", "llamando función getMovimientosAhorro")
+                Log.d("MovimientoLccRepository", "llamando función getMovimientosLcc")
                 val response = movimientosLccService.getMovimientosLcc(token, rut)
                 if (response.isSuccessful) {
                     Log.d("MovimientoLccRepository", "Llamada exitosa. BODY "+response.body())

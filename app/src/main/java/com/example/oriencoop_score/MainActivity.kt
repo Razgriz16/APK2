@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Navigation()
         }
-/*
+/*********Agregar ruta al presionar la notificación************************************
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContent {

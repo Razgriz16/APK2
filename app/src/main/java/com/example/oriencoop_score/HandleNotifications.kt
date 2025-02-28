@@ -77,10 +77,11 @@ class HandleNotifications(private val context: Context) {
             .setAutoCancel(false)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
+
             /*TODO BORRAR DE AQUI HASTA ABAJO ANTES DE SUBIR A PLAYSTORE*/
             .setVibrate(longArrayOf(0, 500)) // Explicitly trigger heads-up
             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)) // Force sound
-            .setFullScreenIntent(pendingIntent, true) // Use judiciously
+            //.setFullScreenIntent(pendingIntent, true) // Use judiciously
             /*HASTA AQUI*/
 
         // Generate a unique ID (e.g., using UUID hashing)

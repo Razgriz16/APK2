@@ -12,9 +12,54 @@ import javax.inject.Inject
 @HiltViewModel
 class NotificationViewModel @Inject constructor(private val handleNotifications: HandleNotifications) : ViewModel() {
 
+
+
     fun sendNotification(notification: Notifications) {
         viewModelScope.launch {
             handleNotifications.showNotification(notification)
+        }
+    }
+
+    val singleNotification = Notifications(
+        TITULO = "Single Notification",
+        DESCRIPCION = "This is a single notification example.",
+        DATE = "2023-10-27",
+        TIME = "15:00"
+    )
+
+
+    // Function to create and send dummy notifications
+    fun sendDummyNotifications() {
+        val dummyNotifications = listOf(
+            Notifications(
+                TITULO = "Meeting Reminder",
+                DESCRIPCION = "Don't forget the team meeting at 2 PM.",
+                DATE = "2023-10-27",
+                TIME = "14:00"
+            ),
+            Notifications(
+                TITULO = "Task Deadline",
+                DESCRIPCION = "Your project report is due tomorrow.",
+                DATE = "2023-10-28",
+                TIME = "09:00"
+            )/*,
+            Notifications(
+                TITULO = "Lunch Break",
+                DESCRIPCION = "It's time for lunch!",
+                DATE = "2023-10-27",
+                TIME = "12:30"
+            ),
+            Notifications(
+                TITULO = "Workout Time",
+                DESCRIPCION = "Don't forget your workout today",
+                DATE = "2023-10-27",
+                TIME = "18:00"
+            )
+            */
+        )
+
+        dummyNotifications.forEach { notification ->
+            sendNotification(notification)
         }
     }
 }

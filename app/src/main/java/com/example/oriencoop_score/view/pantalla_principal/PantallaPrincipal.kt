@@ -43,20 +43,11 @@ fun PantallaPrincipal(
     val drawerWidth = screenWidth * 0.5f // 50% of screen width
 
     val viewModel: NotificationViewModel = hiltViewModel()
-
+    val singleNotification = viewModel.singleNotification
     LaunchedEffect(Unit) {
         delay(1500)
-        viewModel.sendNotification(
-            Notifications(
-                TITULO = "Test Title",
-                DESCRIPCION = "Dummy Notification Content",
-                DATE = "2024-04-30",
-                TIME = "12:00 PM"
-            )
-        )
+        viewModel.sendNotification(singleNotification)
     }
-
-
 
     ModalNavigationDrawer(
         drawerState = drawerState,

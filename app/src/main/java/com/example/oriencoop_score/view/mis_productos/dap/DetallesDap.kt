@@ -1,6 +1,7 @@
 package com.example.oriencoop_score.view.mis_productos.dap
 
-import Dap
+import DapResponse
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,10 +29,11 @@ import androidx.compose.ui.unit.sp
 import com.example.oriencoop_score.R
 import com.example.oriencoop_score.model.CuentaAhorro
 import com.example.oriencoop_score.ui.theme.AppTheme
+import com.example.oriencoop_score.utility.formatNumberWithDots2
 
 
 @Composable
-fun DapItem(cuenta: Dap, isSelected: Boolean, onClick: () -> Unit) {
+fun DapItem(cuenta: DapResponse, isSelected: Boolean, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -70,8 +72,9 @@ fun DapItem(cuenta: Dap, isSelected: Boolean, onClick: () -> Unit) {
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
-fun DetallesDap(cuenta: Dap) {
+fun DetallesDap(cuenta: DapResponse) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -90,17 +93,20 @@ fun DetallesDap(cuenta: Dap) {
             HorizontalDivider()
             cuenta.fechaVencimiento?.let { DetailRow(label = "Fecha Vencimietno:", value = it) }
             HorizontalDivider()
-            DetailRow(label = "Plazo:", value = cuenta.plazoPactado.toString())
+            DetailRow(label = "Plazo pactado? (Días):", value = cuenta.plazoPactado.toString())
             HorizontalDivider()
             DetailRow(label = "Estado:", value = cuenta.nombreEstado)
             HorizontalDivider()
             DetailRow(label = "Sucursal:", value = cuenta.sucursalOrigen.toString())
             HorizontalDivider()
-            DetailRow(label = "Monto Inversión:", value = cuenta.montoInversion.toString())
+            val montoInteresInversion = formatNumberWithDots2(cuenta.montoInversion)
+            DetailRow(label = "Monto Inversión:", value = montoInteresInversion)
             HorizontalDivider()
-            DetailRow(label = "Monto Interés:", value = cuenta.montoInversion.toString())
+            val montoInteresInteres = formatNumberWithDots2(cuenta.montoInteres)
+            DetailRow(label = "Monto Interés:", value = montoInteresInteres)
             HorizontalDivider()
-            DetailRow(label = "Monto Rescate:", value = cuenta.montoInversion.toString(), valueColor = AppTheme.colors.azul)
+            val montoRescate = formatNumberWithDots2(cuenta.montoInversion + cuenta.montoInteres)
+            DetailRow(label = "Monto Rescate:", value = montoRescate, valueColor = AppTheme.colors.azul)
 
         }
     }

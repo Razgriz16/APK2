@@ -157,10 +157,6 @@ fun SaldoView(saldoContable: String?, navController: NavController) {
 //*****Barra inferior de la app*****
 @Composable
 fun BottomBar(navController: NavController)
-              //onHomeClick: () -> Unit = {},
-              //onProductosClick: () -> Unit = {},
-              //onGiroClick: () -> Unit = {},
-              //onDollarClick: () -> Unit = {})
 {
     Row(
         modifier = Modifier
@@ -348,7 +344,7 @@ fun AccionesRapidas(
                 "LCR" -> ProductButton(
                     icon = R.drawable.lcr,
                     text = "Línea de crédito\nrotativa",
-                    onClick = { /* Handle click */ },
+                    onClick = { onProductClick(Pantalla.Lcr.route) },
                     modifier = Modifier
                         .size(70.dp)
                         .border( // Línea divisoria superior APLICADA AL COLUMN CONTENEDOR
@@ -361,7 +357,7 @@ fun AccionesRapidas(
                 "DEPOSTO" -> ProductButton(
                     icon = R.drawable.deposito,
                     text = "Depósito a\nplazo",
-                    onClick = { /* Handle click */ },
+                    onClick = {onProductClick(Pantalla.Dap.route) },
                     modifier = Modifier
                         .size(70.dp)
                         .border( // Línea divisoria superior APLICADA AL COLUMN CONTENEDOR
