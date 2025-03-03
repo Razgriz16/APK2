@@ -4,12 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -39,11 +41,13 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.oriencoop_score.model.MovimientosLcr
 import com.example.oriencoop_score.ui.theme.AppTheme
+import com.example.oriencoop_score.view.mis_productos.lcr.DetallesLcr
+import com.example.oriencoop_score.view.mis_productos.lcr.MovimientosListLcr
 import com.example.oriencoop_score.view.pantalla_principal.BottomBar
 import com.example.oriencoop_score.view_model.LcrViewModel
-
-
+import com.example.oriencoop_score.view_model.MovimientosLcrViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,26 +55,25 @@ fun Lcr(
     navController: NavController
 ) {
     val lcrViewModel: LcrViewModel = hiltViewModel()
-    //val movimientosLcrViewModel: MovimientosLcrViewModel = hiltViewModel()
+    val movimientosLcrViewModel: MovimientosLcrViewModel = hiltViewModel()
 
     val lcrData by lcrViewModel.lcrData.collectAsState()
-    //val movimientos by movimientosLcrViewModel.movimientoslcr.collectAsState()
-    //val isLoading by movimientosLcrViewModel.isLoading.collectAsState()
-    //val error by movimientosLcrViewModel.error.collectAsState()
+    val movimientos by movimientosLcrViewModel.movimientoslcr.collectAsState()
+    val isLoading by movimientosLcrViewModel.isLoading.collectAsState()
+    val error by movimientosLcrViewModel.error.collectAsState()
 
     // State for showing the full-screen dialog
     var showAllMovimientosDialog by remember { mutableStateOf(false) }
-
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Linea De Crédito a cuotas",
+                        text = "Linea De Crédito rotativa",
                         color = Color.Black,
                         textAlign = TextAlign.Left,
-                        fontSize = AppTheme.typography.normal.fontSize // Use theme
+                        fontSize = AppTheme.typography.normal.fontSize
                     )
                 },
                 navigationIcon = {
@@ -78,7 +81,7 @@ fun Lcr(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = com.example.oriencoop_score.ui.theme.amarillo // Use theme
+                            tint = com.example.oriencoop_score.ui.theme.amarillo
                         )
                     }
                 },
@@ -91,89 +94,113 @@ fun Lcr(
             Box(
                 modifier = Modifier
                     .padding(bottom = 16.dp)
-
-            )
-            { BottomBar(navController) } // Assuming you have a BottomBar composable
+            ) {
+                BottomBar(navController)
+            }
         }
-
     ) { paddingValues ->
-        Column(
+        // Add LazyColumn to enable scrolling for the entire content
+        LazyColumn(
             modifier = Modifier
                 .background(Color.White)
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
-
-
+                .padding(horizontal = 16.dp)
         ) {
-            lcrData?.let { data ->
-                DetallesLcr(
-                    NUMEROCUENTA = data.NUMEROCUENTA,
-                    CUPOAUTORIZADO = "$ ${data.CUPOAUTORIZADO}",
-                    CUPOUTILIZADO = "$ ${data.CUPOUTILIZADO}",
-                    CUPODISPONIBLE = "$ ${data.CUPODISPONIBLE}",
-                    FECHAATIVACION = data.FECHAATIVACION,
-                    SUCURSAL = data.SUCURSAL,
-                    TIPO = data.TIPO
-                )
-            }
-        }
-    }/*
-    Spacer(modifier = Modifier.height(24.dp))
-    Column(modifier = Modifier.fillMaxSize()) {
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Movimientos",
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center
-            )
-            IconButton(onClick = { showAllMovimientosDialog = true }) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Ver todos los movimientos",
-                    tint = AppTheme.colors.azul //Consistent
-                )
-            }
-        }
-
-                if (isLoading) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                } else if (error != null) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(text = error ?: "Error desconocido", color = Color.Red)
-                    }
-                } else {
-                    MovimientosListLcr(movimientos = movimientos)
+            // Details section
+            item {
+                lcrData?.let { data ->
+                    DetallesLcr(
+                        NUMEROCUENTA = data.NUMEROCUENTA,
+                        CUPOAUTORIZADO = "$ ${data.CUPOAUTORIZADO}",
+                        CUPOUTILIZADO = "$ ${data.CUPOUTILIZADO}",
+                        CUPODISPONIBLE = "$ ${data.CUPODISPONIBLE}",
+                        FECHAATIVACION = data.FECHAATIVACION,
+                        SUCURSAL = data.SUCURSAL,
+                        TIPO = data.TIPO
+                    )
                 }
 
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+
+            // Movements header
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Movimientos",
+                        style = MaterialTheme.typography.titleLarge,
+                        textAlign = TextAlign.Center
+                    )
+                    IconButton(onClick = { showAllMovimientosDialog = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Ver todos los movimientos",
+                            tint = AppTheme.colors.azul
+                        )
+                    }
+                }
+            }
+
+            // Movements content
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min)
+                ) {
+                    if (isLoading) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    } else if (error != null) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(text = error ?: "Error desconocido", color = Color.Red)
+                        }
+                    } else {
+                        // Use a fixed height container to prevent nested scroll conflicts
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(300.dp)
+                        ) {
+                            MovimientosListLcr(movimientos = movimientos)
+                        }
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
-
             }
         }
+    }
 
-        // Show the dialog when showAllMovimientosDialog is true
-        if (showAllMovimientosDialog) {
-            AllMovimientosDialogLcr(
-                movimientos = movimientos,
-                isLoading = isLoading,
-                error = error,
-                onDismiss = { showAllMovimientosDialog = false }
-            )
-        }
-    }*/
-
+    // Show the dialog when showAllMovimientosDialog is true
+    if (showAllMovimientosDialog) {
+        AllMovimientosDialogLcr(
+            movimientos = movimientos,
+            isLoading = isLoading,
+            error = error,
+            onDismiss = { showAllMovimientosDialog = false }
+        )
+    }
 }
-/*
+
 @Composable
 fun AllMovimientosDialogLcr(
     movimientos: List<MovimientosLcr>,
@@ -209,7 +236,7 @@ fun AllMovimientosDialogLcr(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = com.example.oriencoop_score.ui.theme.amarillo // Use theme
+                            tint = com.example.oriencoop_score.ui.theme.amarillo
                         )
                     }
                 }
@@ -217,15 +244,26 @@ fun AllMovimientosDialogLcr(
 
                 when {
                     isLoading -> {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
                             CircularProgressIndicator()
                         }
                     }
+
                     error != null -> {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text(text = error ?: "Error desconocido", color = MaterialTheme.colorScheme.error)
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = error ?: "Error desconocido",
+                                color = MaterialTheme.colorScheme.error
+                            )
                         }
                     }
+
                     else -> {
                         MovimientosListLcr(movimientos = movimientos)
                     }
@@ -234,4 +272,3 @@ fun AllMovimientosDialogLcr(
         }
     }
 }
-*/

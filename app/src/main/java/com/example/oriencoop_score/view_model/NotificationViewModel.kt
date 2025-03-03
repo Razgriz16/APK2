@@ -1,6 +1,7 @@
 package com.example.oriencoop_score.view_model
 
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.oriencoop_score.HandleNotifications
@@ -8,15 +9,20 @@ import com.example.oriencoop_score.model.Notifications
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 @HiltViewModel
 class NotificationViewModel @Inject constructor(private val handleNotifications: HandleNotifications) : ViewModel() {
 
+    // LiveData or State to hold the notifications.  Using mutableStateListOf for simplicity and reactivity.
+    private val _notifications = mutableStateListOf<Notifications>()
+    val notifications: List<Notifications> = _notifications
 
 
     fun sendNotification(notification: Notifications) {
         viewModelScope.launch {
             handleNotifications.showNotification(notification)
+            // Add to our list for the dialog.  Crucially, add *after* showing the system notification.
+            _notifications.add(notification)
+
         }
     }
 
@@ -61,5 +67,9 @@ class NotificationViewModel @Inject constructor(private val handleNotifications:
         dummyNotifications.forEach { notification ->
             sendNotification(notification)
         }
+    }
+    //Clear all notifications
+    fun clearNotifications() {
+        _notifications.clear()
     }
 }

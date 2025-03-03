@@ -146,7 +146,7 @@ fun ProductsScreen(
 
                 ProductButton(
                     icon = R.drawable.lcc,
-                    text = "Línea de crédito\nde cuotas",
+                    text = "LCC",
                     onClick = { navController.navigate(Pantalla.Lcc.route) },
                     isVisible = productos["LCC"] ?: false
                 )
@@ -161,7 +161,7 @@ fun ProductsScreen(
             ) {
                 ProductButton(
                     icon = R.drawable.lcr,
-                    text = "Línea de crédito\nrotativa",
+                    text = "LCR",
                     onClick = { navController.navigate(Pantalla.Lcr.route) },
                     isVisible = productos["LCR"] ?: false
                 )

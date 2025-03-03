@@ -44,6 +44,8 @@ fun PantallaPrincipal(
 
     val viewModel: NotificationViewModel = hiltViewModel()
     val singleNotification = viewModel.singleNotification
+
+    var showDialog by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         delay(1500)
         viewModel.sendNotification(singleNotification)
@@ -69,7 +71,7 @@ fun PantallaPrincipal(
                         }
                     },
                     onAlertClick = {
-
+                        showDialog = true
                     },
                 )
             },
@@ -117,7 +119,14 @@ fun PantallaPrincipal(
 
                 }
             }
+
         )
+        if (showDialog) {
+            NotificationDialog(
+                viewModel = viewModel,
+                onDismiss = { showDialog = false } // Close the dialog.
+            )
+        }
 
     }
 }
