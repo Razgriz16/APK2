@@ -94,7 +94,7 @@ fun ProductsScreen(
                     .padding(bottom = 16.dp)
 
             )
-            { BottomBar(navController) }
+            { BottomBar(navController, currentRoute = navController.currentDestination?.route ?: "") }
         }
 
 
@@ -117,14 +117,17 @@ fun ProductsScreen(
                     icon = R.drawable.bank,
                     text = "Cuenta Capitalización",
                     onClick = { navController.navigate(Pantalla.CuentaCap.route) },
-                    isVisible = productos["CSOCIAL"] ?: false
+                    isVisible = productos["CSOCIAL"] ?: false,
+                    iconSize = 35.dp
+
                 )
 
                 ProductButton(
                     icon = R.drawable.piggy_bank,
                     text = "Cuenta De\nahorro",
                     onClick = { navController.navigate(Pantalla.CuentaAhorro.route)},
-                    isVisible = productos["AHORRO"] ?: false
+                    isVisible = productos["AHORRO"] ?: false,
+                    iconSize = 35.dp
                 )
             }
             //Fin Primera Fila//
@@ -137,18 +140,20 @@ fun ProductsScreen(
             ) {
                 ProductButton(
                     icon = R.drawable.credito_cuotas,
-                    text = "Crédito en\ncuotas",
+                    text = "Crédito en\nCuotas",
                     onClick = {navController.navigate(Pantalla.CreditoCuotas.route)},
-                    isVisible = productos["CREDITO"] ?: false
+                    isVisible = productos["CREDITO"] ?: false,
+                    iconSize = 35.dp
                 )
 
 
 
                 ProductButton(
                     icon = R.drawable.lcc,
-                    text = "LCC",
+                    text = "Linea de Crédito a Cuotas",
                     onClick = { navController.navigate(Pantalla.Lcc.route) },
-                    isVisible = productos["LCC"] ?: false
+                    isVisible = productos["LCC"] ?: false,
+                    iconSize = 35.dp
                 )
             }
 
@@ -161,16 +166,20 @@ fun ProductsScreen(
             ) {
                 ProductButton(
                     icon = R.drawable.lcr,
-                    text = "LCR",
+                    text = "Línea de Crédito Rotativa",
                     onClick = { navController.navigate(Pantalla.Lcr.route) },
-                    isVisible = productos["LCR"] ?: false
+                    isVisible = productos["LCR"] ?: false,
+                    iconSize = 35.dp
+
                 )
 
                 ProductButton(
                     icon = R.drawable.deposito,
                     text = "Depósito a\nplazo",
                     onClick = { navController.navigate(Pantalla.Dap.route) },
-                    isVisible = productos["DEPOSTO"] ?: false
+                    isVisible = productos["DEPOSTO"] ?: false,
+                    iconSize = 35.dp
+
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))

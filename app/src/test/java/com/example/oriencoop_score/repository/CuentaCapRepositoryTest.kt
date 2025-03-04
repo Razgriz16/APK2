@@ -1,7 +1,6 @@
 package com.example.oriencoop_score.repository
 
 import android.util.Log
-import com.example.oriencoop_score.api.CuentaCapService
 import com.example.oriencoop_score.model.CuentaCapResponse
 import io.mockk.coEvery
 import io.mockk.mockk

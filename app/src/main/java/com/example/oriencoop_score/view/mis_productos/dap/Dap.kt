@@ -81,7 +81,7 @@ fun Dap(
         },
         bottomBar = {
             Box(modifier = Modifier.padding(bottom = 16.dp)) {
-                BottomBar(navController)
+                BottomBar(navController, currentRoute = navController.currentDestination?.route ?: "")
             }
         }
     ) { paddingValues ->

@@ -27,8 +27,8 @@ class NotificationViewModel @Inject constructor(private val handleNotifications:
     }
 
     val singleNotification = Notifications(
-        TITULO = "Single Notification",
-        DESCRIPCION = "This is a single notification example.",
+        TITULO = "Movimiento realizado",
+        DESCRIPCION = "Se ha realizado un giro de $1000 en la cuenta de ahorros.",
         DATE = "2023-10-27",
         TIME = "15:00"
     )

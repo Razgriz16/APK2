@@ -91,22 +91,22 @@ fun DetallesDap(cuenta: DapResponse) {
             HorizontalDivider()
             cuenta.fechaActivacion?.let { DetailRow(label = "Fecha Activación:", value = it) }
             HorizontalDivider()
-            cuenta.fechaVencimiento?.let { DetailRow(label = "Fecha Vencimietno:", value = it) }
+            cuenta.fechaVencimiento?.let { DetailRow(label = "Fecha Vencimiento:", value = it) }
             HorizontalDivider()
-            DetailRow(label = "Plazo pactado? (Días):", value = cuenta.plazoPactado.toString())
+            DetailRow(label = "Plazo pactado:", value = cuenta.plazoPactado.toString())
             HorizontalDivider()
             DetailRow(label = "Estado:", value = cuenta.nombreEstado)
             HorizontalDivider()
             DetailRow(label = "Sucursal:", value = cuenta.sucursalOrigen.toString())
             HorizontalDivider()
             val montoInteresInversion = formatNumberWithDots2(cuenta.montoInversion)
-            DetailRow(label = "Monto Inversión:", value = montoInteresInversion)
+            DetailRow(label = "Monto Inversión:", value = "$${montoInteresInversion}")
             HorizontalDivider()
             val montoInteresInteres = formatNumberWithDots2(cuenta.montoInteres)
-            DetailRow(label = "Monto Interés:", value = montoInteresInteres)
+            DetailRow(label = "Monto Interés:", value = "$${montoInteresInteres}")
             HorizontalDivider()
             val montoRescate = formatNumberWithDots2(cuenta.montoInversion + cuenta.montoInteres)
-            DetailRow(label = "Monto Rescate:", value = montoRescate, valueColor = AppTheme.colors.azul)
+            DetailRow(label = "Monto Rescate:", value = "$${montoRescate}", valueColor = AppTheme.colors.azul)
 
         }
     }

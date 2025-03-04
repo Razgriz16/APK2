@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -97,7 +99,7 @@ fun CuentaAhorro(
         },
         bottomBar = {
             Box(modifier = Modifier.padding(bottom = 16.dp)) {
-                BottomBar(navController)
+                BottomBar(navController, currentRoute = navController.currentDestination?.route ?: "")
             }
         }
     ) { paddingValues ->
@@ -220,15 +222,9 @@ fun AllMovimientosDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.Start, // Align items to the start
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        "Todos los Movimientos",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(start = 16.dp),
-                        textAlign = TextAlign.Center
-                    )
                     IconButton(onClick = { onDismiss() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -236,6 +232,16 @@ fun AllMovimientosDialog(
                             tint = com.example.oriencoop_score.ui.theme.amarillo
                         )
                     }
+                    Text(
+                        text = "Todos los Movimientos",
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier
+                            .weight(1f) // Take up remaining space
+                            .fillMaxWidth(), // Ensure it fills the weight
+                        textAlign = TextAlign.Center
+                    )
+                    // Add an invisible spacer to balance the row.
+                    Spacer(modifier = Modifier.width(48.dp)) // Equal to the IconButton size
                 }
 
                 HorizontalDivider()

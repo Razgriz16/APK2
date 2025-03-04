@@ -81,7 +81,7 @@ fun CreditoCuotas(
             Box(
                 modifier = Modifier.padding(bottom = 16.dp)
             ) {
-                BottomBar(navController)
+                BottomBar(navController, currentRoute = navController.currentDestination?.route ?: "")
             }
         }
     ) { paddingValues ->
@@ -197,31 +197,31 @@ fun AllMovimientosDialog(
                 .padding(16.dp),
             color = MaterialTheme.colorScheme.background
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            )
-            {
+            Column(modifier = Modifier.fillMaxSize()) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.Start, // Align items to the start
                     verticalAlignment = Alignment.CenterVertically
-
-                ){
-                    Text(
-                        "Todos los Movimientos",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(start = 16.dp),
-                        textAlign = TextAlign.Center
-                    )
-                    IconButton(onClick = {onDismiss()}){
+                ) {
+                    IconButton(onClick = { onDismiss() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = com.example.oriencoop_score.ui.theme.amarillo // Use your theme color
+                            tint = com.example.oriencoop_score.ui.theme.amarillo
                         )
                     }
+                    Text(
+                        text = "Todos los Movimientos",
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier
+                            .weight(1f) // Take up remaining space
+                            .fillMaxWidth(), // Ensure it fills the weight
+                        textAlign = TextAlign.Center
+                    )
+                    // Add an invisible spacer to balance the row.
+                    Spacer(modifier = Modifier.width(48.dp)) // Equal to the IconButton size
                 }
 
                 HorizontalDivider()

@@ -10,9 +10,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,7 +30,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -69,6 +74,7 @@ fun Saldo(navController: NavController) {
         cuentaCapData != null -> {
             // Asumiendo que tu backend provee un valor para "Monto ahorrado a la fecha"
             // Ajusta el nombre de la propiedad según tus datos reales
+
             SaldoView(saldoContable = cuentaCapData?.SALDOCONTABLE, navController ) // Reemplaza SALDOCONTABLE con la propiedad correcta si es necesario
         }
         else -> {
@@ -93,6 +99,14 @@ fun SaldoView(saldoContable: String?, navController: NavController) {
                 .padding(16.dp), // Padding general del Column
             horizontalAlignment = Alignment.Start
         ) {
+            Text(
+                text = "Cuenta Capitalización",
+                fontSize = AppTheme.typography.normal.fontSize,
+                color = AppTheme.colors.azul,
+                modifier = Modifier.fillMaxWidth()
+                    .padding(bottom = 8.dp), // Padding inferior para el texto
+                textAlign = TextAlign.Center
+            )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(),
@@ -156,59 +170,129 @@ fun SaldoView(saldoContable: String?, navController: NavController) {
 
 //*****Barra inferior de la app*****
 @Composable
-fun BottomBar(navController: NavController)
-{
+fun BottomBar(navController: NavController, currentRoute: String) {
+    val context = LocalContext.current
+    val navigationBarHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(30.dp)
-            .background(Color.White),
+            .height(60.dp)
+            .background(Color.White)
+            .padding(bottom = navigationBarHeight),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-
         // Home
-        Image(
-            painter = painterResource(id = R.drawable.icon_interface_homeicons),
-            contentDescription = null,
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .size(60.dp)
-                .padding(start = 25.dp)
+                .weight(1f)
                 .clickable { navController.navigate(Pantalla.PantallaPrincipal.route) }
-        )
+        ) {
+            Image(
+                painter = painterResource(
+                    id = if (currentRoute == Pantalla.PantallaPrincipal.route)
+                        R.drawable.new_home_yellow // Your active home icon
+                    else R.drawable.new_home
+                ),
+                contentDescription = "Inicio",
+                modifier = Modifier.size(30.dp)
+            )
+            Text(
+                text = "Inicio",
+                style = TextStyle(
+                    fontSize = 10.sp,
+                    color = Color.Black, // Fixed color
+                    fontWeight = if (currentRoute == Pantalla.PantallaPrincipal.route)
+                        FontWeight.Bold
+                    else FontWeight.Normal
+                ),
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
 
         // Menu
-        Image(
-            painter = painterResource(id = R.drawable.icon_button_menuicon_top),
-            contentDescription = null,
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .size(60.dp)
-                .padding(start = 25.dp)
+                .weight(1f)
                 .clickable { navController.navigate(Pantalla.MisProductos.route) }
-        )
+                .padding(vertical = 8.dp)
+        ) {
+            Image(
+                painter = painterResource(
+                    id = if (currentRoute == Pantalla.MisProductos.route
+                        || currentRoute == Pantalla.CuentaCap.route
+                        || currentRoute == Pantalla.CuentaAhorro.route
+                        || currentRoute == Pantalla.CreditoCuotas.route
+                        || currentRoute == Pantalla.Lcc.route
+                        || currentRoute == Pantalla.Lcr.route
+                        || currentRoute == Pantalla.Dap.route)
+                        R.drawable.new_menu_yellow // Your active menu icon
+                    else R.drawable.new_menu
+                ),
+                contentDescription = "Mis Productos",
+                modifier = Modifier.size(25.dp)
+            )
+            Text(
+                text = "Mis Productos",
+                style = TextStyle(
+                    fontSize = 10.sp,
+                    color = Color.Black, // Fixed color
+                    fontWeight = if (currentRoute == Pantalla.MisProductos.route)
+                        FontWeight.Bold
+                    else FontWeight.Normal
+                ),
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
 
         // Giro
-        Image(
-            painter = painterResource(id = R.drawable.icon_arrow_undoicons),
-            contentDescription = null,
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .size(60.dp)
-                .padding(start = 25.dp)
-                .clickable { }
-        )
+                .weight(1f)
+                .clickable { /* Add your Giro navigation logic */ }
+                .padding(vertical = 8.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.icon_arrow_undoicons),
+                contentDescription = "Giro",
+                modifier = Modifier.size(25.dp)
+            )
+            Text(
+                text = "Giro",
+                style = TextStyle(
+                    fontSize = 10.sp,
+                    color = Color.Black, // Fixed color
+                ),
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
 
         // Pago
-
-        Image(
-            painter = painterResource(id = R.drawable.icon_sign_dollaricons),
-            contentDescription = null,
-
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .size(60.dp)
-                .padding(end = 25.dp)
-                .clickable { }
-        )
-
+                .weight(1f)
+                .clickable { /* Add your Pago navigation logic */ }
+                .padding(vertical = 8.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.icon_sign_dollaricons),
+                contentDescription = "Pago",
+                modifier = Modifier.size(25.dp)
+            )
+            Text(
+                text = "Pago",
+                style = TextStyle(
+                    fontSize = 10.sp,
+                    color = Color.Black, // Fixed color
+                ),
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
     }
 }
 
@@ -290,7 +374,7 @@ fun AccionesRapidas(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(4.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         productosVisibles.forEach { producto ->
@@ -299,72 +383,78 @@ fun AccionesRapidas(
                     icon = R.drawable.bank,
                     text = "Cuenta Capitalización",
                     onClick = { onProductClick(Pantalla.CuentaCap.route) },
-                    modifier = Modifier.size(70.dp)
+                    modifier = Modifier.size(75.dp),
+                    textStyle = AppTheme.typography.pequeño
                 )
 
                 "AHORRO" -> ProductButton(
                     icon = R.drawable.piggy_bank,
-                    text = "Cuenta De\nahorro",
+                    text = "Cuenta De ahorro",
                     onClick = { onProductClick(Pantalla.CuentaAhorro.route) },
                     modifier = Modifier
-                        .size(70.dp)
-                        .border( // Línea divisoria superior APLICADA AL COLUMN CONTENEDOR
+                        .size(75.dp)
+                        .border(
                             width = 1.dp,
                             color = Color.LightGray,
                             shape = RoundedCornerShape(8.dp)
-                        )
+                        ),
+                    textStyle = AppTheme.typography.pequeño,
                 )
 
                 "CREDITO" -> ProductButton(
                     icon = R.drawable.credito_cuotas,
-                    text = "Crédito en\ncuotas",
+                    text = "Crédito en cuotas",
                     onClick = { onProductClick(Pantalla.CreditoCuotas.route) },
                     modifier = Modifier
-                        .size(70.dp)
-                        .border( // Línea divisoria superior APLICADA AL COLUMN CONTENEDOR
+                        .size(75.dp)
+                        .border(
                             width = 1.dp,
                             color = Color.LightGray,
                             shape = RoundedCornerShape(8.dp)
-                        )
+                        ),
+                    textStyle = AppTheme.typography.pequeño
                 )
 
                 "LCC" -> ProductButton(
                     icon = R.drawable.lcc,
-                    text = "Línea de crédito\nde cuotas",
+                    text = "LCC",
                     onClick = { onProductClick(Pantalla.Lcc.route) },
                     modifier = Modifier
-                        .size(70.dp)
-                        .border( // Línea divisoria superior APLICADA AL COLUMN CONTENEDOR
+                        .size(75.dp)
+                        .border(
                             width = 1.dp,
                             color = Color.LightGray,
                             shape = RoundedCornerShape(8.dp)
-                        )
+                        ),
+                    textStyle = AppTheme.typography.pequeño
                 )
 
                 "LCR" -> ProductButton(
                     icon = R.drawable.lcr,
-                    text = "Línea de crédito\nrotativa",
+                    text = "LCR",
                     onClick = { onProductClick(Pantalla.Lcr.route) },
                     modifier = Modifier
-                        .size(70.dp)
-                        .border( // Línea divisoria superior APLICADA AL COLUMN CONTENEDOR
+                        .size(75.dp)
+                        .border(
                             width = 1.dp,
                             color = Color.LightGray,
                             shape = RoundedCornerShape(8.dp)
-                        )
+                        ),
+                    textStyle = AppTheme.typography.pequeño
                 )
 
                 "DEPOSTO" -> ProductButton(
                     icon = R.drawable.deposito,
-                    text = "Depósito a\nplazo",
-                    onClick = {onProductClick(Pantalla.Dap.route) },
+                    text = "Depósito a plazo",
+                    onClick = { onProductClick(Pantalla.Dap.route) },
                     modifier = Modifier
-                        .size(70.dp)
-                        .border( // Línea divisoria superior APLICADA AL COLUMN CONTENEDOR
+                        .size(75.dp)
+                        .border(
                             width = 1.dp,
                             color = Color.LightGray,
                             shape = RoundedCornerShape(8.dp)
-                        )
+                        ),
+                    textStyle = AppTheme.typography.pequeño
                 )
             }
         }

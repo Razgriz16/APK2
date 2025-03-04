@@ -77,7 +77,7 @@ fun CuentaCap(
                     .padding(bottom = 16.dp)
 
             )
-            { BottomBar(navController) } // Assuming you have a BottomBar composable
+            { BottomBar(navController, currentRoute = navController.currentDestination?.route ?: "") } // Assuming you have a BottomBar composable
         }
 
     ) { paddingValues ->
@@ -173,22 +173,26 @@ fun AllMovimientosDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.Start, // Align items to the start
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        "Todos los Movimientos",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(start = 16.dp),
-                        textAlign = TextAlign.Center
-                    )
                     IconButton(onClick = { onDismiss() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = com.example.oriencoop_score.ui.theme.amarillo // Use theme
+                            tint = com.example.oriencoop_score.ui.theme.amarillo
                         )
                     }
+                    Text(
+                        text = "Todos los Movimientos",
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier
+                            .weight(1f) // Take up remaining space
+                            .fillMaxWidth(), // Ensure it fills the weight
+                        textAlign = TextAlign.Center
+                    )
+                    // Add an invisible spacer to balance the row.
+                    Spacer(modifier = Modifier.width(48.dp)) // Equal to the IconButton size
                 }
                 HorizontalDivider()
 

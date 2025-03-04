@@ -50,62 +50,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideCuentaCapService(@Named("MainApi")retrofit: Retrofit): CuentaCapService { // Function to provide CuentaCapService, injects Retrofit
-        return retrofit.create(CuentaCapService::class.java)
-    }
-
-    @Provides
-    @Singleton
     fun provideMovimientosService(@Named("MainApi")retrofit: Retrofit): MovimientosService { // Function to provide MovimientosService, injects Retrofit
         return retrofit.create(MovimientosService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideCuentaAhorroService(@Named("MainApi")retrofit: Retrofit): CuentaAhorroService { // Function to provide CuentaAhorroService, injects Retrofit
-        return retrofit.create(CuentaAhorroService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideMovimientosAhorroService(@Named("MainApi")retrofit: Retrofit): MovimientosAhorroService { // Function to provide MovimientosAhorroService, injects Retrofit
-        return retrofit.create(MovimientosAhorroService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideCreditoCuotasService(@Named("MainApi")retrofit: Retrofit): CreditoCuotasService { // Function to provide CreditoCuotasService, injects Retrofit
-        return retrofit.create(CreditoCuotasService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideMovimientosCreditosService(@Named("MainApi")retrofit: Retrofit): MovimientosCreditos { // Function to provide MovimientosCreditos, injects Retrofit
-        return retrofit.create(MovimientosCreditos::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideLccService(@Named("MainApi")retrofit: Retrofit): LccService { // Function to provide LccService, injects Retrofit
-        return retrofit.create(LccService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideMovimientosLccService(@Named("MainApi")retrofit: Retrofit): MovimientosLccService { // Function to provide MovimientosLccService, injects Retrofit
-        return retrofit.create(MovimientosLccService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideLcrService(@Named("MainApi")retrofit: Retrofit): LcrService { // Function to provide LccService, injects Retrofit
-        return retrofit.create(LcrService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideMovimientosLcrService(@Named("MainApi")retrofit: Retrofit): MovimientosLcrService { // Function to provide LccService, injects Retrofit
-        return retrofit.create(MovimientosLcrService::class.java)
     }
 
 
@@ -114,12 +60,5 @@ object NetworkModule {
     fun provideClienteInfoService(@Named("MainApi")retrofit: Retrofit): ClienteInfoService { // Function to provide MovimientosLccService, injects Retrofit
         return retrofit.create(ClienteInfoService::class.java)
     }
-
-    @Provides
-    @Singleton
-    fun provideDapService(@Named("MainApi")retrofit: Retrofit): DapService { // Function to provide MovimientosLccService, injects Retrofit
-        return retrofit.create(DapService::class.java)
-    }
-
 
 }

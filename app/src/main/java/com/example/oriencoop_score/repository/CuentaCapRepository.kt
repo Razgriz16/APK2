@@ -1,8 +1,8 @@
 package com.example.oriencoop_score.repository
 
 import android.util.Log
+import com.example.oriencoop_score.api.MisProductosService
 import com.example.oriencoop_score.utility.Result
-import com.example.oriencoop_score.api.CuentaCapService
 import com.example.oriencoop_score.model.CuentaCapResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -10,7 +10,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CuentaCapRepository @Inject constructor(private val cuentaCapService: CuentaCapService) {
+class CuentaCapRepository @Inject constructor(private val cuentaCapService: MisProductosService) {
     suspend fun getCuentaCap(token: String, rut: String): Result<CuentaCapResponse> {
         return withContext(Dispatchers.IO) {
             try {

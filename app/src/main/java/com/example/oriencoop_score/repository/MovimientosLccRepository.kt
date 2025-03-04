@@ -1,8 +1,8 @@
 package com.example.oriencoop_score.repository
 
 import android.util.Log
+import com.example.oriencoop_score.api.MovimientosService
 import com.example.oriencoop_score.utility.Result
-import com.example.oriencoop_score.api.MovimientosLccService
 import com.example.oriencoop_score.model.MovimientosLccResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -10,7 +10,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MovimientosLccRepository @Inject constructor(private val movimientosLccService: MovimientosLccService) {
+class MovimientosLccRepository @Inject constructor(private val movimientosLccService: MovimientosService) {
     suspend fun getMovimientosLcc(token: String, rut: String): Result<MovimientosLccResponse> {
         return withContext(Dispatchers.IO) {
             try {

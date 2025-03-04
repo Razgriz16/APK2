@@ -87,7 +87,7 @@ fun ClienteInfo(
             // Assuming you have a BottomBar composable, consistent with the image.
             Box(modifier = Modifier.padding(bottom = 16.dp))
             {
-                BottomBar(navController)
+                BottomBar(navController, currentRoute = navController.currentDestination?.route ?: "")
             }
         }
     ) { innerPadding ->

@@ -1,7 +1,7 @@
 package com.example.oriencoop_score.repository
 
 import android.util.Log
-import com.example.oriencoop_score.api.LcrService
+import com.example.oriencoop_score.api.MisProductosService
 import com.example.oriencoop_score.model.LcrResponse
 import com.example.oriencoop_score.utility.Result
 import kotlinx.coroutines.Dispatchers
@@ -10,7 +10,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LcrRepository @Inject constructor(private val lcrService: LcrService) {
+class LcrRepository @Inject constructor(private val lcrService: MisProductosService) {
     suspend fun getLcr(token: String, rut: String): Result<LcrResponse> {
         return withContext(Dispatchers.IO) {
             try {
