@@ -65,6 +65,7 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.2.0")
     implementation(libs.androidx.espresso.core)
     implementation(libs.androidx.ui.test.junit4.android)
+    implementation(libs.play.services.maps)
 
     testImplementation("app.cash.turbine:turbine:1.0.0")
     testImplementation(libs.junit)

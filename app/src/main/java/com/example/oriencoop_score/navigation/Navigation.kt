@@ -15,6 +15,7 @@ import com.example.oriencoop_score.view.mis_productos.dap.Dap
 import com.example.oriencoop_score.view.mis_productos.lcc.Lcc
 import com.example.oriencoop_score.view.mis_productos.lcr.Lcr
 import com.example.oriencoop_score.view.pantalla_principal.ClienteInfo
+import com.example.oriencoop_score.view.pantalla_principal.SucursalesScreen
 
 @Composable
 fun Navigation() {
@@ -59,6 +60,12 @@ fun Navigation() {
         composable(route = Pantalla.Dap.route) {
             Dap(navController = navController) /*, viewModel = harryPotterViewModel*/
         }
+
+        composable(route = Pantalla.Sucursales.route) {
+            SucursalesScreen(navController = navController) /*, viewModel = harryPotterViewModel*/
+        }
+
+
 
     }
 }

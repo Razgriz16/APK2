@@ -150,7 +150,7 @@ fun DrawerContent(onCloseDrawer: () -> Unit, navController: NavController, drawe
                 DrawerMenuItem(iconId = R.drawable.mis_datos, text = "Mis Datos") { navController.navigate(Pantalla.ClienteInfo.route) }
                 //DrawerMenuItem(iconId = R.drawable.clave, text = "Cambiar Clave") { /* TODO: Handle click */ }
                 //DrawerMenuItem(iconId = R.drawable.soporte, text = "Contacto con ejecutivo") { /* TODO: Handle click */ }
-                //DrawerMenuItem(iconId = R.drawable.ubicacion, text = "Sucursales") { /* TODO: Handle click */ }
+                DrawerMenuItem(iconId = R.drawable.ubicacion, text = "Sucursales") { navController.navigate(Pantalla.Sucursales.route) }
                 //DrawerMenuItem(iconId = R.drawable.mensaje, text = "Preguntas Frecuentes") { /* TODO: Handle click */ }
                 DrawerMenuItem(iconId = R.drawable.salir, text = "Cerrar Sesión", sessionManager = { SessionManager().clearSession() }) {
                     navController.navigate(
