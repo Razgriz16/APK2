@@ -139,7 +139,7 @@ fun Lcc(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { showFacturasDialog = true },  // Clickable Card
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp), // Add some elevation
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp), // Add some elevation
                     shape = RoundedCornerShape(8.dp),  // Rounded corners like the image
                     colors = CardDefaults.cardColors(containerColor = Color.White) // White background
 

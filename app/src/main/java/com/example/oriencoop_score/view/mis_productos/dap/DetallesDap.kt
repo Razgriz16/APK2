@@ -91,6 +91,8 @@ fun DetallesDap(cuenta: DapResponse) {
             HorizontalDivider()
             cuenta.fechaActivacion?.let { DetailRow(label = "Fecha Activación:", value = it) }
             HorizontalDivider()
+            cuenta.fechaRenovacion?.let { DetailRow(label = "Fecha Renovación:", value = it) }
+            HorizontalDivider()
             cuenta.fechaVencimiento?.let { DetailRow(label = "Fecha Vencimiento:", value = it) }
             HorizontalDivider()
             DetailRow(label = "Plazo pactado:", value = cuenta.plazoPactado.toString())

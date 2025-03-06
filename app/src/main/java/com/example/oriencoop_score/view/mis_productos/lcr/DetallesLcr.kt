@@ -27,10 +27,10 @@ fun DetallesLcr(
     CUPOAUTORIZADO: String,
     CUPODISPONIBLE: String,
     CUPOUTILIZADO: String,
-    FECHAATIVACION: String,
+    //FECHAATIVACION: String,
     NUMEROCUENTA: String,
-    SUCURSAL: String,
-    TIPO: String,
+    //SUCURSAL: String,
+    //TIPO: String,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -65,17 +65,11 @@ fun DetallesLcr(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp) // Consistent spacing
             ) {
-                DetailRow("Tipo", TIPO)
-                HorizontalDivider()
                 DetailRow("Cupo Autorizado", CUPOAUTORIZADO)
                 HorizontalDivider()
                 DetailRow("Cupo Utilizado", CUPOUTILIZADO)
                 HorizontalDivider()
                 DetailRow("Cupo Disponible", CUPODISPONIBLE)
-                HorizontalDivider()
-                DetailRow("Fecha Activación", FECHAATIVACION)
-                HorizontalDivider()
-                DetailRow("Sucursal", SUCURSAL)
             }
         }
     }

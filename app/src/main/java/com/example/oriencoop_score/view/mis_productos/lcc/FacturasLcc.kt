@@ -3,10 +3,13 @@ package com.example.oriencoop_score.view.mis_productos.lcc
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,15 +43,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.example.oriencoop_score.R
 import com.example.oriencoop_score.model.FacturasLcc
 import com.example.oriencoop_score.ui.theme.AppTheme
 import com.example.oriencoop_score.ui.theme.amarillo
+import com.example.oriencoop_score.ui.theme.rojo
+import com.example.oriencoop_score.ui.theme.verde
+import com.example.oriencoop_score.utility.formatNumberWithDots2
 import com.example.oriencoop_score.view.mis_productos.cuenta_ahorro.DetailRow
 @Composable
 fun FacturasLccDialog(
@@ -90,7 +100,7 @@ fun FacturasLccDialog(
                             .fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
-                    Spacer(modifier = Modifier.width(48.dp))
+                    Spacer(modifier = Modifier.width(48.dp)) // Keep the spacer for consistent layout
                 }
 
                 HorizontalDivider()
@@ -106,8 +116,11 @@ fun FacturasLccDialog(
                             Text(text = error ?: "Error desconocido", color = MaterialTheme.colorScheme.error)
                         }
                     }
+                    facturas.isEmpty() -> {  // Check for empty list *here*
+                        EmptyFacturasView() // Use a dedicated Composable
+                    }
                     else -> {
-                        FacturasList(facturas = facturas)  // Use a separate composable
+                        FacturasList(facturas = facturas)
                     }
                 }
             }
@@ -115,23 +128,109 @@ fun FacturasLccDialog(
     }
 }
 
+
 @Composable
 fun FacturasList(facturas: List<FacturasLcc>) {
-    LazyColumn {
+    LazyColumn(
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp), // Add padding around the list
+        verticalArrangement = Arrangement.spacedBy(8.dp) // Add spacing between items
+    ) {
         items(facturas) { factura ->
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                DetailRow(label = "Fecha Vencimiento:", value = factura.FECHAVENCIMIENTO)
-                DetailRow(label = "Estado:", value = factura.ESTADO)
-                DetailRow(label = "Monto Facturado:", value = factura.MONTOFACTURADO)
-                DetailRow(label = "Días Mora:", value = factura.DIASMORA)
-                HorizontalDivider()
-            }
+            FacturaItem(factura = factura)
         }
     }
+}
+
+@Composable
+fun FacturaItem(factura: FacturasLcc) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp)), // Rounded corners for the card
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp) , // Add a subtle shadow
+
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp) // Add padding inside the card
+        ) {
+
+            // Title (Estado) -  Make it stand out
+            Text(
+                text = factura.ESTADO,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold, // Make the title bold
+                color = when (factura.ESTADO.uppercase()) { // Conditional coloring based on status
+                    "VIGENTE" -> verde
+                    "MOROSA" -> Color(0xFFFFA500) // Orange
+                    "VENCIDA" -> rojo
+                    else -> MaterialTheme.colorScheme.onSurface // Default color
+                }
+            )
+            Spacer(modifier = Modifier.height(8.dp)) // Add spacing between title and details
+
+            DetailRow(label = "Fecha Vencimiento:", value = factura.FECHAVENCIMIENTO)
+            DetailRow(label = "Monto Facturado:", value = "$${factura.MONTOFACTURADO}")
+            DetailRow(label = "Días Mora:", value = factura.DIASMORA)
+
+        }
+    }
+}
+
+
+@Composable
+fun EmptyFacturasView() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.tick), // Replace with your image resource
+            contentDescription = "No invoices",
+            modifier = Modifier.size(120.dp) // Adjust size as needed
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "No hay facturas",
+            style = MaterialTheme.typography.titleMedium, // Or any style you prefer
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+// Preview with data
+@Preview(showBackground = true)
+@Composable
+fun FacturasLccDialogPreviewWithData() {
+    val sampleFacturas = listOf(
+        FacturasLcc("2024-03-15", "Pagada", "$100.00", "0"),
+        FacturasLcc("2024-02-28", "Pendiente", "$50.00", "15"),
+        FacturasLcc("2024-01-10", "Vencida", "$75.00", "60")
+    )
+    MaterialTheme { // Wrap with MaterialTheme for correct styling
+        FacturasLccDialog(facturas = sampleFacturas, isLoading = false, error = null) {}
+    }
+}
+
+// Preview without data (empty list, showing EmptyFacturasView)
+@Preview(showBackground = true)
+@Composable
+fun FacturasLccDialogPreviewEmpty() {
+    FacturasLccDialog(facturas = emptyList(), isLoading = false, error = null) {}
+
+}
+
+@Preview(showBackground = true)
+@Composable
+fun FacturasLccDialogPreviewLoading() {
+
+    FacturasLccDialog(facturas = emptyList(), isLoading = true, error = null) {}
+
 }
 /*
 @Composable

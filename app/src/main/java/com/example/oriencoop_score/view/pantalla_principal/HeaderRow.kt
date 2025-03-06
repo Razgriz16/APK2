@@ -76,7 +76,7 @@ fun HeaderRow(
                         .clickable { onMenuClick() }
                 )
                 Image(
-                    painter = painterResource(id = R.drawable.logooriencoop),
+                    painter = painterResource(id = R.drawable.oriencoop_logo_new),
                     contentDescription = null,
                     modifier = Modifier
                         .size(120.dp)
@@ -147,7 +147,7 @@ fun DrawerContent(onCloseDrawer: () -> Unit, navController: NavController, drawe
         // Menu Items (using LazyColumn for scrollable content)
         LazyColumn(modifier = Modifier.align(Alignment.CenterHorizontally)) {
             item {
-                DrawerMenuItem(iconId = R.drawable.folders, text = "Mis Datos") { navController.navigate(Pantalla.ClienteInfo.route) }
+                DrawerMenuItem(iconId = R.drawable.mis_datos, text = "Mis Datos") { navController.navigate(Pantalla.ClienteInfo.route) }
                 //DrawerMenuItem(iconId = R.drawable.clave, text = "Cambiar Clave") { /* TODO: Handle click */ }
                 //DrawerMenuItem(iconId = R.drawable.soporte, text = "Contacto con ejecutivo") { /* TODO: Handle click */ }
                 //DrawerMenuItem(iconId = R.drawable.ubicacion, text = "Sucursales") { /* TODO: Handle click */ }

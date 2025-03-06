@@ -115,10 +115,7 @@ fun Lcr(
                         NUMEROCUENTA = data.NUMEROCUENTA,
                         CUPOAUTORIZADO = "$ ${data.CUPOAUTORIZADO}",
                         CUPOUTILIZADO = "$ ${data.CUPOUTILIZADO}",
-                        CUPODISPONIBLE = "$ ${data.CUPODISPONIBLE}",
-                        FECHAATIVACION = data.FECHAATIVACION,
-                        SUCURSAL = data.SUCURSAL,
-                        TIPO = data.TIPO
+                        CUPODISPONIBLE = "$ ${data.CUPODISPONIBLE}"
                     )
                 }
 
