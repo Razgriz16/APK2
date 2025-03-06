@@ -54,7 +54,7 @@ object AppTheme {
             fontSize = 15.sp
         )
 
-        val pequeño = TextStyle(
+        val small = TextStyle(
             fontFamily = FontFamily.Default,
             fontSize = 11.sp
         )

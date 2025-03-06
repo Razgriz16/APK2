@@ -38,6 +38,7 @@ fun LoginScreen(navController: NavController) {
     val username by loginViewModel.username.collectAsState()
     val password by loginViewModel.password.collectAsState()
     var buttonEnabled by remember { mutableStateOf(true) }
+    val rutValid by loginViewModel.rutValid.collectAsState()
 
     // Use LaunchedEffect to trigger navigation only when loginState changes to Success
     LaunchedEffect(key1 = loginState) {
@@ -97,12 +98,24 @@ fun LoginScreen(navController: NavController) {
                             loginViewModel.performLogin(username, password)
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFf49600)),
-                        enabled = loginState !is LoginState.Loading //&& username.isNotEmpty() && password.isNotEmpty(), // Combine states
+                        enabled = loginState !is LoginState.Loading && username.isNotEmpty() //&& password.isNotEmpty(), // Combine states
                     ) {
                         Text("Log In")
                     }
+
+                    // Display RUT validation message
+                    if (rutValid == false){
+                        Text(
+                            text = "Rut incorrecto",
+                            color = Color.Red
+                        )
+                    }
+
+
                     Spacer(modifier = Modifier.height(16.dp))
                     // Optionally show a progress indicator or error message here
+
+
                     when (loginState) {
                         is LoginState.Loading -> CircularProgressIndicator()
                         is LoginState.Error -> Text(
@@ -116,4 +129,5 @@ fun LoginScreen(navController: NavController) {
         }
     }
 }
+
 

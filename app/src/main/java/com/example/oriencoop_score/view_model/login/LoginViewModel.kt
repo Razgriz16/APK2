@@ -14,15 +14,18 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import getClaveSHA1
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import validRut
 import javax.inject.Inject
+
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginRepository:LoginRepository,
+    private val loginRepository: LoginRepository,
     private val sessionManager: SessionManager
 ) : ViewModel() {
     // Estado del formulario (username y password)
     private val _username = MutableStateFlow("")
     private val _password = MutableStateFlow("")
+    private val _rutValid = MutableStateFlow<Boolean?>(null) // Null initially
 
     // Estado global del login (éxito, error, carga)
     private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
@@ -31,6 +34,7 @@ class LoginViewModel @Inject constructor(
     val username: StateFlow<String> = _username
     val password: StateFlow<String> = _password
     val loginState: StateFlow<LoginState> = _loginState
+    val rutValid: StateFlow<Boolean?> = _rutValid
 
     // Token obtenido (público pero solo lectura)
     private val _token = MutableStateFlow("")
@@ -60,7 +64,8 @@ class LoginViewModel @Inject constructor(
             try {
                 // Login oculto
                 Log.d("Login", "Realizando Login Entidad (Hidden Login)")
-                val hiddenLoginResult = loginRepository.performHiddenLogin("admin", "securepassword")
+                val hiddenLoginResult =
+                    loginRepository.performHiddenLogin("admin", "securepassword")
                 if (hiddenLoginResult is Result.Success) {
                     val token = hiddenLoginResult.data.token // Extract the token field
                     Log.d("Login", "Login Entidad Exitoso")
@@ -68,26 +73,34 @@ class LoginViewModel @Inject constructor(
                     // Step 2: Perform User Login with user-provided credentials and token
                     Log.d("Login", "Realizando Login Cliente (User Login) con token: $token")
                     val rut = cleanRut(username)
+                    val _rutValid = validRut(rut)
                     val clave = getClaveSHA1(rut, password)
-                    val userLoginResult = loginRepository.performUserLogin(token, "5980334", "CFC253C1E446785B61AB66ACA3D2A36C332463C2")
+                    if (_rutValid) {
+                        val userLoginResult = loginRepository.performUserLogin(token, "5980334", "CFC253C1E446785B61AB66ACA3D2A36C332463C2")
                         //clave?.let { loginRepository.performUserLogin(token, rut, it) }
-                    if (userLoginResult is Result.Success) {
-                        Log.d("Login", "Login Cliente Exitoso")
-                        _username.value = username
-                        _password.value = password // Guardar el nombre de usuario
-                        _loginState.value = LoginState.Success(userLoginResult.data)
-                        sessionManager.saveSession(token, "5915933")
-                    } else if (userLoginResult is Result.Error) {
-                        _loginState.value = LoginState.Error(
-                            userLoginResult.exception.message ?: "User login failed"
-                        )
-                        Log.e("Login", "Error en el Login Cliente: ${userLoginResult.exception.message}")
+                        if (userLoginResult is Result.Success) {
+                            Log.d("Login", "Login Cliente Exitoso")
+                            _username.value = username
+                            _password.value = password // Guardar el nombre de usuario
+                            _loginState.value = LoginState.Success(userLoginResult.data)
+                            sessionManager.saveSession(token, rut)
+                        } else if (userLoginResult is Result.Error) {
+                            _loginState.value = LoginState.Error(
+                                userLoginResult.exception.message ?: "User login failed"
+                            )
+                            Log.e("Login", "Error en el Login Cliente: ${userLoginResult.exception.message}")
+                        }
+                    } else {
+                        Log.d("Login", "Rut incorrecto")
                     }
                 } else if (hiddenLoginResult is Result.Error) {
                     _loginState.value = LoginState.Error(
                         hiddenLoginResult.exception.message ?: "Hidden login failed"
                     )
-                    Log.e("Login", "Error en el Login Entidad: ${hiddenLoginResult.exception.message}")
+                    Log.e(
+                        "Login",
+                        "Error en el Login Entidad: ${hiddenLoginResult.exception.message}"
+                    )
                 }
             } catch (e: Exception) {
                 _loginState.value = LoginState.Error(e.message ?: "An unexpected error occurred")

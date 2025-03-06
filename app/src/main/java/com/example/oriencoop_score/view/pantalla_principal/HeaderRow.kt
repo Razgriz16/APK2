@@ -68,7 +68,7 @@ fun HeaderRow(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.hamburger_menu),
+                    painter = painterResource(id = R.drawable.hamburger_xml),
                     contentDescription = null,
                     modifier = Modifier
                         .size(60.dp)
@@ -83,7 +83,7 @@ fun HeaderRow(
                         .clickable { onLogoClick() }
                 )
                 Image(
-                    painter = painterResource(id = R.drawable.bell),
+                    painter = painterResource(id = R.drawable.bell_svg),
                     contentDescription = null,
                     modifier = Modifier
                         .size(60.dp)

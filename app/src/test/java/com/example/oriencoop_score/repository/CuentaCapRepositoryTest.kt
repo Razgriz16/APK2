@@ -1,6 +1,7 @@
 package com.example.oriencoop_score.repository
 
 import android.util.Log
+import com.example.oriencoop_score.api.MisProductosService
 import com.example.oriencoop_score.model.CuentaCapResponse
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -24,7 +25,7 @@ import java.io.IOException
 class CuentaCapRepositoryTest {
 
     // Dependencies to be mocked and the class under test
-    private lateinit var cuentaCapService: CuentaCapService
+    private lateinit var cuentaCapService: MisProductosService
 
     @Before
     fun setup() {

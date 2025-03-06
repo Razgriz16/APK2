@@ -56,9 +56,9 @@ fun CreditoCuotaItem(cuenta: CreditoCuota, isSelected: Boolean, onClick: () -> U
                 color = if (isSelected) Color.White else Color.Black
             )
             val dropdownIcon: Painter = if (isSelected) {
-                painterResource(id = R.drawable.chevronup) // Your "up" image
+                painterResource(id = R.drawable.chevron_up_yellow) // Your "up" image
             } else {
-                painterResource(id = R.drawable.chevrondown) // Your "down" image
+                painterResource(id = R.drawable.chevron_down_yellow) // Your "down" image
             }
             Image(
                 painter = dropdownIcon,

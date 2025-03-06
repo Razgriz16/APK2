@@ -1,6 +1,8 @@
 package com.example.oriencoop_score.utility
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,6 +18,14 @@ class SessionManager @Inject constructor() {
     // Estado global del username
     private val _username = MutableStateFlow("")
     val username: StateFlow<String> = _username.asStateFlow()
+
+    private val _nroCuenta = MutableStateFlow<Long>(0)
+    val nroCuenta: StateFlow<Long> = _nroCuenta
+
+    fun setNroCuenta(nroCuenta: Long) {
+        Log.d("SessionManager", "Setting nroCuenta to: $nroCuenta")
+        _nroCuenta.value = nroCuenta
+    }
 
     // Guardar el token y username en la sesión
     fun saveSession(token: String, username: String) {

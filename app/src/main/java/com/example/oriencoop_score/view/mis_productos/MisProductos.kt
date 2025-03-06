@@ -114,16 +114,15 @@ fun ProductsScreen(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 ProductButton(
-                    icon = R.drawable.bank,
+                    icon = R.drawable.cuenta_cap,
                     text = "Cuenta Capitalización",
                     onClick = { navController.navigate(Pantalla.CuentaCap.route) },
-                    isVisible = productos["CSOCIAL"] ?: false,
                     iconSize = 35.dp
 
                 )
 
                 ProductButton(
-                    icon = R.drawable.piggy_bank,
+                    icon = R.drawable.ahorro,
                     text = "Cuenta De\nahorro",
                     onClick = { navController.navigate(Pantalla.CuentaAhorro.route)},
                     isVisible = productos["AHORRO"] ?: false,
@@ -139,7 +138,7 @@ fun ProductsScreen(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 ProductButton(
-                    icon = R.drawable.credito_cuotas,
+                    icon = R.drawable.credito_cuotas_og,
                     text = "Crédito en\nCuotas",
                     onClick = {navController.navigate(Pantalla.CreditoCuotas.route)},
                     isVisible = productos["CREDITO"] ?: false,
@@ -174,7 +173,7 @@ fun ProductsScreen(
                 )
 
                 ProductButton(
-                    icon = R.drawable.deposito,
+                    icon = R.drawable.deposito_a_plazo,
                     text = "Depósito a\nplazo",
                     onClick = { navController.navigate(Pantalla.Dap.route) },
                     isVisible = productos["DEPOSTO"] ?: false,

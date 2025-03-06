@@ -1,6 +1,7 @@
 package com.example.oriencoop_score.view.mis_productos.lcc
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,9 +12,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,8 +38,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -43,9 +54,9 @@ import androidx.navigation.NavController
 import com.example.oriencoop_score.model.MovimientosLcc
 import com.example.oriencoop_score.ui.theme.AppTheme
 import com.example.oriencoop_score.view.pantalla_principal.BottomBar
+import com.example.oriencoop_score.view_model.FacturasLccViewModel
 import com.example.oriencoop_score.view_model.LccViewModel
 import com.example.oriencoop_score.view_model.MovimientosLccViewModel
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,11 +65,14 @@ fun Lcc(
 ) {
     val lccViewModel: LccViewModel = hiltViewModel()
     val movimientosLccViewModel: MovimientosLccViewModel = hiltViewModel()
+    val FacturasLccViewModel: FacturasLccViewModel = hiltViewModel()
 
     val lccData by lccViewModel.lccData.collectAsState()
     val movimientos by movimientosLccViewModel.movimientoslcc.collectAsState()
     val isLoading by movimientosLccViewModel.isLoading.collectAsState()
     val error by movimientosLccViewModel.error.collectAsState()
+    val facturas by FacturasLccViewModel.facturaslcc.collectAsState()
+    var showFacturasDialog by remember { mutableStateOf(false) }
 
     // State for showing the full-screen dialog
     var showAllMovimientosDialog by remember { mutableStateOf(false) }
@@ -99,27 +113,60 @@ fun Lcc(
         }
 
     ) { paddingValues ->
-        Column(
+        LazyColumn(  // Use LazyColumn for scrollable content
             modifier = Modifier
                 .background(Color.White)
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp)
-
-
         ) {
-            lccData?.let { data ->
-                data.lcc.forEach { item ->
-                    DetallesLcc( // Assuming you have a Detalles composable
-                        accountNumber = item.NROCUENTA,
-                        cupoAutorizado = "$ ${item.CUPOAUTORIZADO}",
-                        cupoUtilizado = "$ ${item.CUPOUTILIZADO}",
-                        cupoDisponible = "$ ${item.CUPODISPONIBLE}"
-                    )
+            item {  // Wrap each section in an item block
+                lccData?.let { data ->
+                    data.lcc.forEach { item ->
+                        DetallesLcc( // Assuming you have a Detalles composable
+                            accountNumber = item.numerocuenta,
+                            cupoAutorizado = "$ ${item.cupoautorizado}",
+                            cupoUtilizado = "$ ${item.cupoutilizado}",
+                            cupoDisponible = "$ ${item.cupodisponible}"
+                        )
+                    }
                 }
+                Spacer(modifier = Modifier.height(16.dp))
             }
-            Spacer(modifier = Modifier.height(24.dp))
-            Column(modifier = Modifier.fillMaxSize()) {
+
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showFacturasDialog = true },  // Clickable Card
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp), // Add some elevation
+                    shape = RoundedCornerShape(8.dp),  // Rounded corners like the image
+                    colors = CardDefaults.cardColors(containerColor = Color.White) // White background
+
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp), // Padding inside the Card
+                        horizontalArrangement = Arrangement.SpaceBetween, // Space out the text and icon
+                        verticalAlignment = Alignment.CenterVertically // Center vertically
+                    ) {
+                        Text(
+                            text = "Facturas",
+                            style = MaterialTheme.typography.titleMedium, // Or titleLarge, adjust as needed
+                            fontWeight = FontWeight.Bold  // Make the text bold
+                        )
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Ver todas las facturas",
+                            tint = AppTheme.colors.azul
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            item { //Movimientos section
 
                 Row(
                     modifier = Modifier
@@ -141,23 +188,26 @@ fun Lcc(
                         )
                     }
                 }
+            }
 
+            item {
                 if (isLoading) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) { // Added height
                         CircularProgressIndicator()
                     }
                 } else if (error != null) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) { // Added height
                         Text(text = error ?: "Error desconocido", color = Color.Red)
                     }
                 } else {
-                    MovimientosListLcc(movimientos = movimientos)
+                    Box(modifier = Modifier.height(200.dp)) { // Constrain the height
+                        MovimientosListLcc(movimientos = movimientos)
+                    }
                 }
-
-
                 Spacer(modifier = Modifier.height(16.dp))
-
             }
+
+
         }
 
         // Show the dialog when showAllMovimientosDialog is true
@@ -169,9 +219,17 @@ fun Lcc(
                 onDismiss = { showAllMovimientosDialog = false }
             )
         }
+
+        if (showFacturasDialog) {
+            FacturasLccDialog(
+                facturas = facturas,
+                isLoading = isLoading,
+                error = error,
+                onDismiss = { showFacturasDialog = false }
+            )
+        }
     }
 }
-
 @Composable
 fun AllMovimientosDialogLcc(
     movimientos: List<MovimientosLcc>,
@@ -189,7 +247,35 @@ fun AllMovimientosDialogLcc(
                 .padding(16.dp),
             color = MaterialTheme.colorScheme.background
         ) {
-            Column(modifier = Modifier.fillMaxSize()) {
+            // Set up NestedScrollConnection
+            val nestedScrollConnection = remember {
+                object : NestedScrollConnection {
+                    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                        // Try to consume scroll delta before child
+                        return Offset.Zero // Let the child handle it
+                    }
+
+                    override fun onPostScroll(
+                        consumed: Offset,
+                        available: Offset,
+                        source: NestedScrollSource
+                    ): Offset {
+                        // We're not consuming, let the child handle it
+                        return Offset.Zero
+                    }
+
+                    override suspend fun onPreFling(available: Velocity): Velocity {
+                        return Velocity.Zero // Let child handle fling
+                    }
+
+                    override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
+                        return Velocity.Zero // Let child handle fling
+                    }
+                }
+            }
+
+
+            Column(modifier = Modifier.fillMaxSize().nestedScroll(nestedScrollConnection)) { // Use nestedScroll modifier
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -217,7 +303,7 @@ fun AllMovimientosDialogLcc(
                 }
 
                 HorizontalDivider()
-
+                // No need for LazyColumn here, as MovimientosListLcc should be its own LazyColumn
                 when {
                     isLoading -> {
                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -233,6 +319,7 @@ fun AllMovimientosDialogLcc(
                         MovimientosListLcc(movimientos = movimientos)
                     }
                 }
+
             }
         }
     }

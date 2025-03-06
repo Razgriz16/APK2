@@ -1,6 +1,7 @@
 package com.example.oriencoop_score.repository
 
 import android.util.Log
+import com.example.oriencoop_score.api.MisProductosService
 import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.utility.SessionManager
 import com.example.oriencoop_score.model.Lcc
@@ -27,7 +28,7 @@ import java.io.IOException
 class LccRepositoryTest {
 
     // Dependencies to be mocked and the class under test
-    private lateinit var lccService: LccService
+    private lateinit var lccService: MisProductosService
 
     @Before
     fun setup() {

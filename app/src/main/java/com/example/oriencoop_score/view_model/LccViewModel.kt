@@ -1,6 +1,7 @@
 package com.example.oriencoop_score.view_model
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.oriencoop_score.utility.Result
@@ -16,8 +17,13 @@ import javax.inject.Inject
 @HiltViewModel
 class LccViewModel @Inject constructor(
     private val repository: LccRepository,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    companion object {
+        const val NRO_CUENTA_KEY = "nroCuenta"
+    }
 
     private val _lccData = MutableStateFlow<LccResponse?>(LccResponse(emptyList())) // Usamos CuentaCap?, no CuentaCapResponse
     val lccData: StateFlow<LccResponse?> = _lccData
@@ -30,10 +36,12 @@ class LccViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+
+
     init {
+        Log.d("LccViewModel", "LccViewModel initialized!")
         LccDatos()
     }
-
 
     fun LccDatos() {
         val token = sessionManager.token.value ?: "" //Maneja los posibles null
@@ -52,6 +60,12 @@ class LccViewModel @Inject constructor(
                 when (val result = repository.getLcc(token, rut)) {
                     is Result.Success -> {
                         _lccData.value = result.data
+                        // Use result.data directly
+                        val nroCuenta = result.data.lcc.firstOrNull()?.numerocuenta
+                        Log.d("LccViewModel", "NROCUENTA: $nroCuenta")
+                        if (nroCuenta != null) {
+                            sessionManager.setNroCuenta(nroCuenta)
+                        }
                         Log.d("LccViewModel", "Datos obtenidos: ${result.data}")
                     }
                     is Result.Error -> {

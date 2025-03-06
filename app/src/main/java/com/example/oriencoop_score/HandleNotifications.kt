@@ -68,7 +68,7 @@ class HandleNotifications(private val context: Context) {
         )
 
         val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.icon_alert_bellicon_top)
+            .setSmallIcon(R.drawable.bell_svg)
             .setContentTitle(notification.TITULO)
             .setContentText(notification.DESCRIPCION)
             .setPriority(NotificationCompat.PRIORITY_HIGH) // Affects pre-Oreo behavior

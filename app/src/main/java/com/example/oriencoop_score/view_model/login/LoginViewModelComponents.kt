@@ -47,14 +47,19 @@ fun cleanRut(rut: String): String {
     return rutWithoutVerification.replace(".", "").replace("-", "") // Remove dots, dashes, and leading zeros
 }
 
+fun validRut(rut: String): Boolean {
+    if (rut.matches(regex = """^0*(\d{1,3}(\.?\d{3})*)-?([\dkK])$""".toRegex())) {
+        return true
+    } else {
+        return false
+    }
+}
+
 fun main() {
     val rut = cleanRut("6.600.427-9")
     println(rut)
-    if (!rut.matches(regex = """^0*(\d{1,3}(\.?\d{3})*)-?([\dkK])$""".toRegex())) {
-        println("rut invalido")
-    } else {
-        println("rut correcto")
-    }
+    val rutValido = validRut(rut)
+    print("es valido:"+rutValido)
     val str = "1234"
     val claveSHA1 = getClaveSHA1(rut, str)
     println("Clave SHA-1 doble: $claveSHA1")

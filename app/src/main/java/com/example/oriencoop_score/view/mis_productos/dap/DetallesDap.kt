@@ -58,9 +58,9 @@ fun DapItem(cuenta: DapResponse, isSelected: Boolean, onClick: () -> Unit) {
                 color = if (isSelected) Color.White else Color.Black
             )
             val dropdownIcon: Painter = if (isSelected) {
-                painterResource(id = R.drawable.chevronup) // Your "up" image
+                painterResource(id = R.drawable.chevron_up_yellow) // Your "up" image
             } else {
-                painterResource(id = R.drawable.chevrondown) // Your "down" image
+                painterResource(id = R.drawable.chevron_down_yellow) // Your "down" image
             }
             Image(
                 painter = dropdownIcon,
@@ -96,8 +96,6 @@ fun DetallesDap(cuenta: DapResponse) {
             DetailRow(label = "Plazo pactado:", value = cuenta.plazoPactado.toString())
             HorizontalDivider()
             DetailRow(label = "Estado:", value = cuenta.nombreEstado)
-            HorizontalDivider()
-            DetailRow(label = "Sucursal:", value = cuenta.sucursalOrigen.toString())
             HorizontalDivider()
             val montoInteresInversion = formatNumberWithDots2(cuenta.montoInversion)
             DetailRow(label = "Monto Inversión:", value = "$${montoInteresInversion}")

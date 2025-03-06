@@ -1,5 +1,6 @@
 package com.example.oriencoop_score.api
 
+import com.example.oriencoop_score.model.FacturasLcc
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -52,6 +53,12 @@ object NetworkModule {
     @Singleton
     fun provideMovimientosService(@Named("MainApi")retrofit: Retrofit): MovimientosService { // Function to provide MovimientosService, injects Retrofit
         return retrofit.create(MovimientosService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFacturasService(@Named("MainApi")retrofit: Retrofit): FacturasService { // Function to provide FacturasService, injects Retrofit
+        return retrofit.create(FacturasService::class.java)
     }
 
 

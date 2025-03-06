@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -173,11 +174,12 @@ fun SaldoView(saldoContable: String?, navController: NavController) {
 fun BottomBar(navController: NavController, currentRoute: String) {
     val context = LocalContext.current
     val navigationBarHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val uriHandler = LocalUriHandler.current
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp)
+            //.height(60.dp)
             .background(Color.White)
             .padding(bottom = navigationBarHeight),
         verticalAlignment = Alignment.CenterVertically,
@@ -193,8 +195,8 @@ fun BottomBar(navController: NavController, currentRoute: String) {
             Image(
                 painter = painterResource(
                     id = if (currentRoute == Pantalla.PantallaPrincipal.route)
-                        R.drawable.new_home_yellow // Your active home icon
-                    else R.drawable.new_home
+                        R.drawable.home_yellow_xml // Your active home icon
+                    else R.drawable.home_xml
                 ),
                 contentDescription = "Inicio",
                 modifier = Modifier.size(30.dp)
@@ -218,7 +220,7 @@ fun BottomBar(navController: NavController, currentRoute: String) {
             modifier = Modifier
                 .weight(1f)
                 .clickable { navController.navigate(Pantalla.MisProductos.route) }
-                .padding(vertical = 8.dp)
+                .padding(vertical = 4.dp)
         ) {
             Image(
                 painter = painterResource(
@@ -229,8 +231,8 @@ fun BottomBar(navController: NavController, currentRoute: String) {
                         || currentRoute == Pantalla.Lcc.route
                         || currentRoute == Pantalla.Lcr.route
                         || currentRoute == Pantalla.Dap.route)
-                        R.drawable.new_menu_yellow // Your active menu icon
-                    else R.drawable.new_menu
+                        R.drawable.menu_xml_yellow // Your active menu icon
+                    else R.drawable.menu_xml
                 ),
                 contentDescription = "Mis Productos",
                 modifier = Modifier.size(25.dp)
@@ -244,7 +246,7 @@ fun BottomBar(navController: NavController, currentRoute: String) {
                         FontWeight.Bold
                     else FontWeight.Normal
                 ),
-                modifier = Modifier.padding(top = 4.dp)
+                modifier = Modifier.padding(top = 6.dp)
             )
         }
 
@@ -257,7 +259,7 @@ fun BottomBar(navController: NavController, currentRoute: String) {
                 .padding(vertical = 8.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.icon_arrow_undoicons),
+                painter = painterResource(id = R.drawable.giro_en_linea),
                 contentDescription = "Giro",
                 modifier = Modifier.size(25.dp)
             )
@@ -276,16 +278,16 @@ fun BottomBar(navController: NavController, currentRoute: String) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .weight(1f)
-                .clickable { /* Add your Pago navigation logic */ }
+                .clickable { uriHandler.openUri("https://www.oriencoop.cl/express/") }
                 .padding(vertical = 8.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.icon_sign_dollaricons),
-                contentDescription = "Pago",
+                painter = painterResource(id = R.drawable.pago),
+                contentDescription = "Pago en línea",
                 modifier = Modifier.size(25.dp)
             )
             Text(
-                text = "Pago",
+                text = "Pago en línea",
                 style = TextStyle(
                     fontSize = 10.sp,
                     color = Color.Black, // Fixed color
@@ -380,15 +382,15 @@ fun AccionesRapidas(
         productosVisibles.forEach { producto ->
             when (producto) {
                 "CSOCIAL" -> ProductButton(
-                    icon = R.drawable.bank,
+                    icon = R.drawable.cuenta_cap,
                     text = "Cuenta Capitalización",
                     onClick = { onProductClick(Pantalla.CuentaCap.route) },
                     modifier = Modifier.size(75.dp),
-                    textStyle = AppTheme.typography.pequeño
+                    textStyle = AppTheme.typography.small
                 )
 
                 "AHORRO" -> ProductButton(
-                    icon = R.drawable.piggy_bank,
+                    icon = R.drawable.ahorro,
                     text = "Cuenta De ahorro",
                     onClick = { onProductClick(Pantalla.CuentaAhorro.route) },
                     modifier = Modifier
@@ -398,11 +400,11 @@ fun AccionesRapidas(
                             color = Color.LightGray,
                             shape = RoundedCornerShape(8.dp)
                         ),
-                    textStyle = AppTheme.typography.pequeño,
+                    textStyle = AppTheme.typography.small,
                 )
 
                 "CREDITO" -> ProductButton(
-                    icon = R.drawable.credito_cuotas,
+                    icon = R.drawable.credito_cuotas_og,
                     text = "Crédito en cuotas",
                     onClick = { onProductClick(Pantalla.CreditoCuotas.route) },
                     modifier = Modifier
@@ -412,7 +414,7 @@ fun AccionesRapidas(
                             color = Color.LightGray,
                             shape = RoundedCornerShape(8.dp)
                         ),
-                    textStyle = AppTheme.typography.pequeño
+                    textStyle = AppTheme.typography.small
                 )
 
                 "LCC" -> ProductButton(
@@ -426,7 +428,7 @@ fun AccionesRapidas(
                             color = Color.LightGray,
                             shape = RoundedCornerShape(8.dp)
                         ),
-                    textStyle = AppTheme.typography.pequeño
+                    textStyle = AppTheme.typography.small
                 )
 
                 "LCR" -> ProductButton(
@@ -440,11 +442,11 @@ fun AccionesRapidas(
                             color = Color.LightGray,
                             shape = RoundedCornerShape(8.dp)
                         ),
-                    textStyle = AppTheme.typography.pequeño
+                    textStyle = AppTheme.typography.small
                 )
 
                 "DEPOSTO" -> ProductButton(
-                    icon = R.drawable.deposito,
+                    icon = R.drawable.deposito_a_plazo,
                     text = "Depósito a plazo",
                     onClick = { onProductClick(Pantalla.Dap.route) },
                     modifier = Modifier
@@ -454,7 +456,7 @@ fun AccionesRapidas(
                             color = Color.LightGray,
                             shape = RoundedCornerShape(8.dp)
                         ),
-                    textStyle = AppTheme.typography.pequeño
+                    textStyle = AppTheme.typography.small
                 )
             }
         }
