@@ -83,7 +83,7 @@ class LoginViewModel @Inject constructor(
                             _username.value = username
                             _password.value = password // Guardar el nombre de usuario
                             _loginState.value = LoginState.Success(userLoginResult.data)
-                            sessionManager.saveSession(token, rut)
+                            sessionManager.saveSession("5980334", "CFC253C1E446785B61AB66ACA3D2A36C332463C2")
                         } else if (userLoginResult is Result.Error) {
                             _loginState.value = LoginState.Error(
                                 userLoginResult.exception.message ?: "User login failed"

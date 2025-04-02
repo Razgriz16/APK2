@@ -4,27 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-03-06T18:02:17.984212400Z">
+        <DropdownSelection timestamp="2025-04-02T17:39:54.626120500Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\dperez_prac\.android\avd\Pixel_2_API_35.avd" />
-            </handle>
-          </Target>
-        </DropdownSelection>
-        <DialogSelection />
-      </SelectionState>
-      <SelectionState runConfigName="LoginScreenTest">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="ClientesInfoPreview">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="FacturasLccDialogPreviewWithData">
-        <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-03-06T18:46:47.412607600Z">
-          <Target type="DEFAULT_BOOT">
-            <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=EF500A4LTLFERJBA153" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\david.perez\.android\avd\Pixel_2.avd" />
             </handle>
           </Target>
         </DropdownSelection>
