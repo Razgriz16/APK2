@@ -1,10 +1,10 @@
 package com.example.oriencoop_score.view_model
 
-import DapResponse
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.oriencoop_score.model.CuentaAhorro
+import com.example.oriencoop_score.model.DapResponse
 import com.example.oriencoop_score.repository.CuentaCapRepository
 import com.example.oriencoop_score.repository.DapRepository
 import com.example.oriencoop_score.utility.Result

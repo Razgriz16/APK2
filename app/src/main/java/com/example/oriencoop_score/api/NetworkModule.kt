@@ -68,4 +68,12 @@ object NetworkModule {
         return retrofit.create(ClienteInfoService::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideSucursalesService(@Named("MainApi")retrofit: Retrofit): SucursalesService { // Function to provide MovimientosLccService, injects Retrofit
+        return retrofit.create(SucursalesService::class.java)
+    }
+
+
+
 }

@@ -1,9 +1,10 @@
 package com.example.oriencoop_score.api
 
-import DapResponse
+
 import com.example.oriencoop_score.model.CreditoCuotasResponse
 import com.example.oriencoop_score.model.CuentaAhorroResponse
 import com.example.oriencoop_score.model.CuentaCapResponse
+import com.example.oriencoop_score.model.DapResponse
 import com.example.oriencoop_score.model.LccResponse
 import com.example.oriencoop_score.model.LcrResponse
 import com.example.oriencoop_score.model.MisProductosResponse

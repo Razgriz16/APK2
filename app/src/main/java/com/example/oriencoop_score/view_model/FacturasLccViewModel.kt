@@ -69,7 +69,6 @@ class FacturasLccViewModel @Inject constructor(
                     _facturaslcc.value = emptyList()
                 }
                 Result.Loading -> _isLoading.value = true
-                null -> Log.d("FacturasLccViewModel", "Es nulo")
             }
             _isLoading.value = false
         }

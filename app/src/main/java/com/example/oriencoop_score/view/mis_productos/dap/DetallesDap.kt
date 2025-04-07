@@ -1,6 +1,5 @@
 package com.example.oriencoop_score.view.mis_productos.dap
 
-import DapResponse
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -28,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.oriencoop_score.R
 import com.example.oriencoop_score.model.CuentaAhorro
+import com.example.oriencoop_score.model.DapResponse
 import com.example.oriencoop_score.ui.theme.AppTheme
 import com.example.oriencoop_score.utility.formatNumberWithDots2
 

@@ -1,8 +1,8 @@
 package com.example.oriencoop_score.repository
 
-import DapResponse
 import android.util.Log
 import com.example.oriencoop_score.api.MisProductosService
+import com.example.oriencoop_score.model.DapResponse
 import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.utility.customDateFormat
 import kotlinx.coroutines.Dispatchers
