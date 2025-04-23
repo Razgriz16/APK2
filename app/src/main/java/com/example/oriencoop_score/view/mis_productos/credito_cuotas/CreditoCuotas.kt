@@ -3,7 +3,6 @@ package com.example.oriencoop_score.view.mis_productos.credito_cuotas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -43,11 +42,11 @@ fun CreditoCuotas(
     val creditoCuotasData by creditoCuotasViewModel.creditoCuotasData.collectAsState()
     val isLoading by creditoCuotasViewModel.isLoading.collectAsState()
     val error by creditoCuotasViewModel.error.collectAsState()
-    val cuentaSeleccionada by creditoCuotasViewModel.cuentaSeleccionada.collectAsState()
+    val cuotaSeleccionada by creditoCuotasViewModel.cuentaSeleccionada.collectAsState()
 
     // State to control the expanded Movimientos dialog
     var showAllMovimientosDialog by remember { mutableStateOf(false) }
-    var selectedAccountForDialog by remember { mutableStateOf<Long?>(null) }
+    var selectedAccountForDialog by remember { mutableStateOf<String?>(null) }
 
     // Estado de scroll para la LazyColumn
     val listState = rememberLazyListState()
@@ -99,7 +98,6 @@ fun CreditoCuotas(
                 Text(text = error ?: "Error desconocido", color = Color.Red)
             }
             else -> {
-                // Reemplazamos Column por LazyColumn para hacer la vista scrolleable
                 LazyColumn(
                     state = listState,
                     modifier = Modifier
@@ -110,19 +108,16 @@ fun CreditoCuotas(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     creditoCuotasData?.let { data ->
-                        itemsIndexed(data.credito_cuotas) { index, cuenta ->
-                            // Cada item se maneja por separado.
-                            // Asegúrate de que los componentes dentro (como DetallesCreditoCuotas)
-                            // no tengan scroll interno sin restricciones.
+                        itemsIndexed(data.data) { index, cuota ->
                             Column {
-                                CreditoCuotaItem(cuenta, cuentaSeleccionada?.NROCUENTA == cuenta.NROCUENTA) {
-                                    creditoCuotasViewModel.selectCuenta(cuenta)
+                                CreditoCuotaItem(cuota, cuotaSeleccionada?.numerocredito == cuota.numerocredito) {
+                                    creditoCuotasViewModel.selectCuota(cuota)
                                     coroutineScope.launch {
                                         listState.animateScrollToItem(index)
                                     }
                                 }
-                                if (cuentaSeleccionada?.NROCUENTA == cuenta.NROCUENTA) {
-                                    DetallesCreditoCuotas(cuenta)
+                                if (cuotaSeleccionada?.numerocredito == cuota.numerocredito) {
+                                    DetallesCreditoCuotas(cuota)
 
                                     Row(
                                         modifier = Modifier
@@ -137,7 +132,7 @@ fun CreditoCuotas(
                                             textAlign = TextAlign.Center
                                         )
                                         IconButton(onClick = {
-                                            selectedAccountForDialog = cuenta.NROCUENTA
+                                            selectedAccountForDialog = cuota.numerocredito
                                             showAllMovimientosDialog = true
                                         }) {
                                             Icon(
@@ -146,15 +141,13 @@ fun CreditoCuotas(
                                                 tint = AppTheme.colors.azul
                                             )
                                         }
-                                    }
-                                    // Si MovimientosCreditosScreen usa scroll internamente,
-                                    // también se recomienda asignar un tamaño fijo:
+                                    }/*
                                     Box(modifier = Modifier.height(300.dp)) {
                                         MovimientosCreditosScreen(
                                             movimientosCreditosViewModel,
-                                            selectedAccount = cuenta.NROCUENTA
+                                            selectedAccount = cuota.numerocredito
                                         )
-                                    }
+                                    }*/
                                 }
                             }
                         }
@@ -167,28 +160,29 @@ fun CreditoCuotas(
         if (showAllMovimientosDialog) {
             AllMovimientosDialog(
                 movimientosCreditosViewModel = movimientosCreditosViewModel,
-                selectedAccount = selectedAccountForDialog ?: 0, // Valor por defecto
+                selectedAccount = selectedAccountForDialog ?: "",
                 onDismiss = { showAllMovimientosDialog = false }
             )
         }
     }
 }
+
 @Composable
 fun AllMovimientosDialog(
     movimientosCreditosViewModel: MovimientosCreditosViewModel,
-    selectedAccount: Long,
+    selectedAccount: String,
     onDismiss: () -> Unit
 ) {
     val movimientos by movimientosCreditosViewModel.movimientos.collectAsState()
     val isLoading by movimientosCreditosViewModel.isLoading.collectAsState()
     val error by movimientosCreditosViewModel.error.collectAsState()
 
-    val filteredMovimientos = movimientos.filter { it.NROCUENTA == selectedAccount }
+    //val filteredMovimientos = movimientos.filter { it.NROCUENTA == selectedAccount }
 
     Dialog(
         onDismissRequest = { onDismiss() },
         properties = DialogProperties(
-            usePlatformDefaultWidth = false // Important for full-screen dialog
+            usePlatformDefaultWidth = false
         )
     ) {
         Surface(
@@ -202,7 +196,7 @@ fun AllMovimientosDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
-                    horizontalArrangement = Arrangement.Start, // Align items to the start
+                    horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = { onDismiss() }) {
@@ -216,12 +210,11 @@ fun AllMovimientosDialog(
                         text = "Todos los Movimientos",
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier
-                            .weight(1f) // Take up remaining space
-                            .fillMaxWidth(), // Ensure it fills the weight
+                            .weight(1f)
+                            .fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
-                    // Add an invisible spacer to balance the row.
-                    Spacer(modifier = Modifier.width(48.dp)) // Equal to the IconButton size
+                    Spacer(modifier = Modifier.width(48.dp))
                 }
 
                 HorizontalDivider()
@@ -232,7 +225,6 @@ fun AllMovimientosDialog(
                             CircularProgressIndicator()
                         }
                     }
-
                     error != null -> {
                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             Text(
@@ -240,8 +232,7 @@ fun AllMovimientosDialog(
                                 color = MaterialTheme.colorScheme.error
                             )
                         }
-                    }
-
+                    }/*
                     else -> {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
@@ -253,7 +244,7 @@ fun AllMovimientosDialog(
                                 HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
                             }
                         }
-                    }
+                    }*/
                 }
             }
         }

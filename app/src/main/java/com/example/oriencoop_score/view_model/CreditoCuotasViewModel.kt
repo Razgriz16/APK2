@@ -3,16 +3,18 @@ package com.example.oriencoop_score.view_model
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.oriencoop_score.model.CreditoCuotas
 import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.utility.SessionManager
-import com.example.oriencoop_score.model.CreditoCuota
 import com.example.oriencoop_score.model.CreditoCuotasResponse
 import com.example.oriencoop_score.repository.CreditoCuotasRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @HiltViewModel
 class CreditoCuotasViewModel @Inject constructor(
@@ -20,72 +22,78 @@ class CreditoCuotasViewModel @Inject constructor(
     private val sessionManager: SessionManager
 ) : ViewModel() {
 
-    private val _creditoCuotasData = MutableStateFlow<CreditoCuotasResponse?>(CreditoCuotasResponse(
-        emptyList())) // Usamos CuentaCap?, no CuentaCapResponse
-    val creditoCuotasData: StateFlow<CreditoCuotasResponse?> = _creditoCuotasData
+    // Estado para los datos de las cuotas de crédito
+    private val _creditoCuotasData = MutableStateFlow<CreditoCuotasResponse?>(null)
+    val creditoCuotasData: StateFlow<CreditoCuotasResponse?> = _creditoCuotasData.asStateFlow()
 
     // Estado de error
-    private val _error = MutableStateFlow<String?>(null) // Usamos String?, no String("")
-    val error: StateFlow<String?> = _error
+    private val _error = MutableStateFlow<String?>(null)
+    val error: StateFlow<String?> = _error.asStateFlow()
 
     // Estado de carga
     private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    // Cuenta seleccionada para expandir detalles
-    private val _cuentaSeleccionada = MutableStateFlow<CreditoCuota?>(null)
-    val cuentaSeleccionada: StateFlow<CreditoCuota?> = _cuentaSeleccionada
+    // Cuota seleccionada para expandir detalles
+    private val _cuentaSeleccionada = MutableStateFlow<CreditoCuotas?>(null)
+    val cuentaSeleccionada: StateFlow<CreditoCuotas?> = _cuentaSeleccionada.asStateFlow()
 
     init {
-        creditoCuotasDatos()
+        fetchCreditoCuotas()
     }
 
-
-    fun creditoCuotasDatos() {
-        val token = sessionManager.token.value ?: "" // Maneja los posibles null
-        val rut = sessionManager.username.value ?: "" // Maneja los posibles null
-        if (token.isBlank() || rut.isBlank()) { // Comprueba si son blancos
-            _error.value = "Token o Rut no pueden estar vacíos"
-            Log.e("CreditoCuotasViewModel", "Token o Rut no pueden estar vacíos")
+    /**
+     * Obtiene los datos de las cuotas de crédito desde el repositorio.
+     * Valida la cédula del usuario desde el sessionManager antes de realizar la llamada.
+     */
+    fun fetchCreditoCuotas() {
+        val cedula = sessionManager.getUserRut().toString()
+        if (cedula.isBlank()) {
+            _error.value = "Cédula no disponible"
+            Log.e("CreditoCuotasViewModel", "Cédula no disponible")
             return
         }
 
         viewModelScope.launch {
-            _isLoading.value = true // Indicar que se está cargando
-            Log.d("CreditoCuotasViewModel", "Token: $token, Rut: $rut")
+            _isLoading.value = true
+            Log.d("CreditoCuotasViewModel", "Iniciando obtención de datos para cédula: $cedula")
 
-            try {
-                when (val result = repository.getCreditoCuotas(token, rut)) {
-                    is Result.Success -> {
-                        _creditoCuotasData.value = result.data
-                        Log.d("CreditoCuotasViewModel", "Datos obtenidos: ${result.data}")
-                    }
-                    is Result.Error -> {
-                        _error.value = result.exception.message // Guardar el mensaje de error
-                        Log.e("CreditoCuotasViewModel", "Error al obtener datos: ${result.exception.message}")
-                    }
-                    Result.Loading -> _isLoading.value = false
+            when (val result = repository.getCreditoCuotas(cedula)) {
+                is Result.Success -> {
+                    _creditoCuotasData.value = result.data
+                    _error.value = null
+                    Log.d("CreditoCuotasViewModel", "Datos obtenidos: ${result.data.data.size} cuentas")
                 }
-            } catch (e: Exception) {
-                // Catch any exceptions thrown by the repository and set the error state
-                _error.value = e.message
-                Log.e("CreditoCuotasViewModel", "Exception thrown: ${e.message}")
-            } finally {
-                _isLoading.value = false // Finalizar la carga
+                is Result.Error -> {
+                    _error.value = result.exception.message ?: "Error desconocido"
+                    Log.e("CreditoCuotasViewModel", "Error al obtener datos: ${result.exception.message}")
+                }
+
+                Result.Loading -> Result.Loading
             }
+            _isLoading.value = false
         }
     }
 
-    fun selectCuenta(cuenta: CreditoCuota) {
-        // Si se toca la misma cuenta, se oculta la vista de detalles (toggle)
-        if (_cuentaSeleccionada.value?.NROCUENTA == cuenta.NROCUENTA) {
+    /**
+     * Selecciona una cuota para mostrar sus detalles.
+     * Si se selecciona la misma cuota, se deselecciona (toggle).
+     *
+     * @param cuota La cuota seleccionada.
+     */
+    fun selectCuota(cuota: CreditoCuotas) {
+        if (_cuentaSeleccionada.value?.credito == cuota.credito) {
             _cuentaSeleccionada.value = null
         } else {
-            _cuentaSeleccionada.value = cuenta
+            _cuentaSeleccionada.value = cuota
         }
     }
 
-    fun clearCuentaSeleccionada() {
+    /**
+     * Limpia la cuota seleccionada.
+     */
+    fun clearCuotaSeleccionada() {
         _cuentaSeleccionada.value = null
     }
 }
+ 

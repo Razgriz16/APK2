@@ -7,6 +7,7 @@ import com.example.oriencoop_score.navigation.Navigation
 import dagger.hilt.android.AndroidEntryPoint
 import android.Manifest
 import android.content.pm.PackageManager
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import dagger.hilt.android.HiltAndroidApp
@@ -18,6 +19,7 @@ class MainActivity : ComponentActivity() {
         const val REQUEST_CODE_NOTIFICATION_PERMISSION = 1001
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

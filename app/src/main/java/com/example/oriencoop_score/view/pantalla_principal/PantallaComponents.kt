@@ -1,6 +1,6 @@
 package com.example.oriencoop_score.view.pantalla_principal
 
-import MindicatorsViewModel
+import com.example.oriencoop_score.view_model.MindicatorsViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -172,7 +172,7 @@ fun SaldoView(saldoContable: String?, navController: NavController) {
 //*****Barra inferior de la app*****
 @Composable
 fun BottomBar(navController: NavController, currentRoute: String) {
-    val context = LocalContext.current
+    //val context = LocalContext.current
     val navigationBarHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val uriHandler = LocalUriHandler.current
 

@@ -35,17 +35,16 @@ class FacturasLccViewModel @Inject constructor(
 
         // Observe nroCuenta changes and load data when it becomes available
         viewModelScope.launch {
-            sessionManager.nroCuenta.collect { cuenta ->
-                Log.d("FacturasLccViewModel", "nroCuenta updated: $cuenta")
-                if (cuenta != 0L) {
-                    obtenerFacturasLcc(cuenta)
-                }
+            val cuenta = sessionManager.getNroCuenta()
+            Log.d("FacturasLccViewModel", "nroCuenta obtained: $cuenta")
+            if (cuenta != 0L) {
+                obtenerFacturasLcc(cuenta)
             }
         }
     }
 
-    fun obtenerFacturasLcc(cuenta: Long = sessionManager.nroCuenta.value) {
-        val token = sessionManager.token.value
+    fun obtenerFacturasLcc(cuenta: Long = sessionManager.getNroCuenta()) {
+        val token = sessionManager.getAccessToken().toString() ?: ""
         Log.d("FacturasLccViewModel", "numero cuenta: $cuenta")
 
         if (cuenta == 0L) {

@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.oriencoop_score.R
-import com.example.oriencoop_score.model.CreditoCuota
+import com.example.oriencoop_score.model.CreditoCuotas
 import com.example.oriencoop_score.ui.theme.AppTheme
 import com.example.oriencoop_score.view.mis_productos.cuenta_ahorro.DetailRow
 
@@ -31,7 +31,7 @@ import com.example.oriencoop_score.view.mis_productos.cuenta_ahorro.DetailRow
 @OptIn(ExperimentalMaterial3Api::class)
 
 @Composable
-fun CreditoCuotaItem(cuenta: CreditoCuota, isSelected: Boolean, onClick: () -> Unit) {
+fun CreditoCuotaItem(cuenta: CreditoCuotas, isSelected: Boolean, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -50,7 +50,7 @@ fun CreditoCuotaItem(cuenta: CreditoCuota, isSelected: Boolean, onClick: () -> U
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = cuenta.NROCUENTA.toString(),
+                text = cuenta.numerocredito.toString(),
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 color = if (isSelected) Color.White else Color.Black
@@ -71,7 +71,7 @@ fun CreditoCuotaItem(cuenta: CreditoCuota, isSelected: Boolean, onClick: () -> U
 }
 
 @Composable
-fun DetallesCreditoCuotas(cuenta: CreditoCuota) {
+fun DetallesCreditoCuotas(cuenta: CreditoCuotas) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -84,21 +84,21 @@ fun DetallesCreditoCuotas(cuenta: CreditoCuota) {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp) // More spacing
         ) {
-            DetailRow(label = "Tipo", value = cuenta.TIPOCUENTA)
+            DetailRow(label = "Tipo", value = cuenta.desc_producto)
             HorizontalDivider()
-            DetailRow(label = "Número de cuotas", value = "${cuenta.NUMEROCUOTAS}")
+            DetailRow(label = "Número de cuotas", value = cuenta.cuotas)
             HorizontalDivider()
-            DetailRow(label = "Monto crédito", value = cuenta.MONTOCREDITO)
+            DetailRow(label = "Monto crédito", value = cuenta.montoliquido_pesos)
             HorizontalDivider()
-            DetailRow(label = "Valor Cuota", value = cuenta.VALORCUOTA)
+            DetailRow(label = "Valor Cuota", value = cuenta.valorcuota_pesos)
             HorizontalDivider()
-            DetailRow(label = "Prox Vencimiento", value = cuenta.PROXVENCIMIENTO)
+            DetailRow(label = "Prox Vencimiento", value = cuenta.fechaactivacion) // TODO REVISAR FECHA DE VENCIMIENTO SEA FECHA CANCELACIÓN
         }
     }
 }
 @Preview
 @Composable
-fun preview(){
+fun Preview(){
     Card(
         modifier = Modifier
             .fillMaxWidth()

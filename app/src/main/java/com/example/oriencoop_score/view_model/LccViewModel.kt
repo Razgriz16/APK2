@@ -44,8 +44,8 @@ class LccViewModel @Inject constructor(
     }
 
     fun LccDatos() {
-        val token = sessionManager.token.value ?: "" //Maneja los posibles null
-        val rut = sessionManager.username.value ?: "" //Maneja los posibles null
+        val token = sessionManager.getAccessToken().toString() ?: "" //Maneja los posibles null
+        val rut = sessionManager.getUserRut().toString() ?: "" //Maneja los posibles null
         if (token.isBlank() || rut.isBlank()){ //Comprueba si son blancos
             _error.value = "Token o Rut no pueden estar vacíos"
             Log.e("LccViewModel", "Token o Rut no pueden estar vacíos")
@@ -64,7 +64,7 @@ class LccViewModel @Inject constructor(
                         val nroCuenta = result.data.lcc.firstOrNull()?.numerocuenta
                         Log.d("LccViewModel", "NROCUENTA: $nroCuenta")
                         if (nroCuenta != null) {
-                            sessionManager.setNroCuenta(nroCuenta)
+                            sessionManager.saveNroCuenta(nroCuenta)
                         }
                         Log.d("LccViewModel", "Datos obtenidos: ${result.data}")
                     }

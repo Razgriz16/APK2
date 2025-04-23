@@ -1,44 +1,105 @@
 package com.example.oriencoop_score.utility
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
+import androidx.core.content.edit
+import com.example.oriencoop_score.model.Usuario
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
-class SessionManager @Inject constructor() {
-    // Estado global del token
-    private val _token = MutableStateFlow("")
-    val token: StateFlow<String> = _token.asStateFlow()
+class SessionManager @Inject constructor(@ApplicationContext private val context: Context) {
 
-    // Estado global del username
-    private val _username = MutableStateFlow("")
-    val username: StateFlow<String> = _username.asStateFlow()
-
-    private val _nroCuenta = MutableStateFlow<Long>(0)
-    val nroCuenta: StateFlow<Long> = _nroCuenta
-
-    fun setNroCuenta(nroCuenta: Long) {
-        Log.d("SessionManager", "Setting nroCuenta to: $nroCuenta")
-        _nroCuenta.value = nroCuenta
+    private val sharedPreferences: SharedPreferences by lazy {
+        try {
+            val masterKeyAlias = MasterKey.Builder(context)
+                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                .build()
+            EncryptedSharedPreferences.create(
+                context,
+                "session_prefs",
+                masterKeyAlias,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
+        } catch (e: Exception) {
+            Log.e("SessionManager", "Failed to initialize EncryptedSharedPreferences", e)
+            context.getSharedPreferences("session_prefs_fallback", Context.MODE_PRIVATE)
+        }
     }
 
-    // Guardar el token y username en la sesión
-    fun saveSession(token: String, username: String) {
-        _token.value = token
-        _username.value = username
-        Log.d("SessionManager", "Session saved: Token=$token, Username=$username")
+    private val _sessionState = MutableStateFlow(getSessionState())
+    val sessionState: StateFlow<SessionState> = _sessionState.asStateFlow()
+
+    data class SessionState(
+        val isLoggedIn: Boolean,
+        val accessToken: String?,
+        val userName: String?,
+        val userRut: Int,
+        val nroCuenta: Long
+    )
+
+    private fun getSessionState(): SessionState {
+        return SessionState(
+            isLoggedIn = isLoggedIn(),
+            accessToken = getAccessToken(),
+            userName = getUserName(),
+            userRut = getUserRut(),
+            nroCuenta = getNroCuenta()
+        )
     }
 
-    // Limpiar la sesión (logout)
+    fun saveSession(accessToken: String, refreshToken: String, usuario: Usuario) {
+        with(sharedPreferences.edit()) {
+            putString("access_token", accessToken)
+            putString("refresh_token", refreshToken)
+            putString("user_nombre", usuario.nombre)
+            putInt("user_rut", usuario.rut)
+            apply()
+        }
+        _sessionState.value = getSessionState()
+        Log.d("SessionManager", "Session saved successfully")
+    }
+
     fun clearSession() {
-        _token.value = ""
-        _username.value = ""
+        sharedPreferences.edit() { clear() }
+        _sessionState.value = getSessionState()
         Log.d("SessionManager", "Session cleared")
-
     }
+
+    fun saveNroCuenta(nroCuenta: Long) {
+        with(sharedPreferences.edit()) {
+            putLong("nro_cuenta", nroCuenta)
+            apply()
+        }
+        Log.d("SessionManager", "NroCuenta saved: $nroCuenta")
+    }
+
+    fun updateTokens(accessToken: String, refreshToken: String) {
+        with(sharedPreferences.edit()) {
+            putString("access_token", accessToken)
+            putString("refresh_token", refreshToken)
+            apply()
+        }
+        Log.d("SessionManager", "Tokens updated")
+    }
+
+    fun getAccessToken(): String? = sharedPreferences.getString("access_token", null)
+
+    fun getRefreshToken(): String? = sharedPreferences.getString("refresh_token", null)
+
+    fun getUserName(): String? = sharedPreferences.getString("user_nombre", null)
+
+    fun getUserRut(): Int = sharedPreferences.getInt("user_rut", 0)
+
+    fun getNroCuenta(): Long = sharedPreferences.getLong("nro_cuenta", 0L)
+
+    fun isLoggedIn(): Boolean = getAccessToken() != null // Función no usada
 }

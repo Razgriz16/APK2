@@ -1,5 +1,7 @@
 package com.example.oriencoop_score.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.oriencoop_score.view.pantalla_principal.PantallaPrincipal
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
@@ -16,6 +18,7 @@ import com.example.oriencoop_score.view.mis_productos.lcr.Lcr
 import com.example.oriencoop_score.view.pantalla_principal.ClienteInfo
 import com.example.oriencoop_score.view.pantalla_principal.Sucursales.SucursalesScreen
 
+@RequiresApi(Build.VERSION_CODES.N)
 @Composable
 fun Navigation() {
     val navController = rememberNavController()

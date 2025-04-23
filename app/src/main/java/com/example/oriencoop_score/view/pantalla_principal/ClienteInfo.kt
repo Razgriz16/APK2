@@ -1,6 +1,5 @@
 package com.example.oriencoop_score.view.pantalla_principal
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,49 +25,40 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.oriencoop_score.model.ClienteInfoResponse
 import com.example.oriencoop_score.navigation.Pantalla
 import com.example.oriencoop_score.ui.theme.AppTheme
-import com.example.oriencoop_score.view.LoginScreen
-import com.example.oriencoop_score.view_model.ClienteInfoViewModel
+import com.example.oriencoop_score.utility.SessionViewModel
+import com.example.oriencoop_score.view_model.ClienteViewModel
 
-
-@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClienteInfo(
-    navController: NavController
+    navController: NavController,// Nuevo parámetro para pasar el RUT
+    viewModel: ClienteViewModel = hiltViewModel(),
+    sessionViewModel: SessionViewModel = hiltViewModel()
 ) {
-    val clienteInfoViewModel: ClienteInfoViewModel = hiltViewModel()
-    val clienteInfo = clienteInfoViewModel.clienteInfo.value
-    val isLoading = clienteInfoViewModel.isLoading.value
-    val error = clienteInfoViewModel.error.value
+    // Observar el estado del ViewModel
+    val clienteInfoState = viewModel.clienteInfoState.collectAsState().value
+    val rut = sessionViewModel.sessionState.collectAsState().value.userRut
 
-
-
-    if (error != null) {
-        Text(text = "Error: $error")
+    // Llamar a fetchClienteInfo al iniciar la pantalla
+    LaunchedEffect(Unit) {
+        viewModel.fetchClienteInfo()
     }
 
-    // Apply the custom color scheme
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text(
-                        "Mis datos"
-                    )
-                },
+                title = { Text("Mis datos") },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigate(Pantalla.PantallaPrincipal.route) }) {
                         Icon(
@@ -79,58 +69,73 @@ fun ClienteInfo(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = AppTheme.colors.blanco, // Consistent with your image
+                    containerColor = AppTheme.colors.blanco
                 )
             )
         },
         bottomBar = {
-            // Assuming you have a BottomBar composable, consistent with the image.
-            Box(modifier = Modifier.padding(bottom = 16.dp))
-            {
-                BottomBar(navController, currentRoute = navController.currentDestination?.route ?: "")
+            Box(modifier = Modifier.padding(bottom = 16.dp)) {
+                BottomBar(
+                    navController = navController,
+                    currentRoute = navController.currentDestination?.route ?: ""
+                )
             }
         }
     ) { innerPadding ->
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(AppTheme.colors.blanco) // Use a light background
+                .background(AppTheme.colors.blanco)
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            if (clienteInfo != null) {
-                // Client Info Card
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .shadow(elevation = 4.dp, shape = RoundedCornerShape(16.dp)),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = AppTheme.colors.surface
-                    ),
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(16.dp)
-                    ) {
-                        ClientInfoItem("Nombre:", clienteInfo.NOMBRE)
-                        ClientInfoItem("RUT:", clienteInfo.RUTCOMPLETO)
-                        ClientInfoItem("Número de teléfono:", clienteInfo.NUMERO)
-                        ClientInfoItem("Dirección:", clienteInfo.CALLENUMEROS)
-                        ClientInfoItem("Email:", clienteInfo.EMAIL)
-                    }
-                }
-            } else {
-                // Error/Loading State
-                if (isLoading){
+            when {
+                clienteInfoState.isLoading -> {
                     LoadingScreen()
+                }
+                clienteInfoState.error != null -> {
+                    Text(
+                        text = "Error: ${clienteInfoState.error}",
+                        modifier = Modifier.padding(16.dp),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+                clienteInfoState.userData != null -> {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .shadow(elevation = 4.dp, shape = RoundedCornerShape(16.dp)),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = AppTheme.colors.surface
+                        )
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            ClientInfoItem(
+                                label = "Nombre:",
+                                value = "${clienteInfoState.userData.nombres} ${clienteInfoState.userData.apellidopaterno} ${clienteInfoState.userData.apellidomaterno}"
+                            )
+                            ClientInfoItem(
+                                label = "rut:",
+                                value = "$rut"
+                            )
+                            ClientInfoItem(
+                                label = "Email:",
+                                value = clienteInfoState.userData.email
+                            )
+                            ClientInfoItem(
+                                label = "Dirección:",
+                                value = clienteInfoState.addressData?.calleNumero ?: "No disponible"
+                            )
+                        }
+                    }
                 }
             }
         }
     }
 }
+
 @Composable
 fun ClientInfoItem(label: String, value: String) {
     Column(
@@ -155,29 +160,7 @@ fun ClientInfoItem(label: String, value: String) {
             modifier = Modifier.padding(vertical = 8.dp),
             color = AppTheme.colors.outline
         )
-
     }
 }
-/*
-@Preview(showBackground = true)
-@Composable
-fun ClientesInfoPreview() {
-    val sampleClient = ClienteInfoResponse(
-        CALLENUMEROS = "Main Street 123",
-        EMAIL = "john.doe@example.com",
-        NOMBRE = "John Doe",
-        NUMERO = "123-456-7890",
-        RUTCOMPLETO = "12345678-9"
-    )
-    val navController = rememberNavController()
 
-    ClienteInfo(navController = navController, clienteInfo = sampleClient)
-}
 
-@Preview(showBackground = true)
-@Composable
-fun ClientesInfoNullPreview() {
-    val navController = rememberNavController()
-    ClienteInfo(navController = navController, clienteInfo = null)
-
-}*/

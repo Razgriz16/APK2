@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
 }
 
@@ -39,6 +39,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+        languageVersion = "1.9"
     }
     buildFeatures {
         compose = true
@@ -63,6 +64,8 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("androidx.compose.material3:material3:1.2.0")
+    implementation("androidx.security:security-crypto:1.1.0-alpha03")
+
     implementation(libs.androidx.espresso.core)
     implementation(libs.androidx.ui.test.junit4.android)
     implementation(libs.play.services.maps)
@@ -73,6 +76,8 @@ dependencies {
     testImplementation("io.mockk:mockk:1.13.9")
     testImplementation ("net.bytebuddy:byte-buddy-agent:1.14.11")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
+
+
     testImplementation(libs.hilt.android.testing)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
@@ -85,18 +90,13 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
     implementation("com.google.dagger:hilt-android:2.51.1")
-    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+    ksp("com.google.dagger:hilt-android-compiler:2.51.1") // Usa ksp en lugar de kapt
 
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.7.8")
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.7.8")
 
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.51.1")
-    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.51.1")
+    ksp("com.google.dagger:hilt-android-compiler:2.51.1") // Usa ksp en lugar de kapt
 
 
-}
-
-// Allow references to generated code
-kapt {
-    correctErrorTypes = false
 }

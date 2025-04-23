@@ -39,7 +39,7 @@ import com.example.oriencoop_score.model.MovimientosCreditos
 import com.example.oriencoop_score.ui.theme.AppTheme
 import com.example.oriencoop_score.view.mis_productos.cuenta_ahorro.DetailRow
 import com.example.oriencoop_score.view_model.MovimientosCreditosViewModel
-
+/*
 @Composable
 fun MovimientosCreditosScreen(
     movimientosCreditosViewModel: MovimientosCreditosViewModel,
@@ -182,3 +182,4 @@ fun DialogMovimientosCreditos(
         }
     )
 }
+*/

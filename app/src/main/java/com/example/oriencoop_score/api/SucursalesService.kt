@@ -11,14 +11,14 @@ import retrofit2.http.GET
 
 interface SucursalesService {
     // Endpoint for Ciudades
-    @GET("obtener_ciudades") // Use the actual endpoint path
+    @GET("ciudades") // Use the actual endpoint path
     suspend fun getCiudades(): Response<CiudadesResponse>
 
     // Endpoint for Comunas
-    @GET("obtener_comunas") // Use the actual endpoint path
+    @GET("comunas") // Use the actual endpoint path
     suspend fun getComunas(): Response<ComunasResponse>
 
     // Endpoint for Sucursales
-    @GET("obtener_sucursales") // Use the actual endpoint path
+    @GET("sucursales/activas") // Use the actual endpoint path
     suspend fun getSucursales(): Response<SucursalesResponse>
 }

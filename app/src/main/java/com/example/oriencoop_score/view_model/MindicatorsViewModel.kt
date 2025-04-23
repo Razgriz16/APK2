@@ -1,3 +1,5 @@
+package com.example.oriencoop_score.view_model
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.oriencoop_score.repository.MindicatorsRepository

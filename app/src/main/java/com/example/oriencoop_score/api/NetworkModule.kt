@@ -28,10 +28,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    @Named("MainApi")
+    @Named("api-parametro")
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://192.168.120.8:5000/")
+            .baseUrl("http://192.168.120.8:5000/v1/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -39,38 +39,65 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideLoginService(@Named("MainApi") retrofit: Retrofit): LoginService { // Function to provide LoginService, injects Retrofit
+    @Named("api-cliente")
+    fun provideRetrofitCliente(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("http://192.168.120.8:5001/v1/")
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    @Named("api-credito")
+    fun provideRetrofitCredito(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("http://192.168.120.8:5005/v1/")
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+
+
+
+    @Provides
+    @Singleton
+    fun provideLoginService(@Named("api-cliente") retrofit: Retrofit): LoginService { // Function to provide LoginService, injects Retrofit
         return retrofit.create(LoginService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideMisProductosService(@Named("MainApi")retrofit: Retrofit): MisProductosService { // Function to provide MisProductosService, injects Retrofit
+    fun provideClienteInfoService(@Named("api-cliente")retrofit: Retrofit): ClienteService { // Function to provide MovimientosLccService, injects Retrofit
+        return retrofit.create(ClienteService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMisProductosService(@Named("api-credito")retrofit: Retrofit): MisProductosService { // Function to provide MisProductosService, injects Retrofit
         return retrofit.create(MisProductosService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideMovimientosService(@Named("MainApi")retrofit: Retrofit): MovimientosService { // Function to provide MovimientosService, injects Retrofit
+    fun provideMovimientosService(@Named("api-parametro")retrofit: Retrofit): MovimientosService { // Function to provide MovimientosService, injects Retrofit
         return retrofit.create(MovimientosService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideFacturasService(@Named("MainApi")retrofit: Retrofit): FacturasService { // Function to provide FacturasService, injects Retrofit
+    fun provideFacturasService(@Named("api-parametro")retrofit: Retrofit): FacturasService { // Function to provide FacturasService, injects Retrofit
         return retrofit.create(FacturasService::class.java)
     }
 
 
-    @Provides
-    @Singleton
-    fun provideClienteInfoService(@Named("MainApi")retrofit: Retrofit): ClienteInfoService { // Function to provide MovimientosLccService, injects Retrofit
-        return retrofit.create(ClienteInfoService::class.java)
-    }
+
 
     @Provides
     @Singleton
-    fun provideSucursalesService(@Named("MainApi")retrofit: Retrofit): SucursalesService { // Function to provide MovimientosLccService, injects Retrofit
+    fun provideSucursalesService(@Named("api-parametro")retrofit: Retrofit): SucursalesService { // Function to provide MovimientosLccService, injects Retrofit
         return retrofit.create(SucursalesService::class.java)
     }
 

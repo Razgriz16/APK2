@@ -41,8 +41,8 @@ class CuentaAhorroViewModel @Inject constructor(
     }
 
     fun cuentaAhorroDatos() {
-        val token = sessionManager.token.value ?: ""
-        val rut = sessionManager.username.value ?: ""
+        val token = sessionManager.getAccessToken() ?: ""
+        val rut = sessionManager.getUserRut().toString() ?: ""
         if (token.isBlank() || rut.isBlank()) {
             Log.e("CuentaAhorroViewModel", "Token o Rut no pueden estar vacíos")
             _error.value = "Token o Rut no pueden estar vacíos"

@@ -5,7 +5,9 @@ data class RutRequest(
     val rut: String
 )
 
-
+/* CAMBIAR ESTO. HAY QUE MODIFICARLO PARA QUE PREGUNTE EN CADA API PRIMERO Y BUSQUE EL CAMPO DE "ESTADO"
+Y SI EXISTE ALGÚN PRODUCTO EN ESTADO
+ */
 data class MisProductosResponse(
     val AHORRO: Int,
     val CREDITO: Int,
@@ -39,6 +41,7 @@ data class CuentaAhorroResponse(
 
 
 
+/*
 data class CreditoCuota(
     val MONTOCREDITO: String,
     val NROCUENTA: Long,
@@ -51,7 +54,36 @@ data class CreditoCuota(
 data class CreditoCuotasResponse(
     val credito_cuotas: List<CreditoCuota>
 )
+*/
 
+data class CreditoCuotas(
+    @SerializedName("cedula") val cedula: String,
+    @SerializedName("credito") val credito: String,
+    @SerializedName("cuotas") val cuotas: String,
+    @SerializedName("desc_division") val desc_division: String,
+    @SerializedName("desc_pataforma") val desc_pataforma: String,
+    @SerializedName("desc_producto") val desc_producto: String,
+    @SerializedName("diasmora") val diasmora: String,
+    @SerializedName("estado") val estado: String,
+    @SerializedName("estadocredito") val estadocredito: String,
+    @SerializedName("fechaactivacion") val fechaactivacion: String,
+    @SerializedName("fechacancelacion") val fechacancelacion: String,
+    @SerializedName("fechacreacion") val fechacreacion: String,
+    @SerializedName("fechaestado") val fechaestado: String,
+    @SerializedName("montobruto_pesos") val montobruto_pesos: String,
+    @SerializedName("montoliquido_pesos") val montoliquido_pesos: String,
+    @SerializedName("numerocredito") val numerocredito: String,
+    @SerializedName("numerocuotainicial") val numerocuotainicial: String,
+    @SerializedName("valorcuota") val valorcuota: String,
+    @SerializedName("valorcuota_pesos") val valorcuota_pesos: String,
+    @SerializedName("valorcuotainicial") val valorcuotainicial: String,
+)
+
+data class CreditoCuotasResponse(
+    val count: Int,
+    val data: List<CreditoCuotas>,
+    val errorCode: Int
+)
 
 
 data class DapResponse(

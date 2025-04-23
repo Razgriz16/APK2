@@ -42,8 +42,8 @@ class DapViewModel @Inject constructor(
 
 
     fun dapDatos() {
-        val token = sessionManager.token.value ?: "" // Maneja los posibles null
-        val rut = sessionManager.username.value ?: "" // Maneja los posibles null
+        val token = sessionManager.getAccessToken().toString() // Maneja los posibles null
+        val rut = sessionManager.getUserRut().toString() // Maneja los posibles null
         if (token.isBlank() || rut.isBlank()) { // Comprueba si son blancos
             _error.value = "Token o Rut no pueden estar vacíos"
             Log.e("DapViewModel", "Token o Rut no pueden estar vacíos")

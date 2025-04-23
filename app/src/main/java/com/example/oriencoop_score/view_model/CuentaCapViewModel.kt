@@ -36,8 +36,8 @@ class CuentaCapViewModel @Inject constructor(
 
 
     fun cuentaCapDatos() {
-        val token = sessionManager.token.value ?: "" // Maneja los posibles null
-        val rut = sessionManager.username.value ?: "" // Maneja los posibles null
+        val token = sessionManager.getAccessToken() ?: "" // Maneja los posibles null
+        val rut = sessionManager.getUserRut().toString() ?: "" // Maneja los posibles null
         if (token.isBlank() || rut.isBlank()) { // Comprueba si son blancos
             _error.value = "Token o Rut no pueden estar vacíos"
             Log.e("CuentaCapViewModel", "Token o Rut no pueden estar vacíos")

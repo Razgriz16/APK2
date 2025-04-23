@@ -33,12 +33,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.oriencoop_score.R
-import com.example.oriencoop_score.utility.SessionManager
 import com.example.oriencoop_score.model.Notifications
 import com.example.oriencoop_score.navigation.Pantalla
 import com.example.oriencoop_score.ui.theme.AppTheme
+import com.example.oriencoop_score.utility.SessionViewModel
 
 
 // Función trata la fila superior de la app
@@ -105,7 +106,7 @@ fun HeaderRow(
 
 @Composable
 fun DrawerContent(onCloseDrawer: () -> Unit, navController: NavController, drawerWidth: Dp) { // Added drawerWidth parameter
-
+    val sessionViewModel: SessionViewModel = hiltViewModel()
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -145,6 +146,7 @@ fun DrawerContent(onCloseDrawer: () -> Unit, navController: NavController, drawe
         }
 
         // Menu Items (using LazyColumn for scrollable content)
+
         LazyColumn(modifier = Modifier.align(Alignment.CenterHorizontally)) {
             item {
                 DrawerMenuItem(iconId = R.drawable.mis_datos, text = "Mis Datos") { navController.navigate(Pantalla.ClienteInfo.route) }
@@ -152,7 +154,7 @@ fun DrawerContent(onCloseDrawer: () -> Unit, navController: NavController, drawe
                 //DrawerMenuItem(iconId = R.drawable.soporte, text = "Contacto con ejecutivo") { /* TODO: Handle click */ }
                 DrawerMenuItem(iconId = R.drawable.ubicacion, text = "Sucursales") { navController.navigate(Pantalla.Sucursales.route) }
                 //DrawerMenuItem(iconId = R.drawable.mensaje, text = "Preguntas Frecuentes") { /* TODO: Handle click */ }
-                DrawerMenuItem(iconId = R.drawable.salir, text = "Cerrar Sesión", sessionManager = { SessionManager().clearSession() }) {
+                DrawerMenuItem(iconId = R.drawable.salir, text = "Cerrar Sesión", sessionManager = { sessionViewModel.clearSession() }) {
                     navController.navigate(
                         Pantalla.Login.route
                     )

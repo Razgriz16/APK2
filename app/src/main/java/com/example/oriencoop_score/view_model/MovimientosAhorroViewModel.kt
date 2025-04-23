@@ -52,8 +52,8 @@ class MovimientosAhorroViewModel @Inject constructor(
     }
 
     fun obtenerMovimientosAhorro() {
-        val token = sessionManager.token.value
-        val rut = sessionManager.username.value
+        val token = sessionManager.getAccessToken().toString()
+        val rut = sessionManager.getUserRut().toString()
         if (token.isBlank() || rut.isBlank()){ //Comprueba si son blancos
             Log.e("MovimientosAhorroViewModel", "Token o Rut no pueden estar vacíos")
             _error.value = "Token o Rut no pueden estar vacíos"

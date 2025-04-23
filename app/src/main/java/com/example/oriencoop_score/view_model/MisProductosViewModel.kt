@@ -2,28 +2,27 @@ package com.example.oriencoop_score.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.oriencoop_score.model.MisProductosResponse
-import com.example.oriencoop_score.repository.MisProductosRepository
-import kotlinx.coroutines.launch
+import com.example.oriencoop_score.repository.CreditoCuotasRepository
 import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.utility.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MisProductosViewModel @Inject constructor(
-    private val repository: MisProductosRepository,
+    private val creditoCuotasRepository: CreditoCuotasRepository,
+    // Inyecta aquí los repositorios de otros productos, ej: private val ahorroRepository: AhorroRepository,
     private val sessionManager: SessionManager
 ) : ViewModel() {
 
-    // Estado inicial para los productos
-    //private val _productos = MutableStateFlow<MisProductosResponse?>(null)
-    //val productos: StateFlow<MisProductosResponse?> = _productos
-
-    private val _productos = MutableStateFlow<Map<String, Boolean>>(emptyMap())
-    val productos: StateFlow<Map<String, Boolean>> = _productos
+    // Mapa que indica qué productos están activos (true = mostrar, false = no mostrar)
+    private val _productosActivos = MutableStateFlow<Map<String, Boolean>>(emptyMap())
+    val productosActivos: StateFlow<Map<String, Boolean>> = _productosActivos
 
     // Estado de error
     private val _error = MutableStateFlow<String?>(null)
@@ -34,46 +33,56 @@ class MisProductosViewModel @Inject constructor(
     val isLoading: StateFlow<Boolean> = _isLoading
 
     init {
-        obtenerProductos()
+        obtenerEstadoProductos()
     }
 
-    fun obtenerProductos() {
-        val token = sessionManager.token.value
-        val rut = sessionManager.username.value
+    fun obtenerEstadoProductos() {
+        val token = sessionManager.getAccessToken().toString()
+        val rut = sessionManager.getUserRut().toString()
+
         viewModelScope.launch {
             _isLoading.value = true // Indicar que se está cargando
             try {
-                when (val result = repository.getProductos(token, rut)) {
-                    is Result.Success -> {
-                        _productos.value = convertResponseToMap(result.data)
-                        _error.value = null // Limpiar errores previos
-                    }
+                // Realizar consultas concurrentes a los repositorios
+                val resultados = listOf(
+                    async { verificarProducto(creditoCuotasRepository, token, rut, "CREDITO") },
+                    // Agrega aquí las consultas para otros productos, ej:
+                    // async { verificarProducto(ahorroRepository, token, rut, "AHORRO") },
+                ).awaitAll()
 
-                    is Result.Error -> {
-                        _error.value = result.exception.message // Guardar el mensaje de error
-                        _productos.value = emptyMap() // Limpiar los productos en caso de error
-                    }
-
-                    Result.Loading -> Result.Loading
-                }
-            }
-            catch (e: Exception) {
-                // Catch any exceptions thrown by the repository and set the error state
-                _error.value = e.message
-                _productos.value = emptyMap() // Limpiar los productos en caso de error
-            }finally {
+                // Convertir los resultados en un mapa
+                val mapaProductos = resultados.associateBy({ it.first }, { it.second })
+                _productosActivos.value = mapaProductos
+                _error.value = null // Limpiar errores previos
+            } catch (e: Exception) {
+                _error.value = e.message // Guardar el mensaje de error
+                _productosActivos.value = emptyMap() // Limpiar productos en caso de error
+            } finally {
                 _isLoading.value = false // Finalizar la carga
             }
         }
     }
-    private fun convertResponseToMap(response: MisProductosResponse): Map<String, Boolean> {
-        return mapOf(
-            "CREDITO" to (response.CREDITO == 1),
-            "AHORRO" to (response.AHORRO == 1),
-            "DEPOSTO" to (response.DEPOSTO == 1),
-            "LCC" to (response.LCC == 1),
-            "LCR" to (response.LCR == 1),
-            "CSOCIAL" to (response.CSOCIAL == 1)
-        )
+
+    // Función auxiliar para verificar el estado de un producto
+    private suspend fun verificarProducto(
+        repository: CreditoCuotasRepository, // Cambia esto si usas una interfaz común para todos los repositorios
+        token: String,
+        rut: String,
+        nombreProducto: String
+    ): Pair<String, Boolean> {
+        return try {
+            when (val result = repository.getCreditoCuotas(rut)) {
+                is Result.Success -> {
+                    val count = result.data.count
+                    nombreProducto to (count > 0) // true si count > 0, false si count == 0
+                }
+                is Result.Error -> {
+                    nombreProducto to false // En caso de error, asumimos que no está activo
+                }
+                else -> nombreProducto to false
+            }
+        } catch (e: Exception) {
+            nombreProducto to false // En caso de excepción, asumimos que no está activo
+        }
     }
 }

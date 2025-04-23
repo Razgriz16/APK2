@@ -51,9 +51,9 @@ class SucursalesRepository @Inject constructor(private val sucursalesService: Su
                         // Verifica el código de error específico de la API.
                         // Asumimos 0.0f como éxito según la estructura de CiudadesResponse.
                         if (body.error_code == 0.0f) {
-                            Log.d(TAG, "$functionName: Llamada exitosa. Datos recibidos: ${body.data?.size ?: 0} ciudades.")
+                            Log.d(TAG, "$functionName: Llamada exitosa. Datos recibidos: ${body.data.size} ciudades.")
                             // Éxito: Retorna los datos, o una lista vacía si 'data' es null.
-                            Result.Success(body.data ?: emptyList())
+                            Result.Success(body.data)
                         } else {
                             // Error lógico reportado por la API.
                             val errorMessage = "$functionName: Error lógico de API. Code: ${body.error_code}, Message: ${body.error_message}"
@@ -99,8 +99,8 @@ class SucursalesRepository @Inject constructor(private val sucursalesService: Su
                     if (body != null) {
                         // Asumimos 0.0f como éxito según la estructura de ComunasResponse.
                         if (body.error_code == 0.0f) {
-                            Log.d(TAG, "$functionName: Llamada exitosa. Datos recibidos: ${body.data?.size ?: 0} comunas.")
-                            Result.Success(body.data ?: emptyList())
+                            Log.d(TAG, "$functionName: Llamada exitosa. Datos recibidos: ${body.data.size} comunas.")
+                            Result.Success(body.data)
                         } else {
                             val errorMessage = "$functionName: Error lógico de API. Code: ${body.error_code}, Message: ${body.error_message}"
                             Log.e(TAG, errorMessage)
@@ -142,8 +142,8 @@ class SucursalesRepository @Inject constructor(private val sucursalesService: Su
                     val body = response.body()
                     if (body != null) {
                         // SucursalesResponse no tiene error_code/message, asumimos éxito si HTTP es 2xx y body no es null.
-                        Log.d(TAG, "$functionName: Llamada exitosa. Datos recibidos: ${body.data?.size ?: 0} sucursales.")
-                        Result.Success(body.data ?: emptyList())
+                        Log.d(TAG, "$functionName: Llamada exitosa. Datos recibidos: ${body.data.size} sucursales.")
+                        Result.Success(body.data)
                     } else {
                         val errorMessage = "$functionName: Respuesta HTTP exitosa pero cuerpo nulo."
                         Log.e(TAG, errorMessage)

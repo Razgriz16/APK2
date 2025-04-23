@@ -43,7 +43,7 @@ fun PantallaPrincipal(
     navController: NavController
 ) {
     val misProductosViewModel: MisProductosViewModel = hiltViewModel()
-    val productos by misProductosViewModel.productos.collectAsState()
+    val productos by misProductosViewModel.productosActivos.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()

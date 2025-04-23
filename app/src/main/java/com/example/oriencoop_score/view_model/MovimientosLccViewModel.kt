@@ -38,8 +38,8 @@ class MovimientosLccViewModel @Inject constructor(
     }
 
     fun obtenerMovimientosLcc() {
-        val token = sessionManager.token.value
-        val rut = sessionManager.username.value
+        val token = sessionManager.getAccessToken().toString()
+        val rut = sessionManager.getUserRut().toString()
         if (token.isBlank() || rut.isBlank()){ //Comprueba si son blancos
             Log.e("MovimientosLccViewModel", "Token o Rut no pueden estar vacíos")
             _error.value = "Token o Rut no pueden estar vacíos"
