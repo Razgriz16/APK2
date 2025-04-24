@@ -25,11 +25,14 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.oriencoop_score.model.MovimientosCreditos
 import com.example.oriencoop_score.ui.theme.AppTheme
 import com.example.oriencoop_score.view.pantalla_principal.BottomBar
 import com.example.oriencoop_score.view_model.CreditoCuotasViewModel
 import com.example.oriencoop_score.view_model.MovimientosCreditosViewModel
 import kotlinx.coroutines.launch
+import android.util.Log
+import androidx.compose.foundation.lazy.items
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,10 +46,12 @@ fun CreditoCuotas(
     val isLoading by creditoCuotasViewModel.isLoading.collectAsState()
     val error by creditoCuotasViewModel.error.collectAsState()
     val cuotaSeleccionada by creditoCuotasViewModel.cuentaSeleccionada.collectAsState()
+    val movimientosData by movimientosCreditosViewModel.movimientosData.collectAsState()
 
     // State to control the expanded Movimientos dialog
     var showAllMovimientosDialog by remember { mutableStateOf(false) }
-    var selectedAccountForDialog by remember { mutableStateOf<String?>(null) }
+    var selectedAccountForDialog by remember { mutableStateOf<Long?>(null) }
+    var movimientosForDialog by remember { mutableStateOf<List<MovimientosCreditos>?>(null) }
 
     // Estado de scroll para la LazyColumn
     val listState = rememberLazyListState()
@@ -77,9 +82,7 @@ fun CreditoCuotas(
             )
         },
         bottomBar = {
-            Box(
-                modifier = Modifier.padding(bottom = 16.dp)
-            ) {
+            Box{
                 BottomBar(navController, currentRoute = navController.currentDestination?.route ?: "")
             }
         }
@@ -109,13 +112,20 @@ fun CreditoCuotas(
                 ) {
                     creditoCuotasData?.let { data ->
                         itemsIndexed(data.data) { index, cuota ->
-                            Column {
-                                CreditoCuotaItem(cuota, cuotaSeleccionada?.numerocredito == cuota.numerocredito) {
+                            CreditoCuotaItem(cuota, cuotaSeleccionada?.numerocredito == cuota.numerocredito) {
+                                Log.d("CreditoCuotas", "Cuenta seleccionada: ${cuota.numerocredito}, cuotaSeleccionada: ${cuotaSeleccionada?.numerocredito}")
+                                if (cuotaSeleccionada?.numerocredito == cuota.numerocredito) {
+                                    // Colapsar: deseleccionar la cuenta sin llamar a la API
+                                    creditoCuotasViewModel.clearSelection()
+                                } else {
+                                    // Desplegar: seleccionar la cuenta y cargar movimientos
                                     creditoCuotasViewModel.selectCuota(cuota)
-                                    coroutineScope.launch {
-                                        listState.animateScrollToItem(index)
-                                    }
+                                    movimientosCreditosViewModel.fetchMovimientosCreditos(cuota.credito)
                                 }
+                                coroutineScope.launch {
+                                    listState.animateScrollToItem(index)
+                                }
+                            }
                                 if (cuotaSeleccionada?.numerocredito == cuota.numerocredito) {
                                     DetallesCreditoCuotas(cuota)
 
@@ -132,7 +142,9 @@ fun CreditoCuotas(
                                             textAlign = TextAlign.Center
                                         )
                                         IconButton(onClick = {
-                                            selectedAccountForDialog = cuota.numerocredito
+                                            Log.d("CreditoCuotas", "Botón + clicado para cuenta: ${cuota.numerocredito}")
+                                            selectedAccountForDialog = cuota.credito
+                                            movimientosForDialog = movimientosData?.data
                                             showAllMovimientosDialog = true
                                         }) {
                                             Icon(
@@ -141,13 +153,12 @@ fun CreditoCuotas(
                                                 tint = AppTheme.colors.azul
                                             )
                                         }
-                                    }/*
+                                    }
                                     Box(modifier = Modifier.height(300.dp)) {
                                         MovimientosCreditosScreen(
-                                            movimientosCreditosViewModel,
-                                            selectedAccount = cuota.numerocredito
+                                            movimientosCreditosViewModel = movimientosCreditosViewModel
                                         )
-                                    }*/
+                                    }
                                 }
                             }
                         }
@@ -159,25 +170,24 @@ fun CreditoCuotas(
         // Diálogo para ver todos los movimientos
         if (showAllMovimientosDialog) {
             AllMovimientosDialog(
-                movimientosCreditosViewModel = movimientosCreditosViewModel,
-                selectedAccount = selectedAccountForDialog ?: "",
-                onDismiss = { showAllMovimientosDialog = false }
+                movimientos = movimientosForDialog,
+                selectedAccount = selectedAccountForDialog ?: 0L,
+                onDismiss = {
+                    showAllMovimientosDialog = false
+                    //movimientosCreditosViewModel.clearMovimientos()
+                }
             )
         }
     }
-}
+
 
 @Composable
 fun AllMovimientosDialog(
-    movimientosCreditosViewModel: MovimientosCreditosViewModel,
-    selectedAccount: String,
+    movimientos: List<MovimientosCreditos>?,
+    selectedAccount: Long,
     onDismiss: () -> Unit
 ) {
-    val movimientos by movimientosCreditosViewModel.movimientos.collectAsState()
-    val isLoading by movimientosCreditosViewModel.isLoading.collectAsState()
-    val error by movimientosCreditosViewModel.error.collectAsState()
-
-    //val filteredMovimientos = movimientos.filter { it.NROCUENTA == selectedAccount }
+    Log.d("AllMovimientosDialog", "Renderizando diálogo para cuenta $selectedAccount, movimientos: ${movimientos?.size}")
 
     Dialog(
         onDismissRequest = { onDismiss() },
@@ -219,32 +229,22 @@ fun AllMovimientosDialog(
 
                 HorizontalDivider()
 
-                when {
-                    isLoading -> {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
+                movimientos?.let { movimientosList ->
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(horizontal = 0.dp, vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(0.dp)
+                    ) {
+                        items(movimientosList) { movimiento ->
+                            MovimientosCreditosItem(movimiento = movimiento)
+                            HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
                         }
                     }
-                    error != null -> {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text(
-                                text = error ?: "Error desconocido",
-                                color = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    }/*
-                    else -> {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(horizontal = 0.dp, vertical = 8.dp),
-                            verticalArrangement = Arrangement.spacedBy(0.dp)
-                        ) {
-                            items(filteredMovimientos) { movimiento ->
-                                com.example.oriencoop_score.view.mis_productos.credito_cuotas.MovimientosCreditosItem(movimiento = movimiento)
-                                HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
-                            }
-                        }
-                    }*/
+                } ?: Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "No hay movimientos disponibles")
                 }
             }
         }

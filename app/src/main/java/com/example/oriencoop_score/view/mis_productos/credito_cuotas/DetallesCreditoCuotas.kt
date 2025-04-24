@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -86,13 +84,13 @@ fun DetallesCreditoCuotas(cuenta: CreditoCuotas) {
         ) {
             DetailRow(label = "Tipo", value = cuenta.desc_producto)
             HorizontalDivider()
-            DetailRow(label = "Número de cuotas", value = cuenta.cuotas)
+            DetailRow(label = "Número de cuotas", value = cuenta.cuotas.toString())
             HorizontalDivider()
-            DetailRow(label = "Monto crédito", value = cuenta.montoliquido_pesos)
+            DetailRow(label = "Monto crédito", value = cuenta.montoliquido_pesos.toString())
             HorizontalDivider()
-            DetailRow(label = "Valor Cuota", value = cuenta.valorcuota_pesos)
+            DetailRow(label = "Valor Cuota", value = cuenta.valorcuota_pesos.toString())
             HorizontalDivider()
-            DetailRow(label = "Prox Vencimiento", value = cuenta.fechaactivacion) // TODO REVISAR FECHA DE VENCIMIENTO SEA FECHA CANCELACIÓN
+            DetailRow(label = "Prox Vencimiento", value = cuenta?.fechavencimiento.toString() ?: "Nulo") // TODO REVISAR FECHA DE VENCIMIENTO SEA FECHA CANCELACIÓN
         }
     }
 }

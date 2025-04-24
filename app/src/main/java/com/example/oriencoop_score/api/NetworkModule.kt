@@ -13,6 +13,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 
+
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
@@ -28,9 +29,21 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @Named("mindicators")
+    fun provideRetrofitMindicators(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("http://172.20.0.57:8080/")
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @Singleton
     @Named("api-parametro")
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
+            //https://apiservice.oriencoop.cl/parametro/v1/
             .baseUrl("http://192.168.120.8:5000/v1/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
@@ -59,9 +72,29 @@ object NetworkModule {
             .build()
     }
 
+    @Provides
+    @Singleton
+    @Named("api-ahorro")
+    fun provideRetrofitAhorro(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("http://192.168.120.8:5006/v1/")
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
 
 
 
+
+    /********************************* SERVICIOS RETROFIT *************************************/
+
+    @Provides
+    @Singleton
+    fun mindicatorsService(@Named("mindicators") retrofit: Retrofit): MindicatorInterface { // Function to provide MindicatorInterface
+        return retrofit.create(MindicatorInterface::class.java)
+    }
+
+    /****** SERVICIOS API-CLIENTE ******/
     @Provides
     @Singleton
     fun provideLoginService(@Named("api-cliente") retrofit: Retrofit): LoginService { // Function to provide LoginService, injects Retrofit
@@ -73,18 +106,7 @@ object NetworkModule {
     fun provideClienteInfoService(@Named("api-cliente")retrofit: Retrofit): ClienteService { // Function to provide MovimientosLccService, injects Retrofit
         return retrofit.create(ClienteService::class.java)
     }
-
-    @Provides
-    @Singleton
-    fun provideMisProductosService(@Named("api-credito")retrofit: Retrofit): MisProductosService { // Function to provide MisProductosService, injects Retrofit
-        return retrofit.create(MisProductosService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideMovimientosService(@Named("api-parametro")retrofit: Retrofit): MovimientosService { // Function to provide MovimientosService, injects Retrofit
-        return retrofit.create(MovimientosService::class.java)
-    }
+    /****** SERVICIOS API-PARAMETRO ******/
 
     @Provides
     @Singleton
@@ -92,14 +114,38 @@ object NetworkModule {
         return retrofit.create(FacturasService::class.java)
     }
 
-
-
-
     @Provides
     @Singleton
     fun provideSucursalesService(@Named("api-parametro")retrofit: Retrofit): SucursalesService { // Function to provide MovimientosLccService, injects Retrofit
         return retrofit.create(SucursalesService::class.java)
     }
+
+    /****** SERVICIOS API-CREDITO ******/
+    @Provides
+    @Singleton
+    @MisProductosCredito
+    fun provideMisProductosService(@Named("api-credito")retrofit: Retrofit): MisProductosService { // Function to provide MisProductosService, injects Retrofit
+        return retrofit.create(MisProductosService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMovimientosService(@Named("api-credito")retrofit: Retrofit): MovimientosService { // Function to provide MovimientosService, injects Retrofit
+        return retrofit.create(MovimientosService::class.java)
+    }
+
+    /****** SERVICIOS API-CREDITO ******/
+    @Provides
+    @Singleton
+    @MisProductosAhorro
+    fun provideMisProductosServiceAhorro(@Named("api-ahorro") retrofit: Retrofit): MisProductosService {
+        return retrofit.create(MisProductosService::class.java)
+    }
+
+
+
+
+
 
 
 

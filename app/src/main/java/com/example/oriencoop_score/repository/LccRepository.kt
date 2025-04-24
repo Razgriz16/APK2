@@ -1,6 +1,7 @@
 package com.example.oriencoop_score.repository
 
 import android.util.Log
+import com.example.oriencoop_score.api.MisProductosCredito
 import com.example.oriencoop_score.api.MisProductosService
 import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.model.LccResponse
@@ -10,7 +11,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LccRepository @Inject constructor(private val lccService: MisProductosService) {
+class LccRepository @Inject constructor(
+    @MisProductosCredito private val lccService: MisProductosService) {
     suspend fun getLcc(token: String, rut: String): Result<LccResponse> {
         return withContext(Dispatchers.IO) {
             try {

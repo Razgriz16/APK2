@@ -22,6 +22,7 @@ import com.example.oriencoop_score.view.pantalla_principal.BottomBar
 import com.example.oriencoop_score.view.pantalla_principal.LoadingScreen
 import com.example.oriencoop_score.view_model.MisProductosViewModel
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 
 @Composable
 fun MisProductos(navController: NavController) {
@@ -48,11 +49,6 @@ fun ProductsScreen(
     val error by misProductosViewModel.error.collectAsState()
     val isLoading by misProductosViewModel.isLoading.collectAsState()
 
-    // Mostrar pantalla de carga si isLoading es true
-    if (isLoading) {
-        LoadingScreen()
-        return
-    }
 
     // Mostrar mensaje de error si existe
     error?.let {
@@ -98,80 +94,99 @@ fun ProductsScreen(
             )
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Primera fila
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+        when {
+            isLoading -> Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                ProductButton(
-                    icon = R.drawable.cuenta_cap,
-                    text = "Cuenta Capitalización",
-                    onClick = { navController.navigate(Pantalla.CuentaCap.route) },
-                    iconSize = 35.dp
-                )
-
-                ProductButton(
-                    icon = R.drawable.ahorro,
-                    text = "Cuenta de\nAhorro",
-                    onClick = { navController.navigate(Pantalla.CuentaAhorro.route) },
-                    isVisible = productos["AHORRO"] ?: false,
-                    iconSize = 35.dp
-                )
+                CircularProgressIndicator()
             }
 
-            // Segunda fila
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+            error?.isNotEmpty() == true -> Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                ProductButton(
-                    icon = R.drawable.credito_cuotas_og,
-                    text = "Crédito en\nCuotas",
-                    onClick = { navController.navigate(Pantalla.CreditoCuotas.route) },
-                    isVisible = productos["CREDITO"] ?: false,
-                    iconSize = 35.dp
-                )
-
-                ProductButton(
-                    icon = R.drawable.lcc,
-                    text = "Línea de Crédito\na Cuotas",
-                    onClick = { navController.navigate(Pantalla.Lcc.route) },
-                    isVisible = productos["LCC"] ?: false,
-                    iconSize = 35.dp
-                )
+                Text(text = error ?: "Error desconocido", color = Color.Red)
             }
 
-            // Tercera fila
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                ProductButton(
-                    icon = R.drawable.lcr,
-                    text = "Línea de Crédito\nRotativa",
-                    onClick = { navController.navigate(Pantalla.Lcr.route) },
-                    isVisible = productos["LCR"] ?: false,
-                    iconSize = 35.dp
-                )
+            else -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White)
+                        .padding(paddingValues)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    // Primera fila
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        ProductButton(
+                            icon = R.drawable.cuenta_cap,
+                            text = "Cuenta Capitalización",
+                            onClick = { navController.navigate(Pantalla.CuentaCap.route) },
+                            iconSize = 35.dp
+                        )
 
-                ProductButton(
-                    icon = R.drawable.deposito_a_plazo,
-                    text = "Depósito a\nPlazo",
-                    onClick = { navController.navigate(Pantalla.Dap.route) },
-                    isVisible = productos["DEPOSITO"] ?: false, // Corregido de DEPOSTO a DEPOSITO
-                    iconSize = 35.dp
-                )
+                        ProductButton(
+                            icon = R.drawable.ahorro,
+                            text = "Cuenta de\nAhorro",
+                            onClick = { navController.navigate(Pantalla.CuentaAhorro.route) },
+                            isVisible = productos["AHORRO"] ?: false,
+                            iconSize = 35.dp
+                        )
+                    }
+
+                    // Segunda fila
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        ProductButton(
+                            icon = R.drawable.credito_cuotas_og,
+                            text = "Crédito en\nCuotas",
+                            onClick = { navController.navigate(Pantalla.CreditoCuotas.route) },
+                            isVisible = productos["CREDITO"] ?: false,
+                            iconSize = 35.dp
+                        )
+
+                        ProductButton(
+                            icon = R.drawable.lcc,
+                            text = "Línea de Crédito\na Cuotas",
+                            onClick = { navController.navigate(Pantalla.Lcc.route) },
+                            isVisible = productos["LCC"] ?: false,
+                            iconSize = 35.dp
+                        )
+                    }
+
+                    // Tercera fila
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        ProductButton(
+                            icon = R.drawable.lcr,
+                            text = "Línea de Crédito\nRotativa",
+                            onClick = { navController.navigate(Pantalla.Lcr.route) },
+                            isVisible = productos["LCR"] ?: false,
+                            iconSize = 35.dp
+                        )
+
+                        ProductButton(
+                            icon = R.drawable.deposito_a_plazo,
+                            text = "Depósito a\nPlazo",
+                            onClick = { navController.navigate(Pantalla.Dap.route) },
+                            isVisible = productos["DEPOSITO"]
+                                ?: false, // Corregido de DEPOSTO a DEPOSITO
+                            iconSize = 35.dp
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

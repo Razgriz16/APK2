@@ -1,6 +1,7 @@
 package com.example.oriencoop_score.repository
 
 import android.util.Log
+import com.example.oriencoop_score.api.MisProductosCredito
 import com.example.oriencoop_score.api.MisProductosService
 import com.example.oriencoop_score.model.DapResponse
 import com.example.oriencoop_score.utility.Result
@@ -11,7 +12,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 // DapRepository.kt
 @Singleton
-class DapRepository @Inject constructor(private val dapService: MisProductosService) {
+class DapRepository @Inject constructor(
+    @MisProductosCredito private val dapService: MisProductosService) {
     suspend fun getDap(token: String, rut: String): Result<List<DapResponse>> { // Return Result<List<DapResponse>>
         return withContext(Dispatchers.IO) {
             try {

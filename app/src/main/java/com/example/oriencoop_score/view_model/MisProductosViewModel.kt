@@ -3,6 +3,8 @@ package com.example.oriencoop_score.view_model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.oriencoop_score.repository.CreditoCuotasRepository
+import com.example.oriencoop_score.repository.CuentaAhorroRepository
+import com.example.oriencoop_score.utility.ProductoRepository
 import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.utility.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MisProductosViewModel @Inject constructor(
     private val creditoCuotasRepository: CreditoCuotasRepository,
+    private val cuentaAhorroRepository: CuentaAhorroRepository,
     // Inyecta aquí los repositorios de otros productos, ej: private val ahorroRepository: AhorroRepository,
     private val sessionManager: SessionManager
 ) : ViewModel() {
@@ -46,6 +49,7 @@ class MisProductosViewModel @Inject constructor(
                 // Realizar consultas concurrentes a los repositorios
                 val resultados = listOf(
                     async { verificarProducto(creditoCuotasRepository, token, rut, "CREDITO") },
+                    async { verificarProducto(cuentaAhorroRepository, token, rut, "AHORRO") }
                     // Agrega aquí las consultas para otros productos, ej:
                     // async { verificarProducto(ahorroRepository, token, rut, "AHORRO") },
                 ).awaitAll()
@@ -64,14 +68,14 @@ class MisProductosViewModel @Inject constructor(
     }
 
     // Función auxiliar para verificar el estado de un producto
-    private suspend fun verificarProducto(
-        repository: CreditoCuotasRepository, // Cambia esto si usas una interfaz común para todos los repositorios
+    private suspend fun <T> verificarProducto(
+        repository: ProductoRepository<T>,
         token: String,
         rut: String,
         nombreProducto: String
     ): Pair<String, Boolean> {
         return try {
-            when (val result = repository.getCreditoCuotas(rut)) {
+            when (val result = repository.fetchProducto(rut)) {
                 is Result.Success -> {
                     val count = result.data.count
                     nombreProducto to (count > 0) // true si count > 0, false si count == 0

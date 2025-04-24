@@ -3,14 +3,15 @@ package com.example.oriencoop_score.view_model
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.oriencoop_score.model.ApiResponse
+import com.example.oriencoop_score.model.CuentaAhorro
+import com.example.oriencoop_score.repository.CuentaAhorroRepository
 import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.utility.SessionManager
-import com.example.oriencoop_score.model.CuentaAhorro
-import com.example.oriencoop_score.model.CuentaAhorroResponse
-import com.example.oriencoop_score.repository.CuentaAhorroRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,71 +21,80 @@ class CuentaAhorroViewModel @Inject constructor(
     private val sessionManager: SessionManager
 ) : ViewModel() {
 
-
-    private val _cuentaAhorroData = MutableStateFlow<CuentaAhorroResponse?>(CuentaAhorroResponse(emptyList()))
-    val cuentaAhorroData: StateFlow<CuentaAhorroResponse?> = _cuentaAhorroData
+    // Estado para los datos de las cuentas de ahorro
+    private val _cuentaAhorroData = MutableStateFlow<ApiResponse<CuentaAhorro>?>(null)
+    val cuentaAhorroData: StateFlow<ApiResponse<CuentaAhorro>?> = _cuentaAhorroData.asStateFlow()
 
     // Estado de error
     private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
+    val error: StateFlow<String?> = _error.asStateFlow()
 
     // Estado de carga
     private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     // Cuenta seleccionada para expandir detalles
     private val _cuentaSeleccionada = MutableStateFlow<CuentaAhorro?>(null)
-    val cuentaSeleccionada: StateFlow<CuentaAhorro?> = _cuentaSeleccionada
+    val cuentaSeleccionada: StateFlow<CuentaAhorro?> = _cuentaSeleccionada.asStateFlow()
 
     init {
-        cuentaAhorroDatos()
+        fetchCuentaAhorro()
     }
 
-    fun cuentaAhorroDatos() {
-        val token = sessionManager.getAccessToken() ?: ""
-        val rut = sessionManager.getUserRut().toString() ?: ""
-        if (token.isBlank() || rut.isBlank()) {
-            Log.e("CuentaAhorroViewModel", "Token o Rut no pueden estar vacíos")
-            _error.value = "Token o Rut no pueden estar vacíos"
+    /**
+     * Obtiene los datos de las cuentas de ahorro desde el repositorio.
+     * Valida la cédula del usuario desde el sessionManager antes de realizar la llamada.
+     */
+    fun fetchCuentaAhorro() {
+        val rut = sessionManager.getUserRut().toString()
+        if (rut.isBlank()) {
+            _error.value = "Cédula no disponible"
+            Log.e("CuentaAhorroViewModel", "Cédula no disponible")
             return
         }
 
         viewModelScope.launch {
             _isLoading.value = true
-            Log.d("CuentaAhorroViewModel", "Token: $token, Rut: $rut")
+            Log.d("CuentaAhorroViewModel", "Iniciando obtención de datos para cédula: $rut")
 
-            try {
-                when (val result = repository.getAhorro(token, rut)) {
-                    is Result.Success -> {
-                        Log.d("CuentaAhorroViewModel", "Datos obtenidos: ${result.data}")
-                        _cuentaAhorroData.value = result.data
-                    }
-                    is Result.Error -> {
-                        Log.e("CuentaAhorroViewModel", "Error al obtener datos: ${result.exception.message}")
-                        _error.value = result.exception.message
-                    }
-                    Result.Loading -> Result.Loading
+            when (val result = repository.fetchProducto(rut)) {
+                is Result.Success -> {
+                    _cuentaAhorroData.value = result.data
+                    _error.value = null
+                    Log.d("CuentaAhorroViewModel", "Datos obtenidos: ${result.data.data.size} cuentas")
                 }
-            } catch (e: Exception) {
-                // Catch any exceptions thrown by the repository and set the error state
-                _error.value = e.message
-                Log.e("CuentaAhorroViewModel", "Exception thrown: ${e.message}")
-            } finally {
-                _isLoading.value = false
+                is Result.Error -> {
+                    _error.value = result.exception.message ?: "Error desconocido"
+                    Log.e("CuentaAhorroViewModel", "Error al obtener datos: ${result.exception.message}")
+                }
+                else -> {
+                    Log.d("CuentaAhorroViewModel", "Estado no manejado")
+                }
             }
+            _isLoading.value = false
         }
     }
 
+    /**
+     * Selecciona una cuenta para mostrar sus detalles.
+     * Si se selecciona la misma cuenta, se deselecciona (toggle).
+     *
+     * @param cuenta La cuenta seleccionada.
+     */
     fun selectCuenta(cuenta: CuentaAhorro) {
-        // Si se toca la misma cuenta, se oculta la vista de detalles (toggle)
-        if (_cuentaSeleccionada.value?.NROCUENTA == cuenta.NROCUENTA) {
+        Log.d("CuentaAhorroViewModel", "Seleccionando cuenta: ${cuenta.numeroCuenta}")
+        if (_cuentaSeleccionada.value?.numeroCuenta == cuenta.numeroCuenta) {
             _cuentaSeleccionada.value = null
         } else {
             _cuentaSeleccionada.value = cuenta
         }
     }
 
+    /**
+     * Limpia la cuenta seleccionada.
+     */
     fun clearCuentaSeleccionada() {
+        Log.d("CuentaAhorroViewModel", "Deseleccionando cuenta")
         _cuentaSeleccionada.value = null
     }
 }

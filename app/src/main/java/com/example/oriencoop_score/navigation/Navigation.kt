@@ -10,7 +10,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.oriencoop_score.view.Login
 import com.example.oriencoop_score.view.mis_productos.MisProductos
 import com.example.oriencoop_score.view.mis_productos.credito_cuotas.CreditoCuotas
-import com.example.oriencoop_score.view.mis_productos.cuenta_ahorro.CuentaAhorro
 import com.example.oriencoop_score.view.mis_productos.cuenta_cap.CuentaCap
 import com.example.oriencoop_score.view.mis_productos.dap.Dap
 import com.example.oriencoop_score.view.mis_productos.lcc.Lcc
@@ -22,7 +21,7 @@ import com.example.oriencoop_score.view.pantalla_principal.Sucursales.Sucursales
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Pantalla.Sucursales.route) {
+    NavHost(navController = navController, startDestination = Pantalla.Login.route) {
         composable(route = Pantalla.Login.route) {
             Login(navController = navController)
         }
@@ -40,7 +39,7 @@ fun Navigation() {
         }
 
         composable(route = Pantalla.CuentaAhorro.route) {
-            CuentaAhorro(navController = navController) /*, viewModel = harryPotterViewModel*/
+            //CuentaAhorro(navController = navController) /*, viewModel = harryPotterViewModel*/
         }
 
         composable(route = Pantalla.CreditoCuotas.route) {

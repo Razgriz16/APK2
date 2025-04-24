@@ -3,13 +3,15 @@ package com.example.oriencoop_score.view_model
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.oriencoop_score.utility.Result
-import com.example.oriencoop_score.utility.SessionManager
+import com.example.oriencoop_score.model.ApiResponse
 import com.example.oriencoop_score.model.MovimientosCreditos
 import com.example.oriencoop_score.repository.MovimientosCreditosRepository
+import com.example.oriencoop_score.utility.Result
+import com.example.oriencoop_score.utility.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,63 +20,67 @@ class MovimientosCreditosViewModel @Inject constructor(
     private val repository: MovimientosCreditosRepository,
     private val sessionManager: SessionManager
 ) : ViewModel() {
-    private val _movimientos = MutableStateFlow<List<MovimientosCreditos>>(emptyList())
-    val movimientos: StateFlow<List<MovimientosCreditos>> = _movimientos
+
+    // Estado para los datos de movimientos de créditos
+    private val _movimientosData = MutableStateFlow<ApiResponse<MovimientosCreditos>?>(null)
+    val movimientosData: StateFlow<ApiResponse<MovimientosCreditos>?> = _movimientosData.asStateFlow()
 
     // Estado de error
     private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
+    val error: StateFlow<String?> = _error.asStateFlow()
 
     // Estado de carga
     private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    init {
-        obtenerMovimientosCreditos()
-    }
-    fun cargarMovimientos(nroCuenta: Long) {
-        viewModelScope.launch {
-            //Reseteamos estados
-            _isLoading.value = true
-            _error.value = null
-            _movimientos.value = emptyList()
-            try {
-                //Simulamos la carga de datos. Sustituir por la llamada real al repositorio/api
-                val movimientosDeCuenta = movimientos.value.get(nroCuenta.toInt()) // Implementa esta función
-                _movimientos.value = listOf(movimientosDeCuenta)
-                _isLoading.value = false // Éxito
-            } catch (e: Exception) {
-                _error.value = "Error al cargar movimientos: ${e.message}"
-                _isLoading.value = false
-            }
-        }
-    }
-
-    fun obtenerMovimientosCreditos() {
-        val token = sessionManager.getAccessToken().toString()
+    /**
+     * Carga los movimientos de créditos para un número de cuenta específico.
+     *
+     * @param numeroCuenta El número de cuenta (crédito) para obtener los movimientos.
+     */
+    fun fetchMovimientosCreditos(numeroCuenta: Long) {
         val rut = sessionManager.getUserRut().toString()
-        if (token.isBlank() || rut.isBlank()){ //Comprueba si son blancos
-            Log.e("MovimientosCreditosViewModel", "Token o Rut no pueden estar vacíos")
-            _error.value = "Token o Rut no pueden estar vacíos"
+        if (rut.isBlank()) {
+            _error.value = "RUT no disponible"
+            Log.e("MovimientosCreditosViewModel", "RUT no disponible")
             return
         }
+
         viewModelScope.launch {
-            Log.d("MovimientosCreditosViewModel", "Llamando función obtenerMovimientos")
-            _isLoading.value = true // Indicar que se está cargando
-            when (val result = repository.getMovimientosCreditos(token, rut)) {
+            _isLoading.value = true
+            _error.value = null
+            Log.d("MovimientosCreditosViewModel", "Iniciando obtención de movimientos para cuenta: $numeroCuenta, RUT: $rut")
+
+            when (val result = repository.getMovimientosCreditos(numeroCuenta)) {
                 is Result.Success -> {
-                    Log.d("MovimientosCreditosViewModel", "Llamada exitosa. BODY: "+result.data)
-                    _movimientos.value = result.data.movimientos_creditos
+                    // Filtrar movimientos por número de cuenta
+                    val movimientosFiltrados = result.data.data
+                    _movimientosData.value = ApiResponse<MovimientosCreditos>(
+                        count = movimientosFiltrados.size,
+                        data = movimientosFiltrados,
+                        error_code = result.data.error_code,
+                    )
                     _error.value = null
+                    Log.d("MovimientosCreditosViewModel", "Movimientos obtenidos: ${movimientosFiltrados.size} movimientos")
                 }
                 is Result.Error -> {
-                    Log.e("MovimientosCreditosViewModel", "Llamada fallida. Error: ${result.exception.message}")
-                    _error.value = result.exception.message // Guardar el mensaje de error
-                    _movimientos.value = emptyList() // Limpiar los productos en caso de error
+                    _error.value = result.exception.message ?: "Error desconocido"
+                    Log.e("MovimientosCreditosViewModel", "Error al obtener movimientos: ${result.exception.message}")
                 }
-                Result.Loading -> Result.Loading
+                else -> {
+                    Log.d("MovimientosCreditosViewModel", "Estado inesperado")
+                }
             }
-            _isLoading.value = false // Finalizar la carga
+            _isLoading.value = false
         }
+    }
+
+    /**
+     * Limpia los datos de movimientos y errores.
+     */
+    fun clearMovimientos() {
+        _movimientosData.value = null
+        _error.value = null
+        _isLoading.value = false
     }
 }

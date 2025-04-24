@@ -43,12 +43,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.oriencoop_score.navigation.Pantalla
 import com.example.oriencoop_score.R
+import com.example.oriencoop_score.api.NetworkModule
 import com.example.oriencoop_score.utility.Result
-import com.example.oriencoop_score.api.ManageMindicatorsApi
 import com.example.oriencoop_score.repository.MindicatorsRepository
 import com.example.oriencoop_score.ui.theme.AppTheme
 import com.example.oriencoop_score.view.mis_productos.ProductButton
 import com.example.oriencoop_score.view_model.CuentaCapViewModel
+import retrofit2.Retrofit
 
 // *****Saldo que se muestra*****
 @Composable
@@ -302,10 +303,8 @@ fun BottomBar(navController: NavController, currentRoute: String) {
 fun MindicatorTest() {
     // Observe the LiveData as Compose state
 
-    val mindicatorsRepository = MindicatorsRepository(ManageMindicatorsApi.mindicators) // You might need to adjust constructor if it has dependencies
-    val mindicator: MindicatorsViewModel = viewModel {  // Using the simple viewModel() overload
-        MindicatorsViewModel(mindicatorsRepository)
-    }
+    //val mindicatorsRepository = MindicatorsRepository(NetworkModule.mindicatorsService()) // You might need to adjust constructor if it has dependencies
+    val mindicator: MindicatorsViewModel = hiltViewModel()
 
     val indicadoresState by mindicator.indicadores.collectAsState()
     val isLoading by mindicator.isLoading.collectAsState()

@@ -2,7 +2,6 @@ package com.example.oriencoop_score.view_model
 
 import com.example.oriencoop_score.utility.SessionManager
 import com.example.oriencoop_score.model.MisProductosResponse
-import com.example.oriencoop_score.repository.MisProductosRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every

@@ -1,5 +1,7 @@
 package com.example.oriencoop_score.model
 
+import com.google.gson.annotations.SerializedName
+
 data class Movimiento(
     val CUENTA: Long,
     val FECHAPAGO: String,
@@ -32,18 +34,17 @@ data class MovimientosAhorroResponse(
 )
 
 
-
 data class MovimientosCreditos(
-    val FECHA: String,
-    val MONTO: String,
-    val NOMBRE: String,
-    val NROCUENTA: Long,
-    val SUCURSAL: String
+    @SerializedName("fecha") val fecha: String,
+    @SerializedName("fechahora") val fechaHora: String,
+    @SerializedName("identificador") val identificador: Int,
+    @SerializedName("montomovimiento") val montoMovimiento: Double,
+    @SerializedName("rut") val rut: Int,
+    @SerializedName("sucursal") val sucursal: String,
+    @SerializedName("tipo") val tipo: String,
+    @SerializedName("usuario") val usuario: String
 )
 
-data class MovimientosCreditosResponse(
-    val movimientos_creditos: List<MovimientosCreditos>
-)
 
 
 

@@ -37,6 +37,7 @@ import androidx.navigation.NavController
 import com.example.oriencoop_score.ui.theme.AppTheme // Assuming AppTheme is needed here for icon color
 import com.example.oriencoop_score.view_model.SucursalesViewModel
 import com.example.oriencoop_score.utility.Result // Assuming Result is needed here
+import com.example.oriencoop_score.view.pantalla_principal.BottomBar
 
 // Import the composables and constants from the new file
 // If in the same package, direct use is possible, but explicit import is clearer sometimes
@@ -81,13 +82,10 @@ fun SucursalesScreen(
             )
         },
         bottomBar = {
-            // Assuming you have a BottomBar composable, consistent with the image.
-            // Make sure BottomBar is defined and imported if not in this file
-            Box(modifier = Modifier.padding(bottom = 16.dp)) { // Add padding around the bottom bar
-                // Replace with your actual BottomBar composable
-                // BottomBar(navController, currentRoute = navController.currentDestination?.route ?: "")
-                Text("BottomBar Placeholder", modifier = Modifier.align(Alignment.Center)) // Placeholder
-            }
+            BottomBar(
+                navController = navController,
+                currentRoute = navController.currentDestination?.route ?: ""
+            )
         }
     ) { paddingValues ->
 
@@ -120,7 +118,7 @@ fun SucursalesScreen(
                             modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.spacedBy(4.dp) // Add space between region items
                         ) {
-                            items(regions, key = { it.nombreRegion ?: DEFAULT_REGION_NAME_CONST }) { region -> // Use const from new file
+                            items(regions, key = { it.nombreRegion }) { region -> // Use const from new file
                                 val isRegionExpanded = expandedRegions.contains(region.nombreRegion)
                                 ExpandableRegionItem( // Call the composable from the other file
                                     region = region,

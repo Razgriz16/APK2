@@ -7,10 +7,11 @@ import kotlinx.coroutines.withContext
 import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.api.MindicatorInterface
 import com.example.oriencoop_score.model.Indicador
+import javax.inject.Inject
+import javax.inject.Singleton
 
-
-class MindicatorsRepository (private val mindicatorsApi: MindicatorInterface){
-
+@Singleton
+class MindicatorsRepository @Inject constructor(private val mindicatorsApi: MindicatorInterface){
     suspend fun getIndicadores(): Result<Indicador> {
         return withContext(Dispatchers.IO) {
             try {

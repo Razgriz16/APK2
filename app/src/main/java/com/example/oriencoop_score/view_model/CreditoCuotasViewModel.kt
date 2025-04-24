@@ -3,10 +3,10 @@ package com.example.oriencoop_score.view_model
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.oriencoop_score.model.ApiResponse
 import com.example.oriencoop_score.model.CreditoCuotas
 import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.utility.SessionManager
-import com.example.oriencoop_score.model.CreditoCuotasResponse
 import com.example.oriencoop_score.repository.CreditoCuotasRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,8 +23,8 @@ class CreditoCuotasViewModel @Inject constructor(
 ) : ViewModel() {
 
     // Estado para los datos de las cuotas de crédito
-    private val _creditoCuotasData = MutableStateFlow<CreditoCuotasResponse?>(null)
-    val creditoCuotasData: StateFlow<CreditoCuotasResponse?> = _creditoCuotasData.asStateFlow()
+    private val _creditoCuotasData = MutableStateFlow<ApiResponse<CreditoCuotas>?>(null)
+    val creditoCuotasData: StateFlow<ApiResponse<CreditoCuotas>?> = _creditoCuotasData.asStateFlow()
 
     // Estado de error
     private val _error = MutableStateFlow<String?>(null)
@@ -58,7 +58,7 @@ class CreditoCuotasViewModel @Inject constructor(
             _isLoading.value = true
             Log.d("CreditoCuotasViewModel", "Iniciando obtención de datos para cédula: $cedula")
 
-            when (val result = repository.getCreditoCuotas(cedula)) {
+            when (val result = repository.fetchProducto(cedula)) {
                 is Result.Success -> {
                     _creditoCuotasData.value = result.data
                     _error.value = null
@@ -82,11 +82,15 @@ class CreditoCuotasViewModel @Inject constructor(
      * @param cuota La cuota seleccionada.
      */
     fun selectCuota(cuota: CreditoCuotas) {
-        if (_cuentaSeleccionada.value?.credito == cuota.credito) {
-            _cuentaSeleccionada.value = null
-        } else {
+        Log.d("CreditoCuotasViewModel", "Seleccionando cuota: ${cuota.credito}")
+        if (_cuentaSeleccionada.value?.credito != cuota.credito) {
             _cuentaSeleccionada.value = cuota
         }
+    }
+
+    fun clearSelection() {
+        Log.d("CreditoCuotasViewModel", "Deseleccionando cuota")
+        _cuentaSeleccionada.value = null
     }
 
     /**

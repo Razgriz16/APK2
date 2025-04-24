@@ -51,7 +51,7 @@ import com.example.oriencoop_score.view.pantalla_principal.BottomBar
 import com.example.oriencoop_score.view_model.CuentaAhorroViewModel
 import com.example.oriencoop_score.view_model.MovimientosAhorroViewModel
 import kotlinx.coroutines.launch
-
+/*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CuentaAhorro(
@@ -279,3 +279,4 @@ fun AllMovimientosDialog(
         }
     }
 }
+*/

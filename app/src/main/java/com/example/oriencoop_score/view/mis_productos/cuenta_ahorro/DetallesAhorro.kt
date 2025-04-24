@@ -35,7 +35,7 @@ import com.example.oriencoop_score.model.CuentaAhorro
 import com.example.oriencoop_score.ui.theme.AppTheme
 import com.example.oriencoop_score.R
 
-
+/*
 @Composable
 fun CuentaAhorroItem(cuenta: CuentaAhorro, isSelected: Boolean, onClick: () -> Unit) {
     Card(
@@ -101,7 +101,7 @@ fun DetallesAhorroScreen(cuenta: CuentaAhorro) {
             DetailRow(label = "Sucursal:", value = cuenta.SUCURSAL)
         }
     }
-}
+}*/
 
 // mueve los nombres y los labes a los etremos
 @Composable

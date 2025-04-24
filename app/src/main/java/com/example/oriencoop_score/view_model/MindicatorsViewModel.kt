@@ -6,12 +6,14 @@ import com.example.oriencoop_score.repository.MindicatorsRepository
 import kotlinx.coroutines.launch
 import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.model.Indicador
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
-
-class MindicatorsViewModel (private val repository: MindicatorsRepository) : ViewModel() {
+@HiltViewModel
+class MindicatorsViewModel @Inject constructor(private val repository: MindicatorsRepository) : ViewModel() {
 
 
     private val _indicadores = MutableStateFlow<Result<Indicador>>(Result.Loading) // Inicializa con un estado inicial
