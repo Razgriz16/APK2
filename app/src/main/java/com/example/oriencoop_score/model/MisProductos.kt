@@ -2,11 +2,6 @@ package com.example.oriencoop_score.model
 
 import com.google.gson.annotations.SerializedName
 
-data class ApiResponse<T>(
-    val count: Int,
-    val data: List<T>,
-    val error_code: Int
-)
 
 data class CuentaCapResponse(
     val FECHAAPERTURA: String,
@@ -17,12 +12,12 @@ data class CuentaCapResponse(
 
 /*
 data class CuentaAhorro(
-    val TIPOCUENTA: String,
-    val SALDODISPONIBLE: String,
-    val SALDOCONTABLE: String,
-    val SUCURSAL: String,
-    val FECHAAPERTURA: String,
-    val NROCUENTA: Long
+    val TIPOCUENTA: String, // = nombre_producto
+    val SALDODISPONIBLE: String,  // = saldo_disponible
+    val SALDOCONTABLE: String,  // = saldo_contable
+    val SUCURSAL: String,   // = saldo_disponible
+    val FECHAAPERTURA: String,  // = fecha_apertura
+    val NROCUENTA: Long // = función número de cuenta creada del viewmodel
 )
 
 data class CuentaAhorroResponse(
@@ -49,7 +44,7 @@ data class CuentaAhorro(
     @SerializedName("fechaactivacion") val fechaActivacion: String? = null,
     @SerializedName("saldocontable") val saldoContable: Double,
     @SerializedName("saldodisponible") val saldoDisponible: Double,
-    @SerializedName("fechaapertura") val fechaApertura: String
+    @SerializedName("trunc(cuentaahorro.fechaapertura)") val fechaApertura: String? = null
 )
 
 data class CreditoCuotas(

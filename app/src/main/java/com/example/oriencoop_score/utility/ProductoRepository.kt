@@ -1,6 +1,12 @@
 package com.example.oriencoop_score.utility
 
-import com.example.oriencoop_score.model.ApiResponse
+
+
+data class ApiResponse<T>(
+    val count: Int,
+    val data: List<T>,
+    val error_code: Int
+)
 
 
 interface ProductoRepository<T> {

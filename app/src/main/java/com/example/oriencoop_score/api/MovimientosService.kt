@@ -1,11 +1,11 @@
 package com.example.oriencoop_score.api
 
-import com.example.oriencoop_score.model.ApiResponse
 import com.example.oriencoop_score.model.MovimientosAhorroResponse
 import com.example.oriencoop_score.model.MovimientosCreditos
 import com.example.oriencoop_score.model.MovimientosLccResponse
 import com.example.oriencoop_score.model.MovimientosLcrResponse
 import com.example.oriencoop_score.model.MovimientosResponse
+import com.example.oriencoop_score.utility.ApiResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -24,7 +24,14 @@ interface MovimientosService {
         @Header("Authorization") token: String,
         @Path("rut") rut: String
     ): Response<MovimientosAhorroResponse>
-
+/*
+    @GET("cuenta-ahorro/movimientos")
+    suspend fun getMovimientosAhorro(
+        @Query("codigo_cuenta") codigo_cuenta: Long,
+        @Query("fecha_inicio") fecha_inicio: Long,
+        @Query("fecha_fin") fecha_fin: Long
+    ): Response<MovimientosAhorroResponse>
+*/
     @GET("creditos/movimientos")
     suspend fun getMovimientosCreditos(
         @Query("credito") credito: Long

@@ -3,11 +3,10 @@ package com.example.oriencoop_score.repository
 import android.util.Log
 import com.example.oriencoop_score.api.MisProductosCredito
 import com.example.oriencoop_score.api.MisProductosService
-import com.example.oriencoop_score.model.ApiResponse
 import com.example.oriencoop_score.model.CreditoCuotas
 import com.example.oriencoop_score.utility.ProductoRepository
 import com.example.oriencoop_score.utility.Result
-import dagger.Provides
+import com.example.oriencoop_score.utility.ApiResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException

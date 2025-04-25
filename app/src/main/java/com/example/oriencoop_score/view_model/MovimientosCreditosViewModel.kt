@@ -3,9 +3,9 @@ package com.example.oriencoop_score.view_model
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.oriencoop_score.model.ApiResponse
 import com.example.oriencoop_score.model.MovimientosCreditos
 import com.example.oriencoop_score.repository.MovimientosCreditosRepository
+import com.example.oriencoop_score.utility.ApiResponse
 import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.utility.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -54,14 +54,14 @@ class MovimientosCreditosViewModel @Inject constructor(
             when (val result = repository.getMovimientosCreditos(numeroCuenta)) {
                 is Result.Success -> {
                     // Filtrar movimientos por número de cuenta
-                    val movimientosFiltrados = result.data.data
+                    val movimientosFiltrados = result.data
                     _movimientosData.value = ApiResponse<MovimientosCreditos>(
-                        count = movimientosFiltrados.size,
-                        data = movimientosFiltrados,
-                        error_code = result.data.error_code,
+                        count = movimientosFiltrados.count,
+                        data = movimientosFiltrados.data,
+                        error_code = movimientosFiltrados.error_code,
                     )
                     _error.value = null
-                    Log.d("MovimientosCreditosViewModel", "Movimientos obtenidos: ${movimientosFiltrados.size} movimientos")
+                    Log.d("MovimientosCreditosViewModel", "Movimientos obtenidos: ${movimientosFiltrados.count} movimientos")
                 }
                 is Result.Error -> {
                     _error.value = result.exception.message ?: "Error desconocido"

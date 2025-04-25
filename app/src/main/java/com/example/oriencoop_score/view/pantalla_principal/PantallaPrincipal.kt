@@ -91,10 +91,7 @@ fun PantallaPrincipal(
                 )
             },
             bottomBar = {
-                Box(
-                    modifier = Modifier
-                        .padding(bottom = 16.dp)
-                ) {
+                Box{
                     BottomBar(navController, currentRoute = navController.currentDestination?.route ?: "")
                 }
             },

@@ -3,9 +3,9 @@ package com.example.oriencoop_score.view_model
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.oriencoop_score.model.ApiResponse
 import com.example.oriencoop_score.model.CuentaAhorro
 import com.example.oriencoop_score.repository.CuentaAhorroRepository
+import com.example.oriencoop_score.utility.ApiResponse
 import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.utility.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -59,9 +60,15 @@ class CuentaAhorroViewModel @Inject constructor(
 
             when (val result = repository.fetchProducto(rut)) {
                 is Result.Success -> {
-                    _cuentaAhorroData.value = result.data
+                    // Mapear las cuentas para incluir el número de cuenta formateado
+                    val formattedCuentas = result.data.copy(
+                        data = result.data.data.map { cuenta ->
+                            cuenta.copy() // Creamos una copia para mantener inmutabilidad
+                        }
+                    )
+                    _cuentaAhorroData.value = formattedCuentas
                     _error.value = null
-                    Log.d("CuentaAhorroViewModel", "Datos obtenidos: ${result.data.data.size} cuentas")
+                    Log.d("CuentaAhorroViewModel", "Datos obtenidos: ${formattedCuentas.data.size} cuentas")
                 }
                 is Result.Error -> {
                     _error.value = result.exception.message ?: "Error desconocido"
@@ -73,6 +80,22 @@ class CuentaAhorroViewModel @Inject constructor(
             }
             _isLoading.value = false
         }
+    }
+
+    /**
+     * Formatea el número de cuenta según el patrón: 00codigosistema + 000codigosucursal + 0000000numerocuenta + 0digitocuenta
+     *
+     * @param cuenta La cuenta de ahorro.
+     * @return El número de cuenta formateado como String de 13 dígitos.
+     */
+    private fun formatNumeroCuenta(cuenta: CuentaAhorro): String {
+        return String.format(Locale.ROOT,
+            "%02d%03d%07d%01d",
+            cuenta.codigoSistema,
+            cuenta.codigoSucursal,
+            cuenta.numeroCuenta,
+            cuenta.digitoCuenta
+        )
     }
 
     /**

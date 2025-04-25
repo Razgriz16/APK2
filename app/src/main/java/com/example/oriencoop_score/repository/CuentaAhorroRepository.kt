@@ -3,7 +3,7 @@ package com.example.oriencoop_score.repository
 import android.util.Log
 import com.example.oriencoop_score.api.MisProductosAhorro
 import com.example.oriencoop_score.api.MisProductosService
-import com.example.oriencoop_score.model.ApiResponse
+import com.example.oriencoop_score.utility.ApiResponse
 import com.example.oriencoop_score.model.CuentaAhorro
 import com.example.oriencoop_score.utility.ProductoRepository
 import com.example.oriencoop_score.utility.Result

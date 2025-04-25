@@ -9,11 +9,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -51,12 +49,12 @@ import com.example.oriencoop_score.view.pantalla_principal.BottomBar
 import com.example.oriencoop_score.view_model.CuentaAhorroViewModel
 import com.example.oriencoop_score.view_model.MovimientosAhorroViewModel
 import kotlinx.coroutines.launch
-/*
+import java.util.Locale
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CuentaAhorro(
     navController: NavController,
-
 ) {
     val cuentaAhorroViewModel: CuentaAhorroViewModel = hiltViewModel()
     val movimientosAhorroViewModel: MovimientosAhorroViewModel = hiltViewModel()
@@ -66,11 +64,10 @@ fun CuentaAhorro(
     val error by cuentaAhorroViewModel.error.collectAsState()
     val cuentaSeleccionada by cuentaAhorroViewModel.cuentaSeleccionada.collectAsState()
 
-    // State to control the expanded Movimientos dialog
-    var showAllMovimientosDialog by remember { mutableStateOf(false) }
-    var selectedAccountForDialog by remember { mutableStateOf<Long?>(null) }
 
-    // Estado de scroll para la LazyColumn
+    var showAllMovimientosDialog by remember { mutableStateOf(false) }
+    var selectedAccountForDialog by remember { mutableStateOf<String?>(null) } // Changed to String for numeroCuentaFormateado
+
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -98,7 +95,7 @@ fun CuentaAhorro(
             )
         },
         bottomBar = {
-            Box(modifier = Modifier.padding(bottom = 16.dp)) {
+            Box {
                 BottomBar(navController, currentRoute = navController.currentDestination?.route ?: "")
             }
         }
@@ -119,7 +116,6 @@ fun CuentaAhorro(
             }
 
             else -> {
-                // Usamos LazyColumn para que toda la vista sea scrolleable
                 LazyColumn(
                     state = listState,
                     modifier = Modifier
@@ -130,18 +126,17 @@ fun CuentaAhorro(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     cuentaAhorroData?.let { data ->
-                        itemsIndexed(data.ahorro) { index, cuenta ->
-                            val isSelected = cuentaSeleccionada?.NROCUENTA == cuenta.NROCUENTA
+                        itemsIndexed(data.data) { index, cuenta ->
+                            val numeroCuentaFormateado = String.format(Locale.ROOT, "%02d%03d%07d%01d", cuenta.codigoSistema, cuenta.codigoSucursal, cuenta.numeroCuenta, cuenta.digitoCuenta)
+                            val isSelected = cuentaSeleccionada?.numeroCuenta == cuenta.numeroCuenta
                             Column {
-                                CuentaAhorroItem(cuenta, isSelected) {
+                                CuentaAhorroItem(numeroCuentaFormateado, isSelected) {
                                     cuentaAhorroViewModel.selectCuenta(cuenta)
-                                    // Animamos el scroll para que el item seleccionado quede en la parte superior
                                     coroutineScope.launch {
                                         listState.animateScrollToItem(index)
                                     }
                                 }
                                 if (isSelected) {
-                                    // Se muestra la información sin envolver DetallesAhorroScreen en una caja
                                     DetallesAhorroScreen(cuenta)
                                     Row(
                                         modifier = Modifier
@@ -156,7 +151,7 @@ fun CuentaAhorro(
                                             textAlign = TextAlign.Center
                                         )
                                         IconButton(onClick = {
-                                            selectedAccountForDialog = cuenta.NROCUENTA
+                                            selectedAccountForDialog = numeroCuentaFormateado
                                             showAllMovimientosDialog = true
                                         }) {
                                             Icon(
@@ -165,14 +160,13 @@ fun CuentaAhorro(
                                                 tint = AppTheme.colors.azul
                                             )
                                         }
-                                    }
-                                    // Como MovimientosAhorroScreen contiene scroll, lo envolvemos en un Box con tamaño fijo
+                                    }/*
                                     Box(modifier = Modifier.height(300.dp)) {
                                         MovimientosAhorroScreen(
                                             movimientosAhorroViewModel,
-                                            selectedAccount = cuenta.NROCUENTA
+                                            selectedAccount = cuenta.numeroCuentaFormateado // Changed to String
                                         )
-                                    }
+                                    }*/
                                 }
                             }
                         }
@@ -181,35 +175,31 @@ fun CuentaAhorro(
             }
         }
 
-        // Diálogo para ver todos los movimientos
         if (showAllMovimientosDialog) {
             AllMovimientosDialog(
                 movimientosAhorroViewModel = movimientosAhorroViewModel,
-                selectedAccount = selectedAccountForDialog ?: 0,
+                selectedAccount = selectedAccountForDialog ?: "",
                 onDismiss = { showAllMovimientosDialog = false }
             )
         }
     }
 }
 
-
 @Composable
 fun AllMovimientosDialog(
     movimientosAhorroViewModel: MovimientosAhorroViewModel,
-    selectedAccount: Long,
+    selectedAccount: String, // Changed to String for numeroCuentaFormateado
     onDismiss: () -> Unit
 ) {
     val movimientos by movimientosAhorroViewModel.movimientos.collectAsState()
     val isLoading by movimientosAhorroViewModel.isLoading.collectAsState()
     val error by movimientosAhorroViewModel.error.collectAsState()
 
-    val filteredMovimientos = movimientos.filter { it.NROCUENTA == selectedAccount }
+    val filteredMovimientos = movimientos.filter { it.NROCUENTA == selectedAccount.toLong() } // Assuming NROCUENTA is still Long in Movimientos
 
     Dialog(
         onDismissRequest = { onDismiss() },
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false // Importante para diálogo a pantalla completa
-        )
+        properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Surface(
             modifier = Modifier
@@ -222,7 +212,7 @@ fun AllMovimientosDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
-                    horizontalArrangement = Arrangement.Start, // Align items to the start
+                    horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = { onDismiss() }) {
@@ -236,12 +226,11 @@ fun AllMovimientosDialog(
                         text = "Todos los Movimientos",
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier
-                            .weight(1f) // Take up remaining space
-                            .fillMaxWidth(), // Ensure it fills the weight
+                            .weight(1f)
+                            .fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
-                    // Add an invisible spacer to balance the row.
-                    Spacer(modifier = Modifier.width(48.dp)) // Equal to the IconButton size
+                    Spacer(modifier = Modifier.width(48.dp))
                 }
 
                 HorizontalDivider()
@@ -267,11 +256,11 @@ fun AllMovimientosDialog(
                             modifier = Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(horizontal = 0.dp, vertical = 8.dp),
                             verticalArrangement = Arrangement.spacedBy(0.dp)
-                        ) {
+                        ) {/*
                             items(filteredMovimientos) { movimiento ->
                                 MovimientoItem(movimiento = movimiento)
                                 HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
-                            }
+                            }*/
                         }
                     }
                 }
@@ -279,4 +268,3 @@ fun AllMovimientosDialog(
         }
     }
 }
-*/

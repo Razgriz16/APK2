@@ -3,7 +3,7 @@ package com.example.oriencoop_score.view_model
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.oriencoop_score.model.ApiResponse
+import com.example.oriencoop_score.utility.ApiResponse
 import com.example.oriencoop_score.model.CreditoCuotas
 import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.utility.SessionManager

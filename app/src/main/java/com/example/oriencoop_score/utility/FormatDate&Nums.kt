@@ -25,3 +25,8 @@ fun formatNumberWithDots2(number: Double): String {
     val formatter = NumberFormat.getInstance(Locale.US) // Or any locale you want
     return formatter.format(number).replace(",", ".")
 }
+
+fun formatCuenta(numeroCuenta: String): String {
+    return "${numeroCuenta.substring(0, 2)}-${numeroCuenta.substring(2, 5)}-${numeroCuenta.substring(5, 12)}-${numeroCuenta[12]}"
+}
+
