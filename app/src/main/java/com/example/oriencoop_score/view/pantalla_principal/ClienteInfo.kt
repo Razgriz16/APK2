@@ -36,7 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.oriencoop_score.navigation.Pantalla
 import com.example.oriencoop_score.ui.theme.AppTheme
-import com.example.oriencoop_score.utility.SessionViewModel
+import com.example.oriencoop_score.view_model.SessionViewModel
 import com.example.oriencoop_score.view_model.ClienteViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

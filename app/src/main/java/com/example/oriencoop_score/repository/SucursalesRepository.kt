@@ -34,14 +34,15 @@ class SucursalesRepository @Inject constructor(private val sucursalesService: Su
      * @return Un [Result] que contiene [Result.Success] con [List<Ciudades>]
      *         o [Result.Error] con la [Throwable] correspondiente.
      */
-    suspend fun getCiudades(): Result<List<Ciudades>> {
+    suspend fun getCiudades(token: String): Result<List<Ciudades>> {
         val functionName = "getCiudades"
+        val tokenBearer= "Bearer $token"
         Log.d(TAG, "$functionName: Iniciando llamada a la API.")
         // Ejecuta el bloque en el contexto de Dispatchers.IO.
         return withContext(Dispatchers.IO) {
             try {
                 // Realiza la llamada a la API.
-                val response = sucursalesService.getCiudades()
+                val response = sucursalesService.getCiudades(tokenBearer)
 
                 // Verifica si la llamada HTTP fue exitosa (código 2xx).
                 if (response.isSuccessful) {
@@ -87,12 +88,13 @@ class SucursalesRepository @Inject constructor(private val sucursalesService: Su
      * @return Un [Result] que contiene [Result.Success] con [List<Comunas>]
      *         o [Result.Error] con la [Throwable] correspondiente.
      */
-    suspend fun getComunas(): Result<List<Comunas>> {
+    suspend fun getComunas(token: String): Result<List<Comunas>> {
         val functionName = "getComunas"
+        val tokenBearer= "Bearer $token"
         Log.d(TAG, "$functionName: Iniciando llamada a la API.")
         return withContext(Dispatchers.IO) {
             try {
-                val response = sucursalesService.getComunas()
+                val response = sucursalesService.getComunas(tokenBearer)
 
                 if (response.isSuccessful) {
                     val body = response.body()
@@ -131,12 +133,13 @@ class SucursalesRepository @Inject constructor(private val sucursalesService: Su
      * @return Un [Result] que contiene [Result.Success] con [List<Sucursales>]
      *         o [Result.Error] con la [Throwable] correspondiente.
      */
-    suspend fun getSucursales(): Result<List<Sucursales>> {
+    suspend fun getSucursales(token: String): Result<List<Sucursales>> {
         val functionName = "getSucursales"
+        val tokenBearer= "Bearer $token"
         Log.d(TAG, "$functionName: Iniciando llamada a la API.")
         return withContext(Dispatchers.IO) {
             try {
-                val response = sucursalesService.getSucursales()
+                val response = sucursalesService.getSucursales(tokenBearer)
 
                 if (response.isSuccessful) {
                     val body = response.body()

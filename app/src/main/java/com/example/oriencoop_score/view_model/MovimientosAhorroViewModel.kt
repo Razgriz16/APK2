@@ -4,78 +4,84 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.oriencoop_score.utility.Result
-import com.example.oriencoop_score.utility.SessionManager
+import com.example.oriencoop_score.auth.SessionManager
 import com.example.oriencoop_score.model.MovimientosAhorro
 import com.example.oriencoop_score.repository.MovimientosAhorroRepository
+import com.example.oriencoop_score.model.ApiResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MovimientosAhorroViewModel @Inject constructor(
-    private val repository:MovimientosAhorroRepository,
+    private val repository: MovimientosAhorroRepository,
     private val sessionManager: SessionManager
 ) : ViewModel() {
 
-    private val _movimientos = MutableStateFlow<List<MovimientosAhorro>>(emptyList())
-    val movimientos: StateFlow<List<MovimientosAhorro>> = _movimientos
+    // Estado para los datos de movimientos de ahorro
+    private val _movimientosData = MutableStateFlow<ApiResponse<MovimientosAhorro>?>(null)
+    val movimientosData: StateFlow<ApiResponse<MovimientosAhorro>?> = _movimientosData.asStateFlow()
 
     // Estado de error
     private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
+    val error: StateFlow<String?> = _error.asStateFlow()
 
     // Estado de carga
     private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    init {
-        obtenerMovimientosAhorro()
-    }
-    fun cargarMovimientos(nroCuenta: Long) {
-        viewModelScope.launch {
-            //Reseteamos estados
-            _isLoading.value = true
-            _error.value = null
-            _movimientos.value = emptyList()
-            try {
-                //Simulamos la carga de datos. Sustituir por la llamada real al repositorio/api
-                val movimientosDeCuenta = movimientos.value.get(nroCuenta.toInt()) // Implementa esta función
-                _movimientos.value = listOf(movimientosDeCuenta)
-                _isLoading.value = false // Éxito
-            } catch (e: Exception) {
-                _error.value = "Error al cargar movimientos: ${e.message}"
-                _isLoading.value = false
-            }
-        }
-    }
-
-    fun obtenerMovimientosAhorro() {
-        val token = sessionManager.getAccessToken().toString()
+    /**
+     * Carga los movimientos de ahorro para un número de cuenta específico.
+     *
+     * @param numeroCuenta El número de cuenta (ahorro) para obtener los movimientos.
+     * @param cantidad Cantidad de movimientos a obtener (por defecto 20).
+     */
+    fun fetchMovimientosAhorro(numeroCuenta: Int, cantidad: Int = 20) {
         val rut = sessionManager.getUserRut().toString()
-        if (token.isBlank() || rut.isBlank()){ //Comprueba si son blancos
-            Log.e("MovimientosAhorroViewModel", "Token o Rut no pueden estar vacíos")
-            _error.value = "Token o Rut no pueden estar vacíos"
+        val accessToken = sessionManager.getAccessToken().toString()
+        if (rut.isBlank()) {
+            _error.value = "RUT no disponible"
+            Log.e("MovimientosAhorroViewModel", "RUT no disponible")
             return
         }
+
         viewModelScope.launch {
-            Log.d("MovimientosAhorroViewModel", "Llamando función obtenerMovimientos")
-            _isLoading.value = true // Indicar que se está cargando
-            when (val result = repository.getMovimientosAhorro(token, rut)) {
+            _isLoading.value = true
+            _error.value = null
+            Log.d("MovimientosAhorroViewModel", "Iniciando obtención de movimientos para cuenta: $numeroCuenta, RUT: $rut")
+
+            when (val result = repository.getMovimientosAhorro(numeroCuenta, cantidad, accessToken)) {
                 is Result.Success -> {
-                    Log.d("MovimientosAhorroViewModel", "Llamada exitosa. BODY: "+result.data)
-                    _movimientos.value = result.data.movimientos_ahorro
+                    // Asignar los movimientos obtenidos
+                    _movimientosData.value = ApiResponse<MovimientosAhorro>(
+                        count = result.data.count,
+                        data = result.data.data,
+                        error_code = result.data.error_code,
+                    )
                     _error.value = null
+                    Log.d("MovimientosAhorroViewModel", "Movimientos obtenidos: ${result.data} movimientos")
                 }
                 is Result.Error -> {
-                    Log.e("MovimientosAhorroViewModel", "Llamada fallida. Error: ${result.exception.message}")
-                    _error.value = result.exception.message // Guardar el mensaje de error
-                    _movimientos.value = emptyList() // Limpiar los productos en caso de error
+                    _error.value = result.exception.message ?: "Error desconocido"
+                    Log.e("MovimientosAhorroViewModel", "Error al obtener movimientos: ${result.exception.message}")
                 }
-                Result.Loading -> Result.Loading
+                else -> {
+                    Log.d("MovimientosAhorroViewModel", "Estado inesperado")
+                }
             }
-            _isLoading.value = false // Finalizar la carga
+            _isLoading.value = false
         }
+    }
+
+    /**
+     * Limpia los datos de movimientos y errores.
+     */
+    fun clearMovimientos() {
+        _movimientosData.value = null
+        _error.value = null
+        _isLoading.value = false
     }
 }

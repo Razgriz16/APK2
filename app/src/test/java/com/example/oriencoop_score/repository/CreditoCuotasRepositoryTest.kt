@@ -2,7 +2,7 @@ package com.example.oriencoop_score.repository
 
 import android.util.Log
 import com.example.oriencoop_score.utility.Result
-import com.example.oriencoop_score.utility.SessionManager
+import com.example.oriencoop_score.auth.SessionManager
 import com.example.oriencoop_score.model.CreditoCuota
 import com.example.oriencoop_score.model.CreditoCuotasResponse
 import io.mockk.MockKAnnotations

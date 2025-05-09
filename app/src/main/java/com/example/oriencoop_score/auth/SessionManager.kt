@@ -1,18 +1,18 @@
-package com.example.oriencoop_score.utility
+package com.example.oriencoop_score.auth
 
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.core.content.edit
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
-import javax.inject.Singleton
-import androidx.core.content.edit
 import com.example.oriencoop_score.model.Usuario
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class SessionManager @Inject constructor(@ApplicationContext private val context: Context) {
@@ -41,6 +41,7 @@ class SessionManager @Inject constructor(@ApplicationContext private val context
     data class SessionState(
         val isLoggedIn: Boolean,
         val accessToken: String?,
+        val refreshToken: String?,
         val userName: String?,
         val userRut: Int,
         val nroCuenta: Long
@@ -50,6 +51,7 @@ class SessionManager @Inject constructor(@ApplicationContext private val context
         return SessionState(
             isLoggedIn = isLoggedIn(),
             accessToken = getAccessToken(),
+            refreshToken = getRefreshToken(),
             userName = getUserName(),
             userRut = getUserRut(),
             nroCuenta = getNroCuenta()
@@ -70,6 +72,7 @@ class SessionManager @Inject constructor(@ApplicationContext private val context
 
     fun clearSession() {
         sharedPreferences.edit() { clear() }
+
         _sessionState.value = getSessionState()
         Log.d("SessionManager", "Session cleared")
     }

@@ -11,7 +11,7 @@ import com.example.oriencoop_score.view.Login
 import com.example.oriencoop_score.view.mis_productos.MisProductos
 import com.example.oriencoop_score.view.mis_productos.credito_cuotas.CreditoCuotas
 import com.example.oriencoop_score.view.mis_productos.cuenta_ahorro.CuentaAhorro
-import com.example.oriencoop_score.view.mis_productos.cuenta_cap.CuentaCap
+import com.example.oriencoop_score.view.mis_productos.cuenta_csocial.CuentaCsocial
 import com.example.oriencoop_score.view.mis_productos.dap.Dap
 import com.example.oriencoop_score.view.mis_productos.lcc.Lcc
 import com.example.oriencoop_score.view.mis_productos.lcr.Lcr
@@ -34,9 +34,9 @@ fun Navigation() {
             PantallaPrincipal(navController = navController)
         }
 
-        composable(route = Pantalla.CuentaCap.route) {
+        composable(route = Pantalla.CuentaCsocial.route) {
 
-            CuentaCap(navController = navController) /*, viewModel = harryPotterViewModel*/
+            CuentaCsocial(navController = navController) /*, viewModel = harryPotterViewModel*/
         }
 
         composable(route = Pantalla.CuentaAhorro.route) {

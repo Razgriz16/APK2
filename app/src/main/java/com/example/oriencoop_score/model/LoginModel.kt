@@ -1,18 +1,11 @@
 package com.example.oriencoop_score.model
 import com.google.gson.annotations.SerializedName
 
-/* ***** Login entidad antiguo *****
-data class HiddenLoginRequest(val username: String, val password: String)
-data class HiddenLoginResponse(val message: String, val token: String)
-*/
-
-/* ***** Login clientes antiguo *****
-data class UserLoginRequest(val rut: String, val password: String)
-data class UserLoginResponse(val message: String, val rut: String)
-*/
-
-
-data class UserLoginRequest(val rut: String, val clave: String)
+// Modelo de solicitud de inicio de sesión
+data class UserLoginRequest(
+    @SerializedName("rut") val rut: String,
+    @SerializedName("clave") val clave: String
+)
 
 // Respuesta completa de la API
 data class AuthResponse(
@@ -33,4 +26,14 @@ data class AuthData(
 data class Usuario(
     @SerializedName("nombre") val nombre: String,
     @SerializedName("rut") val rut: Int
+)
+
+// Modelo de solicitud de cierre de sesión
+data class UserLogoutRequest(
+    @SerializedName("token") val token: String
+)
+
+// Respuesta de cierre de sesión
+data class UserLogoutResponse(
+    @SerializedName("message") val message: String
 )

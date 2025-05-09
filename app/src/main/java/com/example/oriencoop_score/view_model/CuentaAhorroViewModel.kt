@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.oriencoop_score.model.CuentaAhorro
 import com.example.oriencoop_score.repository.CuentaAhorroRepository
-import com.example.oriencoop_score.utility.ApiResponse
+import com.example.oriencoop_score.model.ApiResponse
 import com.example.oriencoop_score.utility.Result
-import com.example.oriencoop_score.utility.SessionManager
+import com.example.oriencoop_score.auth.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -47,7 +47,8 @@ class CuentaAhorroViewModel @Inject constructor(
      * Valida la cédula del usuario desde el sessionManager antes de realizar la llamada.
      */
     fun fetchCuentaAhorro() {
-        val rut = sessionManager.getUserRut().toString()
+        val rut = sessionManager.getUserRut().toString().toString()
+        val accessToken = sessionManager.getAccessToken().toString()
         if (rut.isBlank()) {
             _error.value = "Cédula no disponible"
             Log.e("CuentaAhorroViewModel", "Cédula no disponible")
@@ -58,7 +59,7 @@ class CuentaAhorroViewModel @Inject constructor(
             _isLoading.value = true
             Log.d("CuentaAhorroViewModel", "Iniciando obtención de datos para cédula: $rut")
 
-            when (val result = repository.fetchProducto(rut)) {
+            when (val result = repository.fetchProducto(rut, accessToken)) {
                 is Result.Success -> {
                     // Mapear las cuentas para incluir el número de cuenta formateado
                     val formattedCuentas = result.data.copy(

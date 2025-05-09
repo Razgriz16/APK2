@@ -6,7 +6,7 @@ import com.example.oriencoop_score.model.AddressData
 import com.example.oriencoop_score.model.UserData
 import com.example.oriencoop_score.repository.ClienteRepository
 import com.example.oriencoop_score.utility.Result
-import com.example.oriencoop_score.utility.SessionManager
+import com.example.oriencoop_score.auth.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

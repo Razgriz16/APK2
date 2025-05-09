@@ -1,17 +1,18 @@
 package com.example.oriencoop_score.repository
 
 import android.util.Log
-import com.example.oriencoop_score.api.MisProductosAhorro
+import com.example.oriencoop_score.di.MisProductosAhorro
 import com.example.oriencoop_score.api.MisProductosService
-import com.example.oriencoop_score.utility.ApiResponse
+import com.example.oriencoop_score.model.ApiResponse
 import com.example.oriencoop_score.model.CuentaAhorro
-import com.example.oriencoop_score.utility.ProductoRepository
+import com.example.oriencoop_score.model.ProductoRepository
 import com.example.oriencoop_score.utility.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
+
 @Singleton
 class CuentaAhorroRepository @Inject constructor(
     @MisProductosAhorro private val ahorroService: MisProductosService
@@ -30,12 +31,13 @@ class CuentaAhorroRepository @Inject constructor(
      * @return Un [Result] que contiene [Result.Success] con [ApiResponse<CuentaAhorro>]
      *         o [Result.Error] con la [Throwable] correspondiente.
      */
-    override suspend fun fetchProducto(rut: String): Result<ApiResponse<CuentaAhorro>> {
+    override suspend fun fetchProducto(rut: String, token: String?): Result<ApiResponse<CuentaAhorro>> {
         val functionName = "getCuentasAhorro"
+        val tokenBearer = "Bearer $token"
         Log.d(TAG, "$functionName: Iniciando llamada a la API para cédula: $rut")
         return withContext(Dispatchers.IO) {
             try {
-                val response = ahorroService.getAhorro(rut)
+                val response = ahorroService.getAhorro(rut, tokenBearer)
                 if (response.isSuccessful) {
                     val body = response.body()
                     if (body != null) {

@@ -2,37 +2,15 @@ package com.example.oriencoop_score.model
 
 import com.google.gson.annotations.SerializedName
 
-data class Movimiento(
-    val CUENTA: Long,
-    val FECHAPAGO: String,
-    val MONTO: String,
-    val NOMBREABRTRANSACCION: String,
-    val NOMBRETRANSACCION: String,
-    val ESCARGO: String
+data class MovimientosCsocial(
+    @SerializedName("cuenta") val cuenta: Long,
+    @SerializedName("escargo") val escargo: String,
+    @SerializedName("monto") val monto: Double,
+    @SerializedName("nombre") val nombre:String,
+    @SerializedName("nombreabreviado") val nombreabreviado:String,
+    @SerializedName("sucursal") val sucursal:String,
+    @SerializedName("fechapago") val fechapago: String
 )
-
-data class MovimientosResponse(
-    val movimientos: List<Movimiento>
-)
-
-
-
-data class MovimientosAhorro(
-    val MONTO: String,
-    val FECHAMOV: String,
-    val NOMBRETRANSAC: String,
-    val NOMBRETRANSACABRV: String,
-    val CARGOABONO: String,
-    val NOMBRESUCURSAL: String,
-    val NROCUENTA: Long
-
-
-)
-
-data class MovimientosAhorroResponse(
-    val movimientos_ahorro: List<MovimientosAhorro>
-)
-
 
 data class MovimientosCreditos(
     @SerializedName("fecha") val fecha: String,
@@ -45,8 +23,17 @@ data class MovimientosCreditos(
     @SerializedName("usuario") val usuario: String
 )
 
-
-
+data class MovimientosAhorro(
+    @SerializedName("correlativo") val correlativo: Int,
+    @SerializedName("fechaefectiva") val fechaEfectiva: String,
+    @SerializedName("identificador") val identificador: Int,
+    @SerializedName("monto") val monto: Double,
+    @SerializedName("nombre_transaccion") val nombreTransaccion: String,
+    @SerializedName("sucursal") val sucursal: String,
+    @SerializedName("sucursal_origen") val sucursalOrigen: String,
+    @SerializedName("tipo") val tipo: String,
+    @SerializedName("usuario") val usuario: String
+)
 
 data class MovimientosLcc(
     val NROCUENTA: Long,
@@ -66,15 +53,12 @@ data class MovimientosLccResponse(
 
 
 data class MovimientosLcr(
-    val DESCRIPCION: String,
-    val ESCARGOABONO: String,
-    val FECHACONTABLE: String,
-    val FECHAVENCIMIENTO: String,
-    val MONTO: String,
-    val NOMBREMOVIMIENTO: String,
-    val NUMERODOCUMENTO: String
+    @SerializedName("descripcion") val descripcion: String,
+    @SerializedName("escargoabono") val escargoabono: String,
+    @SerializedName("fechacontable") val fechacontable: String,
+    @SerializedName("fechavencimiento") val fechavencimiento: String,
+    @SerializedName("monto") val monto: Double,
+    @SerializedName("nombremovimiento") val nombremovimiento: String,
+    @SerializedName("numerodocumento") val numerodocumento: String
 )
 
-data class MovimientosLcrResponse(
-    val movimientos_lcr: List<MovimientosLcr>
-)

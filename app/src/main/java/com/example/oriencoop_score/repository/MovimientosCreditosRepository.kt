@@ -3,7 +3,7 @@ package com.example.oriencoop_score.repository
 import android.util.Log
 import com.example.oriencoop_score.api.MovimientosService
 import com.example.oriencoop_score.model.MovimientosCreditos
-import com.example.oriencoop_score.utility.ApiResponse
+import com.example.oriencoop_score.model.ApiResponse
 import com.example.oriencoop_score.utility.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,7 +13,7 @@ import javax.inject.Singleton
 
 @Singleton
 class MovimientosCreditosRepository @Inject constructor(
-    private val movimientosService: MovimientosService
+    /*@MisMovimientosCredito*/ val movimientosService: MovimientosService
 ) {
 
     // Define una etiqueta TAG constante para los logs de esta clase.

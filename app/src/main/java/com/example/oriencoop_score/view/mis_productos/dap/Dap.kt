@@ -38,19 +38,17 @@ import com.example.oriencoop_score.view.pantalla_principal.BottomBar
 import com.example.oriencoop_score.view_model.DapViewModel
 import kotlinx.coroutines.launch
 
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Dap(
     navController: NavController,
-
-    ) {
+) {
     val dapViewModel: DapViewModel = hiltViewModel()
     val dapData by dapViewModel.dapData.collectAsState()
     val isLoading by dapViewModel.isLoading.collectAsState()
     val error by dapViewModel.error.collectAsState()
-    val cuentaSeleccionada by dapViewModel.cuentaSeleccionada.collectAsState()
+    val dapSeleccionado by dapViewModel.cuentaSeleccionada.collectAsState()
 
     // Estado de scroll para la LazyColumn
     val listState = rememberLazyListState()
@@ -80,7 +78,7 @@ fun Dap(
             )
         },
         bottomBar = {
-            Box(modifier = Modifier.padding(bottom = 16.dp)) {
+            Box{
                 BottomBar(navController, currentRoute = navController.currentDestination?.route ?: "")
             }
         }
@@ -111,32 +109,28 @@ fun Dap(
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    itemsIndexed(dapData) { index, cuenta ->
-                        val isSelected =
-                            cuentaSeleccionada?.numeroDeposito == cuenta?.numeroDeposito
-                        Column {
-                            if (cuenta != null) {
-                                DapItem(cuenta, isSelected) {
-                                    dapViewModel.selectCuenta(cuenta)
+                    // Verificamos si hay datos en dapData y manejamos el caso de un solo Dap
+                    dapData?.data?.map { dap ->
+                        item {
+                            val isSelected = dapSeleccionado?.numeroDeposito == dap.numeroDeposito
+                            Column {
+                                DapItem(dap, isSelected) {
+                                    dapViewModel.selectDap(dap)
                                     // Animamos el scroll para que el item seleccionado quede en la parte superior
                                     coroutineScope.launch {
-                                        listState.animateScrollToItem(index)
-
+                                        listState.animateScrollToItem(0)
                                     }
                                 }
-                            }
-                            if (isSelected) {
-                                // Se muestra la información sin envolver DetallesAhorroScreen en una caja
-                                if (cuenta != null) {
-                                    DetallesDap(cuenta)
+                                if (isSelected) {
+                                    DetallesDap(dap)
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {}
                                 }
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ){}
                             }
                         }
                     }

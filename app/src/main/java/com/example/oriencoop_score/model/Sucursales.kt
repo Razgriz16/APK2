@@ -2,70 +2,64 @@ package com.example.oriencoop_score.model
 import com.google.gson.annotations.SerializedName
 
 data class Sucursales(
-    val agente: String?,
-    val codigociudad: Int,
-    val codigocomuna: Int,
-    val codigosucursal: Int,
-    val correo: String?,
-    val direccion: String?,
-    val estaactiva: String,
-    val horario: String?,
-    val nombre: String?,
-    val region: String,
-    val telefono: String?
+    @SerializedName("agente") val agente: String?,
+    @SerializedName("codigociudad") val codigociudad: Int,
+    @SerializedName("codigocomuna") val codigocomuna: Int,
+    @SerializedName("codigosucursal") val codigosucursal: Int,
+    @SerializedName("correo") val correo: String?,
+    @SerializedName("direccion") val direccion: String?,
+    @SerializedName("estaactiva") val estaactiva: String,
+    @SerializedName("horario") val horario: String?,
+    @SerializedName("nombre") val nombre: String?,
+    @SerializedName("region") val region: String,
+    @SerializedName("telefono") val telefono: String?
 )
 
 data class SucursalesResponse(
-    val data: List<Sucursales>
+    @SerializedName("data") val data: List<Sucursales>
 )
 
-
-
 data class Ciudades(
-    val activa: String,
-    val codigociudad: Int,
-    val nombre: String
+    @SerializedName("activa") val activa: String,
+    @SerializedName("codigociudad") val codigociudad: Int,
+    @SerializedName("nombre") val nombre: String
 )
 
 data class CiudadesResponse(
-    val data: List<Ciudades>,
-    val error_code: Float,
-    val error_message: String
+    @SerializedName("data") val data: List<Ciudades>,
+    @SerializedName("error_code") val error_code: Float,
+    @SerializedName("error_message") val error_message: String
 )
 
-
-
 data class Comunas(
-    val activa: String?,
-    val codigociudad: Int,
-    val codigocomuna: Int,
-    val codigosucursal: Int,
-    val nombre: String?,
-    val region: String
+    @SerializedName("activa") val activa: String?,
+    @SerializedName("codigociudad") val codigociudad: Int,
+    @SerializedName("codigocomuna") val codigocomuna: Int,
+    @SerializedName("codigosucursal") val codigosucursal: Int,
+    @SerializedName("nombre") val nombre: String?,
+    @SerializedName("region") val region: String
 )
 
 data class ComunasResponse(
-    val data: List<Comunas>,
-    val error_code: Float,
-    val error_message: String
+    @SerializedName("data") val data: List<Comunas>,
+    @SerializedName("error_code") val error_code: Float,
+    @SerializedName("error_message") val error_message: String
 )
-
-
 
 data class SucursalViewData(
-    val nombre: String,
-    val direccion: String,
-    val horario: String,
-    val telefono: String?, // Añadido por si es útil
-    val correo: String?   // Añadido por si es útil
+    @SerializedName("nombre") val nombre: String,
+    @SerializedName("direccion") val direccion: String,
+    @SerializedName("horario") val horario: String,
+    @SerializedName("telefono") val telefono: String?,
+    @SerializedName("correo") val correo: String?
 )
 
-data class ComunaViewData( // Usaremos Comuna como nivel intermedio
-    val nombreComuna: String,
-    val sucursales: List<SucursalViewData>
+data class ComunaViewData(
+    @SerializedName("nombreComuna") val nombreComuna: String,
+    @SerializedName("sucursales") val sucursales: List<SucursalViewData>
 )
 
 data class RegionViewData(
-    val nombreRegion: String,
-    val comunas: List<ComunaViewData>
+    @SerializedName("nombreRegion") val nombreRegion: String,
+    @SerializedName("comunas") val comunas: List<ComunaViewData>
 )

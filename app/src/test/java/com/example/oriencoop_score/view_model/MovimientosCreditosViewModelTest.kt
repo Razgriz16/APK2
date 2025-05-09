@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import com.example.oriencoop_score.utility.Result
-import com.example.oriencoop_score.utility.SessionManager
+import com.example.oriencoop_score.auth.SessionManager
 import com.example.oriencoop_score.model.MovimientosCreditos
 import com.example.oriencoop_score.model.MovimientosCreditosResponse
 import com.example.oriencoop_score.repository.MovimientosCreditosRepository

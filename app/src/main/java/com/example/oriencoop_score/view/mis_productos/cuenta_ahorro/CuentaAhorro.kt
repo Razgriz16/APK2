@@ -1,5 +1,6 @@
 package com.example.oriencoop_score.view.mis_productos.cuenta_ahorro
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,9 +10,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -44,7 +47,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.oriencoop_score.model.MovimientosAhorro
+import com.example.oriencoop_score.model.MovimientosCreditos
 import com.example.oriencoop_score.ui.theme.AppTheme
+import com.example.oriencoop_score.view.mis_productos.credito_cuotas.MovimientosCreditosItem
 import com.example.oriencoop_score.view.pantalla_principal.BottomBar
 import com.example.oriencoop_score.view_model.CuentaAhorroViewModel
 import com.example.oriencoop_score.view_model.MovimientosAhorroViewModel
@@ -63,10 +69,12 @@ fun CuentaAhorro(
     val isLoading by cuentaAhorroViewModel.isLoading.collectAsState()
     val error by cuentaAhorroViewModel.error.collectAsState()
     val cuentaSeleccionada by cuentaAhorroViewModel.cuentaSeleccionada.collectAsState()
+    val movimientosData by movimientosAhorroViewModel.movimientosData.collectAsState()
 
 
     var showAllMovimientosDialog by remember { mutableStateOf(false) }
-    var selectedAccountForDialog by remember { mutableStateOf<String?>(null) } // Changed to String for numeroCuentaFormateado
+    var selectedAccountForDialog by remember { mutableStateOf<Int?>(null) } // Changed to String for numeroCuentaFormateado
+    var movimientosForDialog by remember { mutableStateOf<List<MovimientosAhorro>?>(null) }
 
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -131,7 +139,14 @@ fun CuentaAhorro(
                             val isSelected = cuentaSeleccionada?.numeroCuenta == cuenta.numeroCuenta
                             Column {
                                 CuentaAhorroItem(numeroCuentaFormateado, isSelected) {
-                                    cuentaAhorroViewModel.selectCuenta(cuenta)
+                                    if (isSelected) {
+                                        // Colapsar: deseleccionar la cuenta sin llamar a la API
+                                        cuentaAhorroViewModel.clearCuentaSeleccionada()
+                                    } else {
+                                        // Desplegar: seleccionar la cuenta y cargar movimientos
+                                        cuentaAhorroViewModel.selectCuenta(cuenta)
+                                        movimientosAhorroViewModel.fetchMovimientosAhorro(cuenta.numeroCuenta)
+                                    }
                                     coroutineScope.launch {
                                         listState.animateScrollToItem(index)
                                     }
@@ -151,7 +166,9 @@ fun CuentaAhorro(
                                             textAlign = TextAlign.Center
                                         )
                                         IconButton(onClick = {
-                                            selectedAccountForDialog = numeroCuentaFormateado
+                                            Log.d("CuentaAhorro", "Botón + clicado para cuenta: ${cuenta.numeroCuenta}")
+                                            selectedAccountForDialog = cuenta.numeroCuenta
+                                            movimientosForDialog = movimientosData?.data
                                             showAllMovimientosDialog = true
                                         }) {
                                             Icon(
@@ -160,13 +177,12 @@ fun CuentaAhorro(
                                                 tint = AppTheme.colors.azul
                                             )
                                         }
-                                    }/*
+                                    }
                                     Box(modifier = Modifier.height(300.dp)) {
                                         MovimientosAhorroScreen(
                                             movimientosAhorroViewModel,
-                                            selectedAccount = cuenta.numeroCuentaFormateado // Changed to String
                                         )
-                                    }*/
+                                    }
                                 }
                             }
                         }
@@ -175,11 +191,15 @@ fun CuentaAhorro(
             }
         }
 
+        // Diálogo para ver todos los movimientos
         if (showAllMovimientosDialog) {
             AllMovimientosDialog(
-                movimientosAhorroViewModel = movimientosAhorroViewModel,
-                selectedAccount = selectedAccountForDialog ?: "",
-                onDismiss = { showAllMovimientosDialog = false }
+                movimientos = movimientosForDialog,
+                selectedAccount = selectedAccountForDialog ?: 0,
+                onDismiss = {
+                    showAllMovimientosDialog = false
+                    //movimientosCreditosViewModel.clearMovimientos()
+                }
             )
         }
     }
@@ -187,19 +207,17 @@ fun CuentaAhorro(
 
 @Composable
 fun AllMovimientosDialog(
-    movimientosAhorroViewModel: MovimientosAhorroViewModel,
-    selectedAccount: String, // Changed to String for numeroCuentaFormateado
+    movimientos: List<MovimientosAhorro>?,
+    selectedAccount: Int,
     onDismiss: () -> Unit
 ) {
-    val movimientos by movimientosAhorroViewModel.movimientos.collectAsState()
-    val isLoading by movimientosAhorroViewModel.isLoading.collectAsState()
-    val error by movimientosAhorroViewModel.error.collectAsState()
-
-    val filteredMovimientos = movimientos.filter { it.NROCUENTA == selectedAccount.toLong() } // Assuming NROCUENTA is still Long in Movimientos
+    Log.d("AllMovimientosDialog", "Renderizando diálogo para cuenta $selectedAccount, movimientos: ${movimientos?.size}")
 
     Dialog(
         onDismissRequest = { onDismiss() },
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        )
     ) {
         Surface(
             modifier = Modifier
@@ -235,34 +253,22 @@ fun AllMovimientosDialog(
 
                 HorizontalDivider()
 
-                when {
-                    isLoading -> {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
+                movimientos?.let { movimientosList ->
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(horizontal = 0.dp, vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(0.dp)
+                    ) {
+                        items(movimientosList) { movimiento ->
+                            MovimientosAhorroItem(movimiento = movimiento)
+                            HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
                         }
                     }
-
-                    error != null -> {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text(
-                                text = error ?: "Error desconocido",
-                                color = MaterialTheme.colorScheme.error
-                            )
-                        }
-                    }
-
-                    else -> {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(horizontal = 0.dp, vertical = 8.dp),
-                            verticalArrangement = Arrangement.spacedBy(0.dp)
-                        ) {/*
-                            items(filteredMovimientos) { movimiento ->
-                                MovimientoItem(movimiento = movimiento)
-                                HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
-                            }*/
-                        }
-                    }
+                } ?: Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "No hay movimientos disponibles")
                 }
             }
         }

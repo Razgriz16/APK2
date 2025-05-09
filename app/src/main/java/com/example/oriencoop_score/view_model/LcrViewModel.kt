@@ -3,16 +3,16 @@ package com.example.oriencoop_score.view_model
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.oriencoop_score.model.LcrResponse
-import com.example.oriencoop_score.repository.LcrRepository
 import com.example.oriencoop_score.utility.Result
-import com.example.oriencoop_score.utility.SessionManager
+import com.example.oriencoop_score.auth.SessionManager
+import com.example.oriencoop_score.model.ApiResponse
+import com.example.oriencoop_score.model.Lcr
+import com.example.oriencoop_score.repository.LcrRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 
 @HiltViewModel
 class LcrViewModel @Inject constructor(
@@ -20,11 +20,11 @@ class LcrViewModel @Inject constructor(
     private val sessionManager: SessionManager
 ) : ViewModel() {
 
-    private val _lcrData = MutableStateFlow<LcrResponse?>(null) // Usamos CuentaCap?, no CuentaCapResponse
-    val lcrData: StateFlow<LcrResponse?> = _lcrData
+    private val _lcrData = MutableStateFlow<ApiResponse<Lcr>?>(null)
+    val lcrData: StateFlow<ApiResponse<Lcr>?> = _lcrData
 
     // Estado de error
-    private val _error = MutableStateFlow<String?>(null) // Usamos String?, no String("")
+    private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
     // Estado de carga
@@ -32,42 +32,35 @@ class LcrViewModel @Inject constructor(
     val isLoading: StateFlow<Boolean> = _isLoading
 
     init {
-        LcrDatos()
+        fetchLcrData()
     }
 
-
-    fun LcrDatos() {
-        val token = sessionManager.getAccessToken().toString() ?: "" //Maneja los posibles null
-        val rut = sessionManager.getUserRut().toString() ?: "" //Maneja los posibles null
-        if (token.isBlank() || rut.isBlank()){ //Comprueba si son blancos
-            _error.value = "Token o Rut no pueden estar vacíos"
-            Log.e("LcrViewModel", "Token o Rut no pueden estar vacíos")
+    fun fetchLcrData() {
+        val rut = sessionManager.getUserRut().toString()
+        val accessToken = sessionManager.getAccessToken().toString()
+        if (rut.isBlank()) {
+            _error.value = "RUT no disponible"
+            Log.e("LcrViewModel", "Cédula no disponible")
             return
         }
 
         viewModelScope.launch {
-            _isLoading.value = true // Indicar que se está cargando
-            Log.d("LcrViewModel", "Token: $token, Rut: $rut")
+            _isLoading.value = true
+            Log.d("LcrViewModel", "Iniciando obtención de datos para cédula: $rut")
 
-            try {
-                when (val result = repository.getLcr(token, rut)) {
-                    is Result.Success -> {
-                        _lcrData.value = result.data
-                        Log.d("LcrViewModel", "Datos obtenidos: ${result.data}")
-                    }
-                    is Result.Error -> {
-                        _error.value = result.exception.message // Guardar el mensaje de error
-                        Log.e("LcrViewModel", "Error al obtener datos: ${result.exception.message}")
-                    }
-                    Result.Loading -> _isLoading.value = true
+            when (val result = repository.fetchProducto(rut, accessToken)) {
+                is Result.Success -> {
+                    _lcrData.value = result.data
+                    _error.value = null
+                    Log.d("LcrViewModel", "Datos obtenidos: ${result.data.data.size} registros LCR")
                 }
-            } catch (e: Exception) {
-                // Catch any exceptions thrown by the repository and set the error state
-                _error.value = e.message
-                Log.e("LcrViewModel", "Exception thrown: ${e.message}")
-            } finally {
-                _isLoading.value = false // Finalizar la carga
+                is Result.Error -> {
+                    _error.value = result.exception.message ?: "Error desconocido"
+                    Log.e("LcrViewModel", "Error al obtener datos: ${result.exception.message}")
+                }
+                Result.Loading -> Result.Loading
             }
+            _isLoading.value = false
         }
     }
 }

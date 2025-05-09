@@ -126,7 +126,7 @@ fun ProductsScreen(
                         ProductButton(
                             icon = R.drawable.cuenta_cap,
                             text = "Cuenta Capitalización",
-                            onClick = { navController.navigate(Pantalla.CuentaCap.route) },
+                            onClick = { navController.navigate(Pantalla.CuentaCsocial.route) },
                             iconSize = 35.dp
                         )
 
@@ -178,10 +178,11 @@ fun ProductsScreen(
                             icon = R.drawable.deposito_a_plazo,
                             text = "Depósito a\nPlazo",
                             onClick = { navController.navigate(Pantalla.Dap.route) },
-                            isVisible = productos["DEPOSITO"]
+                            isVisible = productos["DAP"]
                                 ?: false, // Corregido de DEPOSTO a DEPOSITO
                             iconSize = 35.dp
                         )
+
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))

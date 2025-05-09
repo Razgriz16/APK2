@@ -1,7 +1,7 @@
 package com.example.oriencoop_score.repository
 
 import com.example.oriencoop_score.api.LoginService
-import com.example.oriencoop_score.utility.SessionManager
+import com.example.oriencoop_score.auth.SessionManager
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route

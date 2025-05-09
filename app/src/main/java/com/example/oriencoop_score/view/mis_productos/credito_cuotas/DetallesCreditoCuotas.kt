@@ -90,7 +90,7 @@ fun DetallesCreditoCuotas(cuenta: CreditoCuotas) {
             HorizontalDivider()
             DetailRow(label = "Valor Cuota", value = cuenta.valorcuota_pesos.toString())
             HorizontalDivider()
-            DetailRow(label = "Prox Vencimiento", value = cuenta?.fechavencimiento.toString() ?: "Nulo") // TODO REVISAR FECHA DE VENCIMIENTO SEA FECHA CANCELACIÓN
+            DetailRow(label = "Prox Vencimiento", value = cuenta?.fechavencimiento.toString() ?: "Nulo")
         }
     }
 }

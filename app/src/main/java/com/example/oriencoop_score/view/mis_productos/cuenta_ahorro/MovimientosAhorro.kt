@@ -1,5 +1,6 @@
 package com.example.oriencoop_score.view.mis_productos.cuenta_ahorro
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import com.example.oriencoop_score.model.MovimientosAhorro
@@ -38,20 +39,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-/*
+
 @Composable
 fun MovimientosAhorroScreen(
     movimientosAhorroViewModel: MovimientosAhorroViewModel,
-    selectedAccount: Int
 ) {
-    // Observamos los estados del ViewModel
-    val movimientos by movimientosAhorroViewModel.movimientos.collectAsState()
+    val movimientosData by movimientosAhorroViewModel.movimientosData.collectAsState()
     val isLoading by movimientosAhorroViewModel.isLoading.collectAsState()
     val error by movimientosAhorroViewModel.error.collectAsState()
-
-    // Filtramos los movimientos según la cuenta seleccionada.
-    // Se asume que cada MovimientosAhorro tiene la propiedad NROCUENTA: Long.
-    val filteredMovimientos = movimientos.filter { it.NROCUENTA == selectedAccount }
+    Log.d("MovimientosAhorroScreen", "movimientosData: $movimientosData")
 
     when {
         isLoading -> {
@@ -59,35 +55,41 @@ fun MovimientosAhorroScreen(
                 CircularProgressIndicator()
             }
         }
-
         error != null -> {
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Text(text = error ?: "Error desconocido", color = MaterialTheme.colorScheme.error)
             }
         }
-
         else -> {
-            MovimientosList(filteredMovimientos)
+            movimientosData?.data?.let { movimientos ->
+                Log.d("MovimientosAhorroScreen", "Movimientos: $movimientos")
+                MovimientosAhorroList(movimientos)
+            } ?: Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "No hay movimientos disponibles")
+            }
         }
     }
 }
 
 @Composable
-fun MovimientosList(movimientos: List<MovimientosAhorro>) {
+fun MovimientosAhorroList(movimientos: List<MovimientosAhorro>) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 0.dp, vertical = 8.dp), // Reduce horizontal padding
-        verticalArrangement = Arrangement.spacedBy(0.dp) // No spacing between items
+        contentPadding = PaddingValues(horizontal = 0.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(0.dp)
     ) {
         items(movimientos) { movimiento ->
-            MovimientoItem(movimiento = movimiento)
-            HorizontalDivider(thickness = 1.dp, color = Color.LightGray) // Add divider
+            MovimientosAhorroItem(movimiento = movimiento)
+            HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
         }
     }
 }
 
 @Composable
-fun MovimientoItem(movimiento: MovimientosAhorro) {
+fun MovimientosAhorroItem(movimiento: MovimientosAhorro) {
     var showDialog by remember { mutableStateOf(false) }
 
     if (showDialog) {
@@ -96,48 +98,44 @@ fun MovimientoItem(movimiento: MovimientosAhorro) {
         }
     }
 
-    Card(  // Use Card without elevation for a flatter look.
+    Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { showDialog = true },
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),  // Remove elevation
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface) // Use surface color
-
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        Row( // Use Row for horizontal layout
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp), // Adjust padding
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween // Space between elements
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
-                modifier = Modifier.weight(1f)  // Column takes available space
+                modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = movimiento.NOMBRETRANSACABRV,
+                    text = movimiento.nombreTransaccion,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.height(2.dp)) // Reduce spacer
+                Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = movimiento.FECHAMOV, // Removed "Fecha: "
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = movimiento.fechaEfectiva,
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
 
-            Row(  // amount and plus icon
+            Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
-
             ) {
                 Text(
-                    text = if (movimiento.CARGOABONO == "A") "+$${movimiento.MONTO}" else "-$${movimiento.MONTO}",
-                    style = MaterialTheme.typography.bodyLarge,  // or titleMedium?
-                    color = if (movimiento.CARGOABONO == "A") AppTheme.colors.verde else AppTheme.colors.rojo,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-
+                    text = "$${movimiento.monto}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = AppTheme.colors.negro,
+                    fontWeight = FontWeight.Bold
                 )
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -145,7 +143,6 @@ fun MovimientoItem(movimiento: MovimientosAhorro) {
                     tint = if (showDialog) AppTheme.colors.amarillo else AppTheme.colors.azul,
                     modifier = Modifier.size(20.dp)
                 )
-
             }
         }
     }
@@ -165,20 +162,14 @@ fun DialogMovimientosAhorro(
             )
         },
         text = {
-            // Mostramos la información en filas, usando DetailRow para alinear etiqueta y valor
             Column {
-                DetailRow(label = "Transacción:", value = movimiento.NOMBRETRANSAC)
-                DetailRow(label = "Fecha:", value = movimiento.FECHAMOV)
-                DetailRow(label = "Sucursal:", value = movimiento.NOMBRESUCURSAL)
-                DetailRow(
-                    label = "Monto:",
-                    value = if (movimiento.CARGOABONO == "A")
-                        "+$${movimiento.MONTO}"
-                    else
-                        "-$${movimiento.MONTO}",
-                    valueColor = if (movimiento.CARGOABONO == "A") AppTheme.colors.verde else AppTheme.colors.rojo
-                )
-                // Puedes agregar más detalles si tu modelo tiene más propiedades
+                DetailRow(label = "Transacción:", value = movimiento.nombreTransaccion)
+                DetailRow(label = "Fecha:", value = movimiento.fechaEfectiva)
+                DetailRow(label = "Sucursal:", value = movimiento.sucursal)
+                DetailRow(label = "Monto:", value = "$${movimiento.monto}")
+                DetailRow(label = "Usuario:", value = movimiento.usuario)
+                DetailRow(label = "Tipo:", value = movimiento.tipo)
+                DetailRow(label = "Sucursal Origen:", value = movimiento.sucursalOrigen)
             }
         },
         confirmButton = {
@@ -188,4 +179,23 @@ fun DialogMovimientosAhorro(
         }
     )
 }
-*/
+
+@Composable
+fun DetailRow(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}

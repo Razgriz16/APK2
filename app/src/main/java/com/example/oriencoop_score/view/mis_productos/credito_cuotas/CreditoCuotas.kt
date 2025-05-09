@@ -116,7 +116,7 @@ fun CreditoCuotas(
                                 Log.d("CreditoCuotas", "Cuenta seleccionada: ${cuota.numerocredito}, cuotaSeleccionada: ${cuotaSeleccionada?.numerocredito}")
                                 if (cuotaSeleccionada?.numerocredito == cuota.numerocredito) {
                                     // Colapsar: deseleccionar la cuenta sin llamar a la API
-                                    creditoCuotasViewModel.clearSelection()
+                                    creditoCuotasViewModel.clearCuotaSeleccionada()
                                 } else {
                                     // Desplegar: seleccionar la cuenta y cargar movimientos
                                     creditoCuotasViewModel.selectCuota(cuota)

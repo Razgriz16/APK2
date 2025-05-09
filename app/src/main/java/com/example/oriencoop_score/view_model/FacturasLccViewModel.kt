@@ -9,7 +9,7 @@ import com.example.oriencoop_score.model.MovimientosLcc
 import com.example.oriencoop_score.repository.FacturasLccRepository
 import com.example.oriencoop_score.repository.MovimientosLccRepository
 import com.example.oriencoop_score.utility.Result
-import com.example.oriencoop_score.utility.SessionManager
+import com.example.oriencoop_score.auth.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

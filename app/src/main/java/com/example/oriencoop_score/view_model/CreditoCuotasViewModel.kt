@@ -3,10 +3,10 @@ package com.example.oriencoop_score.view_model
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.oriencoop_score.utility.ApiResponse
+import com.example.oriencoop_score.model.ApiResponse
 import com.example.oriencoop_score.model.CreditoCuotas
 import com.example.oriencoop_score.utility.Result
-import com.example.oriencoop_score.utility.SessionManager
+import com.example.oriencoop_score.auth.SessionManager
 import com.example.oriencoop_score.repository.CreditoCuotasRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,6 +48,7 @@ class CreditoCuotasViewModel @Inject constructor(
      */
     fun fetchCreditoCuotas() {
         val cedula = sessionManager.getUserRut().toString()
+        val accessToken = sessionManager.getAccessToken().toString()
         if (cedula.isBlank()) {
             _error.value = "Cédula no disponible"
             Log.e("CreditoCuotasViewModel", "Cédula no disponible")
@@ -58,7 +59,7 @@ class CreditoCuotasViewModel @Inject constructor(
             _isLoading.value = true
             Log.d("CreditoCuotasViewModel", "Iniciando obtención de datos para cédula: $cedula")
 
-            when (val result = repository.fetchProducto(cedula)) {
+            when (val result = repository.fetchProducto(cedula, accessToken)) {
                 is Result.Success -> {
                     _creditoCuotasData.value = result.data
                     _error.value = null

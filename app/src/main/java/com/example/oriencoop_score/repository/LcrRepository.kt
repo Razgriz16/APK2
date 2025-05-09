@@ -1,33 +1,67 @@
 package com.example.oriencoop_score.repository
 
 import android.util.Log
-import com.example.oriencoop_score.api.MisProductosCredito
+import com.example.oriencoop_score.di.MisProductosLcr
 import com.example.oriencoop_score.api.MisProductosService
-import com.example.oriencoop_score.model.LcrResponse
+import com.example.oriencoop_score.model.Lcr
 import com.example.oriencoop_score.utility.Result
+import com.example.oriencoop_score.model.ApiResponse
+import com.example.oriencoop_score.model.ProductoRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class LcrRepository @Inject constructor(
-    @MisProductosCredito private val lcrService: MisProductosService) {
-    suspend fun getLcr(token: String, rut: String): Result<LcrResponse> {
+    @MisProductosLcr private val misProductosService: MisProductosService
+) : ProductoRepository<Lcr> {
+
+    // Define una etiqueta TAG constante para los logs de esta clase.
+    companion object {
+        private const val TAG = "LcrRepository"
+    }
+
+    /**
+     * Obtiene la lista de datos LCR para un usuario mediante la API.
+     * Ejecuta la llamada de red en el hilo de IO y maneja la respuesta específica.
+     *
+     * @param rut La cédula del usuario.
+     * @param token El token de autenticación.
+     * @return Un [Result] que contiene [Result.Success] con [ApiResponse<Lcr>]
+     *         o [Result.Error] con la [Throwable] correspondiente.
+     */
+    override suspend fun fetchProducto(rut: String, token: String?): Result<ApiResponse<Lcr>> {
+        val functionName = "getLcr"
+        val tokenBearer = "Bearer $token"
+        Log.d(TAG, "$functionName: Iniciando llamada a la API para cédula: $rut")
         return withContext(Dispatchers.IO) {
             try {
-                Log.d("LcrRepository", "llamando función getLcr")
-                val response = lcrService.getLcr(token, rut)
+                val response = misProductosService.getLcr(rut, tokenBearer)
                 if (response.isSuccessful) {
-                    Log.d("LcrRepository", "Llamada exitosa. BODY " + response.body())
-                    Result.Success(response.body()!!)
+                    val body = response.body()
+                    if (body != null) {
+                        if (body.error_code == 0 && body.data.isNotEmpty()) {
+                            Log.d(TAG, "$functionName: Llamada exitosa. Datos LCR recibidos.")
+                            Result.Success(body)
+                        } else if (body.error_code == 0 && body.data.isEmpty()) {
+                            Log.d(TAG, "$functionName: Llamada exitosa. Datos LCR vacíos.")
+                            Result.Success(body)
+                        } else {
+                            Log.e(TAG, "$functionName: Error en la respuesta de la API. Código: ${body.error_code}")
+                            Result.Error(IOException("Error de API: Código ${body.error_code}"))
+                        }
+                    } else {
+                        Log.e(TAG, "$functionName: Respuesta HTTP exitosa pero cuerpo nulo.")
+                        Result.Error(IOException("Respuesta HTTP exitosa pero cuerpo nulo."))
+                    }
                 } else {
-                    Log.e("LcrRepository", "Llamada fallida. Error: ${response.code()} ${response.message()}"
-                    )
-                    Result.Error(Exception("Error: ${response.code()} ${response.message()}"))
+                    Log.e(TAG, "$functionName: Error HTTP. Code: ${response.code()}, Message: ${response.message()}")
+                    Result.Error(IOException("Error HTTP: ${response.code()}"))
                 }
             } catch (e: Exception) {
-                Log.e("LcrRepository", "Exception Api call. Error: ${e.message}")
+                Log.e(TAG, "$functionName: Excepción durante la llamada a la API.", e)
                 Result.Error(e)
             }
         }

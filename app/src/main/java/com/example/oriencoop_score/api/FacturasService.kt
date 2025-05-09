@@ -1,7 +1,6 @@
 package com.example.oriencoop_score.api
 
 import com.example.oriencoop_score.model.FacturasLccResponse
-import com.example.oriencoop_score.model.MovimientosLcrResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header

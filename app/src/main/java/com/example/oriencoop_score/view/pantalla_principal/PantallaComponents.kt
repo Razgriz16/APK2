@@ -43,28 +43,28 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.oriencoop_score.navigation.Pantalla
 import com.example.oriencoop_score.R
-import com.example.oriencoop_score.api.NetworkModule
+import com.example.oriencoop_score.di.NetworkModule
 import com.example.oriencoop_score.utility.Result
 import com.example.oriencoop_score.repository.MindicatorsRepository
 import com.example.oriencoop_score.ui.theme.AppTheme
 import com.example.oriencoop_score.view.mis_productos.ProductButton
-import com.example.oriencoop_score.view_model.CuentaCapViewModel
+import com.example.oriencoop_score.view_model.CuentaCsocialViewModel
 import retrofit2.Retrofit
 
 // *****Saldo que se muestra*****
 @Composable
 fun Saldo(navController: NavController) {
 /*
-    val cuentaCapRepository = CuentaCapRepository(LoginManageApi.cuentaCapService) // You might need to adjust constructor if it has dependencies
-    val cuentaCapViewModel: CuentaCapViewModel = viewModel {  // Using the simple viewModel() overload
-        CuentaCapViewModel(cuentaCapRepository)
+    val cuentaCapRepository = CuentaCsocialRepository(LoginManageApi.cuentaCapService) // You might need to adjust constructor if it has dependencies
+    val cuentaCapViewModel: CuentaCsocialViewModel = viewModel {  // Using the simple viewModel() overload
+        CuentaCsocialViewModel(cuentaCapRepository)
     }
  */
-    val cuentaCapViewModel: CuentaCapViewModel = hiltViewModel()
+    val cuentaCsocialViewmodel: CuentaCsocialViewModel = hiltViewModel()
 
-    val cuentaCapData by cuentaCapViewModel.cuentaCapData.collectAsState()
-    val isLoadingSaldo by cuentaCapViewModel.isLoading.collectAsState()
-    val error by cuentaCapViewModel.error.collectAsState()
+    val cuentaCsocialData by cuentaCsocialViewmodel.cuentaCsocialData.collectAsState()
+    val isLoadingSaldo by cuentaCsocialViewmodel.isLoading.collectAsState()
+    val error by cuentaCsocialViewmodel.error.collectAsState()
 
     when {
         isLoadingSaldo -> {
@@ -73,11 +73,11 @@ fun Saldo(navController: NavController) {
         error != null -> {
             Text("Error: $error")
         }
-        cuentaCapData != null -> {
-            // Asumiendo que tu backend provee un valor para "Monto ahorrado a la fecha"
-            // Ajusta el nombre de la propiedad según tus datos reales
+        cuentaCsocialData != null -> {
+            cuentaCsocialData?.data?.map { cuenta ->
+                SaldoView(saldoContable = cuenta.saldoContable.toString(), navController )
 
-            SaldoView(saldoContable = cuentaCapData?.SALDOCONTABLE, navController ) // Reemplaza SALDOCONTABLE con la propiedad correcta si es necesario
+            }
         }
         else -> {
             // Estado por defecto
@@ -148,7 +148,7 @@ fun SaldoView(saldoContable: String?, navController: NavController) {
                     .clickable {
                         // Aquí va la lógica de navegación
                         println("Botón 'Ver detalles cuenta' presionado")
-                        navController.navigate(Pantalla.CuentaCap.route)
+                        navController.navigate(Pantalla.CuentaCsocial.route)
                     }
             ) {
                 Row( // Row para el texto del botón
@@ -226,7 +226,7 @@ fun BottomBar(navController: NavController, currentRoute: String) {
             Image(
                 painter = painterResource(
                     id = if (currentRoute == Pantalla.MisProductos.route
-                        || currentRoute == Pantalla.CuentaCap.route
+                        || currentRoute == Pantalla.CuentaCsocial.route
                         || currentRoute == Pantalla.CuentaAhorro.route
                         || currentRoute == Pantalla.CreditoCuotas.route
                         || currentRoute == Pantalla.Lcc.route
@@ -383,7 +383,7 @@ fun AccionesRapidas(
                 "CSOCIAL" -> ProductButton(
                     icon = R.drawable.cuenta_cap,
                     text = "Cuenta Capitalización",
-                    onClick = { onProductClick(Pantalla.CuentaCap.route) },
+                    onClick = { onProductClick(Pantalla.CuentaCsocial.route) },
                     modifier = Modifier.size(75.dp),
                     textStyle = AppTheme.typography.small
                 )

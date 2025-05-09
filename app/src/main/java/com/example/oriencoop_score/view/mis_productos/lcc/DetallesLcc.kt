@@ -27,13 +27,13 @@ import com.example.oriencoop_score.ui.theme.AppTheme
 import com.example.oriencoop_score.view.mis_productos.cuenta_ahorro.DetailRow
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetallesLcc(
     accountNumber: Long,
-    cupoAutorizado: String,
     cupoUtilizado: String,
     cupoDisponible: String,
+    diasMora: Int,
+    ultimoPago: String,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -59,20 +59,22 @@ fun DetallesLcc(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal =4.dp),
+                .padding(horizontal = 4.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
             shape = RoundedCornerShape(8.dp)
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp) // Consistent spacing
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                DetailRow("Cupo Autorizado", cupoAutorizado)
-                HorizontalDivider()
                 DetailRow("Cupo Utilizado", cupoUtilizado)
                 HorizontalDivider()
                 DetailRow("Cupo Disponible", cupoDisponible)
+                HorizontalDivider()
+                DetailRow("Días de Mora", diasMora.toString())
+                HorizontalDivider()
+                DetailRow("Último Pago", ultimoPago)
             }
         }
     }
@@ -81,12 +83,13 @@ fun DetallesLcc(
 @Preview(showBackground = true)
 @Composable
 fun DetallesLccPreview() {
-    MaterialTheme { // Wrap with MaterialTheme for the preview
+    MaterialTheme {
         DetallesLcc(
             accountNumber = 1234567890L,
-            cupoAutorizado = "$10,000",
             cupoUtilizado = "$2,000",
-            cupoDisponible = "$8,000"
+            cupoDisponible = "$8,000",
+            diasMora = 5,
+            ultimoPago = "2025-04-15"
         )
     }
 }

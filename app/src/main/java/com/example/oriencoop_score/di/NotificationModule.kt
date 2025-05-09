@@ -1,4 +1,4 @@
-package com.example.oriencoop_score.api
+package com.example.oriencoop_score.di
 
 import android.content.Context
 import com.example.oriencoop_score.HandleNotifications

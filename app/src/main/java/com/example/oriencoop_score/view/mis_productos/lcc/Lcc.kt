@@ -64,29 +64,19 @@ fun Lcc(
     navController: NavController
 ) {
     val lccViewModel: LccViewModel = hiltViewModel()
-    val movimientosLccViewModel: MovimientosLccViewModel = hiltViewModel()
-    val FacturasLccViewModel: FacturasLccViewModel = hiltViewModel()
-
     val lccData by lccViewModel.lccData.collectAsState()
-    val movimientos by movimientosLccViewModel.movimientoslcc.collectAsState()
-    val isLoading by movimientosLccViewModel.isLoading.collectAsState()
-    val error by movimientosLccViewModel.error.collectAsState()
-    val facturas by FacturasLccViewModel.facturaslcc.collectAsState()
-    var showFacturasDialog by remember { mutableStateOf(false) }
-
-    // State for showing the full-screen dialog
-    var showAllMovimientosDialog by remember { mutableStateOf(false) }
-
+    val isLoading by lccViewModel.isLoading.collectAsState()
+    val error by lccViewModel.error.collectAsState()
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Linea De Crédito a cuotas",
+                        text = "Línea de Crédito a Cuotas",
                         color = Color.Black,
                         textAlign = TextAlign.Left,
-                        fontSize = AppTheme.typography.normal.fontSize // Use theme
+                        fontSize = AppTheme.typography.normal.fontSize
                     )
                 },
                 navigationIcon = {
@@ -94,7 +84,7 @@ fun Lcc(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = com.example.oriencoop_score.ui.theme.amarillo // Use theme
+                            tint = AppTheme.colors.amarillo
                         )
                     }
                 },
@@ -105,56 +95,81 @@ fun Lcc(
         },
         bottomBar = {
             Box(
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-
-            )
-            { BottomBar(navController, currentRoute = navController.currentDestination?.route ?: "") } // Assuming you have a BottomBar composable
+                modifier = Modifier.padding(bottom = 16.dp)
+            ) {
+                BottomBar(navController, currentRoute = navController.currentDestination?.route ?: "")
+            }
         }
-
     ) { paddingValues ->
-        LazyColumn(  // Use LazyColumn for scrollable content
+        LazyColumn(
             modifier = Modifier
                 .background(Color.White)
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            item {  // Wrap each section in an item block
-                lccData?.let { data ->
-                    data.lcc.forEach { item ->
-                        DetallesLcc( // Assuming you have a Detalles composable
-                            accountNumber = item.numerocuenta,
-                            cupoAutorizado = "$ ${item.cupoautorizado}",
-                            cupoUtilizado = "$ ${item.cupoutilizado}",
-                            cupoDisponible = "$ ${item.cupodisponible}"
-                        )
+            item {
+                when {
+                    isLoading -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .height(200.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                    error != null -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .height(200.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = error ?: "Error desconocido",
+                                color = Color.Red
+                            )
+                        }
+                    }
+                    else -> {
+                        lccData?.data?.forEach { item ->
+                            DetallesLcc(
+                                accountNumber = item.codigo,
+                                cupoUtilizado = "$ ${item.cupoutilizado}",
+                                cupoDisponible = "$ ${item.cupodisponible}",
+                                diasMora = item.diasmora,
+                                ultimoPago = item.ultimo_pago
+                            )
+                        }
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
+            // Commented out facturas section
+            /*
             item {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { showFacturasDialog = true },  // Clickable Card
-                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp), // Add some elevation
-                    shape = RoundedCornerShape(8.dp),  // Rounded corners like the image
-                    colors = CardDefaults.cardColors(containerColor = Color.White) // White background
-
+                        .clickable { showFacturasDialog = true },
+                    elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White)
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp), // Padding inside the Card
-                        horizontalArrangement = Arrangement.SpaceBetween, // Space out the text and icon
-                        verticalAlignment = Alignment.CenterVertically // Center vertically
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
                             text = "Facturas",
-                            style = MaterialTheme.typography.titleMedium, // Or titleLarge, adjust as needed
-                            fontWeight = FontWeight.Bold  // Make the text bold
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
                         )
                         Icon(
                             imageVector = Icons.Default.Add,
@@ -165,9 +180,11 @@ fun Lcc(
                 }
                 Spacer(modifier = Modifier.height(16.dp))
             }
+            */
 
-            item { //Movimientos section
-
+            // Commented out movimientos section
+            /*
+            item {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -184,42 +201,32 @@ fun Lcc(
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Ver todos los movimientos",
-                            tint = AppTheme.colors.azul //Consistent
+                            tint = AppTheme.colors.azul
                         )
                     }
                 }
             }
-
             item {
                 if (isLoading) {
-                    Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) { // Added height
+                    Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator()
                     }
                 } else if (error != null) {
-                    Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) { // Added height
+                    Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
                         Text(text = error ?: "Error desconocido", color = Color.Red)
                     }
                 } else {
-                    Box(modifier = Modifier.height(200.dp)) { // Constrain the height
+                    Box(modifier = Modifier.height(200.dp)) {
                         MovimientosListLcc(movimientos = movimientos)
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
             }
-
-
+            */
         }
 
-        // Show the dialog when showAllMovimientosDialog is true
-        if (showAllMovimientosDialog) {
-            AllMovimientosDialogLcc(
-                movimientos = movimientos,
-                isLoading = isLoading,
-                error = error,
-                onDismiss = { showAllMovimientosDialog = false }
-            )
-        }
-
+        // Commented out facturas dialog
+        /*
         if (showFacturasDialog) {
             FacturasLccDialog(
                 facturas = facturas,
@@ -228,99 +235,18 @@ fun Lcc(
                 onDismiss = { showFacturasDialog = false }
             )
         }
-    }
-}
-@Composable
-fun AllMovimientosDialogLcc(
-    movimientos: List<MovimientosLcc>,
-    isLoading: Boolean,
-    error: String?,
-    onDismiss: () -> Unit
-) {
-    Dialog(
-        onDismissRequest = { onDismiss() },
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            // Set up NestedScrollConnection
-            val nestedScrollConnection = remember {
-                object : NestedScrollConnection {
-                    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                        // Try to consume scroll delta before child
-                        return Offset.Zero // Let the child handle it
-                    }
+        */
 
-                    override fun onPostScroll(
-                        consumed: Offset,
-                        available: Offset,
-                        source: NestedScrollSource
-                    ): Offset {
-                        // We're not consuming, let the child handle it
-                        return Offset.Zero
-                    }
-
-                    override suspend fun onPreFling(available: Velocity): Velocity {
-                        return Velocity.Zero // Let child handle fling
-                    }
-
-                    override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
-                        return Velocity.Zero // Let child handle fling
-                    }
-                }
-            }
-
-
-            Column(modifier = Modifier.fillMaxSize().nestedScroll(nestedScrollConnection)) { // Use nestedScroll modifier
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    horizontalArrangement = Arrangement.Start, // Align items to the start
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = { onDismiss() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = com.example.oriencoop_score.ui.theme.amarillo
-                        )
-                    }
-                    Text(
-                        text = "Todos los Movimientos",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier
-                            .weight(1f) // Take up remaining space
-                            .fillMaxWidth(), // Ensure it fills the weight
-                        textAlign = TextAlign.Center
-                    )
-                    // Add an invisible spacer to balance the row.
-                    Spacer(modifier = Modifier.width(48.dp)) // Equal to the IconButton size
-                }
-
-                HorizontalDivider()
-                // No need for LazyColumn here, as MovimientosListLcc should be its own LazyColumn
-                when {
-                    isLoading -> {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
-                        }
-                    }
-                    error != null -> {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text(text = error ?: "Error desconocido", color = MaterialTheme.colorScheme.error)
-                        }
-                    }
-                    else -> {
-                        MovimientosListLcc(movimientos = movimientos)
-                    }
-                }
-
-            }
+        // Commented out movimientos dialog
+        /*
+        if (showAllMovimientosDialog) {
+            AllMovimientosDialogLcc(
+                movimientos = movimientos,
+                isLoading = isLoading,
+                error = error,
+                onDismiss = { showAllMovimientosDialog = false }
+            )
         }
+        */
     }
 }

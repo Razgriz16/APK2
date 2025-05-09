@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,10 +41,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.oriencoop_score.model.Lcr
 import com.example.oriencoop_score.model.MovimientosLcr
 import com.example.oriencoop_score.ui.theme.AppTheme
-import com.example.oriencoop_score.view.mis_productos.lcr.DetallesLcr
-import com.example.oriencoop_score.view.mis_productos.lcr.MovimientosListLcr
 import com.example.oriencoop_score.view.pantalla_principal.BottomBar
 import com.example.oriencoop_score.view_model.LcrViewModel
 import com.example.oriencoop_score.view_model.MovimientosLcrViewModel
@@ -59,9 +57,20 @@ fun Lcr(
     val movimientosLcrViewModel: MovimientosLcrViewModel = hiltViewModel()
 
     val lcrData by lcrViewModel.lcrData.collectAsState()
-    val movimientos by movimientosLcrViewModel.movimientoslcr.collectAsState()
-    val isLoading by movimientosLcrViewModel.isLoading.collectAsState()
-    val error by movimientosLcrViewModel.error.collectAsState()
+    val isLoading by lcrViewModel.isLoading.collectAsState()
+    val error by lcrViewModel.error.collectAsState()
+
+    // Parse numeroCuenta from lcrData
+    val numeroCuenta = lcrData?.data?.firstOrNull()?.numerocuenta?.let { account ->
+        parseNumeroCuenta(account)
+    } ?: 0
+
+    // Trigger data fetch if numeroCuenta is valid
+    if (numeroCuenta > 0) {
+        movimientosLcrViewModel.fetchMovimientosLcr(numeroCuenta = numeroCuenta, cantidad = 20)
+    } else if (lcrData != null && numeroCuenta == 0) {
+        movimientosLcrViewModel.clearMovimientos()
+    }
 
     // State for showing the full-screen dialog
     var showAllMovimientosDialog by remember { mutableStateOf(false) }
@@ -71,7 +80,7 @@ fun Lcr(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Linea De Crédito rotativa",
+                        text = "Línea De Crédito Rotativa",
                         color = Color.Black,
                         textAlign = TextAlign.Left,
                         fontSize = AppTheme.typography.normal.fontSize
@@ -100,90 +109,93 @@ fun Lcr(
             }
         }
     ) { paddingValues ->
-        // Add LazyColumn to enable scrolling for the entire content
-        LazyColumn(
-            modifier = Modifier
-                .background(Color.White)
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp)
-        ) {
-            // Details section
-            item {
-                lcrData?.let { data ->
-                    DetallesLcr(
-                        NUMEROCUENTA = data.NUMEROCUENTA,
-                        CUPOAUTORIZADO = "$ ${data.CUPOAUTORIZADO}",
-                        CUPOUTILIZADO = "$ ${data.CUPOUTILIZADO}",
-                        CUPODISPONIBLE = "$ ${data.CUPODISPONIBLE}"
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-
-            // Movements header
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Movimientos",
-                        style = MaterialTheme.typography.titleLarge,
-                        textAlign = TextAlign.Center
-                    )
-                    IconButton(onClick = { showAllMovimientosDialog = true }) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Ver todos los movimientos",
-                            tint = AppTheme.colors.azul
-                        )
-                    }
-                }
-            }
-
-            // Movements content
-            item {
+        when {
+            isLoading -> {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(IntrinsicSize.Min)
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
                 ) {
-                    if (isLoading) {
-                        Box(
+                    CircularProgressIndicator()
+                }
+            }
+            error != null -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "error", color = Color.Red)
+                }
+            }
+            else -> {
+                LazyColumn(
+                    modifier = Modifier
+                        .background(Color.White)
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // Details section
+                    item {
+                        lcrData?.data?.forEach { data ->
+                            DetallesLcr(
+                                NUMEROCUENTA = data.numerocuenta,
+                                CUPOAUTORIZADO = "$ ${data.cupoautorizado}",
+                                CUPOUTILIZADO = "$ ${data.cupoutilizado}",
+                                CUPODISPONIBLE = "$ ${data.cupodisponible}"
+                            )
+                        } ?: run {
+                            Text(
+                                text = "No hay datos disponibles",
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+
+                    // Movements header
+                    item {
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(200.dp),
-                            contentAlignment = Alignment.Center
+                                .padding(vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            CircularProgressIndicator()
+                            Text(
+                                text = "Movimientos",
+                                style = MaterialTheme.typography.titleLarge,
+                                textAlign = TextAlign.Center
+                            )
+                            IconButton(onClick = { showAllMovimientosDialog = true }) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Ver todos los movimientos",
+                                    tint = AppTheme.colors.azul
+                                )
+                            }
                         }
-                    } else if (error != null) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(text = error ?: "Error desconocido", color = Color.Red)
-                        }
-                    } else {
-                        // Use a fixed height container to prevent nested scroll conflicts
+                    }
+
+                    // Movements content
+                    item {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(300.dp)
                         ) {
-                            MovimientosListLcr(movimientos = movimientos)
+                            MovimientosLcrScreen(movimientosLcrViewModel)
                         }
+
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
-
-                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
@@ -191,21 +203,43 @@ fun Lcr(
     // Show the dialog when showAllMovimientosDialog is true
     if (showAllMovimientosDialog) {
         AllMovimientosDialogLcr(
-            movimientos = movimientos,
-            isLoading = isLoading,
-            error = error,
+            movimientosLcrViewModel = movimientosLcrViewModel,
             onDismiss = { showAllMovimientosDialog = false }
         )
     }
 }
 
+/**
+ * Parses the numeroCuenta from the format "10-001-0006819-6" to extract the middle part "0006819"
+ * and convert it to an Int (e.g., 6819) by removing leading zeros.
+ *
+ * @param account The account number string in the format "10-001-0006819-6".
+ * @return The parsed numeroCuenta as an Int, or 0 if parsing fails.
+ */
+fun parseNumeroCuenta(account: String): Int {
+    return try {
+        val parts = account.split("-")
+        if (parts.size == 4) {
+            parts[2].toIntOrNull()?.let { num ->
+                num.toString().toIntOrNull() ?: 0
+            } ?: 0
+        } else {
+            0
+        }
+    } catch (e: Exception) {
+        0
+    }
+}
+
 @Composable
 fun AllMovimientosDialogLcr(
-    movimientos: List<MovimientosLcr>,
-    isLoading: Boolean,
-    error: String?,
+    movimientosLcrViewModel: MovimientosLcrViewModel,
     onDismiss: () -> Unit
 ) {
+    val movimientosData by movimientosLcrViewModel.movimientosData.collectAsState()
+    val isLoading by movimientosLcrViewModel.isLoading.collectAsState()
+    val error by movimientosLcrViewModel.error.collectAsState()
+
     Dialog(
         onDismissRequest = { onDismiss() },
         properties = DialogProperties(usePlatformDefaultWidth = false)
@@ -221,7 +255,7 @@ fun AllMovimientosDialogLcr(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
-                    horizontalArrangement = Arrangement.Start, // Align items to the start
+                    horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = { onDismiss() }) {
@@ -235,12 +269,11 @@ fun AllMovimientosDialogLcr(
                         text = "Todos los Movimientos",
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier
-                            .weight(1f) // Take up remaining space
-                            .fillMaxWidth(), // Ensure it fills the weight
+                            .weight(1f)
+                            .fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
-                    // Add an invisible spacer to balance the row.
-                    Spacer(modifier = Modifier.width(48.dp)) // Equal to the IconButton size
+                    Spacer(modifier = Modifier.width(48.dp))
                 }
                 HorizontalDivider()
 
@@ -253,21 +286,26 @@ fun AllMovimientosDialogLcr(
                             CircularProgressIndicator()
                         }
                     }
-
                     error != null -> {
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = error ?: "Error desconocido",
+                                text = "error",
                                 color = MaterialTheme.colorScheme.error
                             )
                         }
                     }
-
                     else -> {
-                        MovimientosListLcr(movimientos = movimientos)
+                        movimientosData?.data?.let { movimientos ->
+                            MovimientosListLcr(movimientos = movimientos)
+                        } ?: Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(text = "No hay movimientos disponibles")
+                        }
                     }
                 }
             }

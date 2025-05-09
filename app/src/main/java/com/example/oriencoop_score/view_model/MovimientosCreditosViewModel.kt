@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.oriencoop_score.model.MovimientosCreditos
 import com.example.oriencoop_score.repository.MovimientosCreditosRepository
-import com.example.oriencoop_score.utility.ApiResponse
+import com.example.oriencoop_score.model.ApiResponse
 import com.example.oriencoop_score.utility.Result
-import com.example.oriencoop_score.utility.SessionManager
+import com.example.oriencoop_score.auth.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,6 +40,7 @@ class MovimientosCreditosViewModel @Inject constructor(
      */
     fun fetchMovimientosCreditos(numeroCuenta: Long) {
         val rut = sessionManager.getUserRut().toString()
+        val accessToken = sessionManager.getAccessToken().toString()
         if (rut.isBlank()) {
             _error.value = "RUT no disponible"
             Log.e("MovimientosCreditosViewModel", "RUT no disponible")

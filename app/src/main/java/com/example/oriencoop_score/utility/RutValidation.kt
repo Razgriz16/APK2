@@ -58,7 +58,7 @@ fun validRut(rut: String): Boolean {
 }
 
 fun main() {
-    val rut = cleanRut("6600427-9")
+    val rut = cleanRut("7791604-0")
     println(rut)
     val rutValido = validRut(rut)
     print("es valido:"+rutValido)

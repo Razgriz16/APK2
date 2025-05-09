@@ -12,6 +12,7 @@ import com.example.oriencoop_score.model.ComunaViewData
 import com.example.oriencoop_score.model.Comunas
 import com.example.oriencoop_score.model.SucursalViewData
 import com.example.oriencoop_score.model.Sucursales
+import com.example.oriencoop_score.auth.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +23,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SucursalesViewModel @Inject constructor(
-    private val sucursalesRepository: SucursalesRepository
+    private val sucursalesRepository: SucursalesRepository,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
 
     companion object {
@@ -44,13 +46,14 @@ class SucursalesViewModel @Inject constructor(
     // La anotación @RequiresApi sigue siendo necesaria por computeIfAbsent
     @RequiresApi(Build.VERSION_CODES.N)
     fun loadAndGroupSucursales() {
+        val refreshToken = sessionManager.getRefreshToken().toString()
         Log.d(TAG, "loadAndGroupSucursales: Iniciando carga y agrupación.")
         _groupedSucursalesState.value = Result.Loading
         viewModelScope.launch {
             try {
-                Log.d(TAG, "loadAndGroupSucursales: Obteniendo datos del repositorio...")
-                val comunasResult = sucursalesRepository.getComunas()
-                val sucursalesResult = sucursalesRepository.getSucursales()
+                Log.d(TAG, "loadAndGroupSucursales: Obteniendo datos del repositorio... con refreshToken: ${refreshToken}")
+                val comunasResult = sucursalesRepository.getComunas(refreshToken)
+                val sucursalesResult = sucursalesRepository.getSucursales(refreshToken)
 
                 if (comunasResult is Result.Success && sucursalesResult is Result.Success) {
                     Log.d(TAG, "loadAndGroupSucursales: Datos obtenidos exitosamente.")

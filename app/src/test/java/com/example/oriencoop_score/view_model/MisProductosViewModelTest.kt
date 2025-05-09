@@ -1,6 +1,6 @@
 package com.example.oriencoop_score.view_model
 
-import com.example.oriencoop_score.utility.SessionManager
+import com.example.oriencoop_score.auth.SessionManager
 import com.example.oriencoop_score.model.MisProductosResponse
 import io.mockk.coEvery
 import io.mockk.coVerify

@@ -3,7 +3,7 @@ package com.example.oriencoop_score.repository
 import android.util.Log
 import com.example.oriencoop_score.api.MisProductosService
 import com.example.oriencoop_score.utility.Result
-import com.example.oriencoop_score.utility.SessionManager
+import com.example.oriencoop_score.auth.SessionManager
 import com.example.oriencoop_score.model.Lcc
 import com.example.oriencoop_score.model.LccResponse
 import io.mockk.MockKAnnotations

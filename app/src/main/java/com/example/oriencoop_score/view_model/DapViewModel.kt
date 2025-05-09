@@ -3,15 +3,15 @@ package com.example.oriencoop_score.view_model
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.oriencoop_score.model.CuentaAhorro
-import com.example.oriencoop_score.model.DapResponse
-import com.example.oriencoop_score.repository.CuentaCapRepository
+import com.example.oriencoop_score.auth.SessionManager
+import com.example.oriencoop_score.model.ApiResponse
+import com.example.oriencoop_score.model.Dap
 import com.example.oriencoop_score.repository.DapRepository
 import com.example.oriencoop_score.utility.Result
-import com.example.oriencoop_score.utility.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,68 +21,83 @@ class DapViewModel @Inject constructor(
     private val sessionManager: SessionManager
 ) : ViewModel() {
 
-    private val _dapData = MutableStateFlow<List<DapResponse?>>(emptyList())
-    val dapData: StateFlow<List<DapResponse?>> = _dapData
+    // Estado para los datos de DAP
+    private val _dapData = MutableStateFlow<ApiResponse<Dap>?>(null)
+    val dapData: StateFlow<ApiResponse<Dap>?> = _dapData.asStateFlow()
 
     // Estado de error
     private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
+    val error: StateFlow<String?> = _error.asStateFlow()
 
     // Estado de carga
     private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _cuentaSeleccionada = MutableStateFlow<DapResponse?>(null)
-    val cuentaSeleccionada: StateFlow<DapResponse?> = _cuentaSeleccionada
-
+    // DAP seleccionado para expandir detalles
+    private val _cuentaSeleccionada = MutableStateFlow<Dap?>(null)
+    val cuentaSeleccionada: StateFlow<Dap?> = _cuentaSeleccionada.asStateFlow()
 
     init {
-        dapDatos()
+        fetchDap()
     }
 
-
-    fun dapDatos() {
-        val token = sessionManager.getAccessToken().toString() // Maneja los posibles null
-        val rut = sessionManager.getUserRut().toString() // Maneja los posibles null
-        if (token.isBlank() || rut.isBlank()) { // Comprueba si son blancos
-            _error.value = "Token o Rut no pueden estar vacíos"
-            Log.e("DapViewModel", "Token o Rut no pueden estar vacíos")
+    /**
+     * Obtiene los datos de DAP desde el repositorio.
+     * Valida la cédula del usuario desde el sessionManager antes de realizar la llamada.
+     */
+    fun fetchDap() {
+        val rut = sessionManager.getUserRut().toString()
+        val accessToken = sessionManager.getAccessToken().toString()
+        if (rut.isBlank()) {
+            _error.value = "Cédula no disponible"
+            Log.e("DapViewModel", "Cédula no disponible")
             return
         }
 
         viewModelScope.launch {
-            _isLoading.value = true // Indicar que se está cargando
-            Log.d("DapViewModel", "Token: $token, Rut: $rut")
+            _isLoading.value = true
+            Log.d("DapViewModel", "Iniciando obtención de datos para cédula: $rut")
 
-            try {
-                when (val result = repository.getDap(token, rut)) {
-                    is Result.Success -> {
-                        _dapData.value = result.data
-                        Log.d("DapViewModel", "Datos obtenidos: ${result.data}")
-                    }
-                    is Result.Error -> {
-                        _error.value = result.exception.message // Guardar el mensaje de error
-                        Log.e("DapViewModel", "Error al obtener datos: ${result.exception.message}")
-                    }
-                    Result.Loading -> _isLoading.value = true
+            when (val result = repository.fetchProducto(rut, accessToken)) {
+                is Result.Success -> {
+                    // Mapear los datos para mantener inmutabilidad
+                    val formattedDap = result.data.copy()
+                    _dapData.value = formattedDap
+                    _error.value = null
+                    Log.d("DapViewModel", "Datos obtenidos: DAP recibido")
                 }
-            } catch (e: Exception) {
-                // Catch any exceptions thrown by the repository and set the error state
-                _error.value = e.message
-                Log.e("DapViewModel", "Exception thrown: ${e.message}")
-            } finally {
-                _isLoading.value = false // Finalizar la carga
+                is Result.Error -> {
+                    _error.value = result.exception.message ?: "Error desconocido"
+                    Log.e("DapViewModel", "Error al obtener datos: ${result.exception.message}")
+                }
+                else -> {
+                    Log.d("DapViewModel", "Estado no manejado")
+                }
             }
+            _isLoading.value = false
         }
     }
 
-    fun selectCuenta(cuenta: DapResponse) {
-        // Si se toca la misma cuenta, se oculta la vista de detalles (toggle)
-        if (_cuentaSeleccionada.value?.numeroDeposito == cuenta.numeroDeposito) {
+    /**
+     * Selecciona un DAP para mostrar sus detalles.
+     * Si se selecciona el mismo DAP, se deselecciona (toggle).
+     *
+     * @param dap El DAP seleccionado.
+     */
+    fun selectDap(dap: Dap) {
+        Log.d("DapViewModel", "Seleccionando DAP: ${dap.numeroDeposito}")
+        if (_cuentaSeleccionada.value?.numeroDeposito == dap.numeroDeposito) {
             _cuentaSeleccionada.value = null
         } else {
-            _cuentaSeleccionada.value = cuenta
+            _cuentaSeleccionada.value = dap
         }
     }
 
+    /**
+     * Limpia el DAP seleccionado.
+     */
+    fun clearDapSeleccionado() {
+        Log.d("DapViewModel", "Deseleccionando DAP")
+        _cuentaSeleccionada.value = null
+    }
 }

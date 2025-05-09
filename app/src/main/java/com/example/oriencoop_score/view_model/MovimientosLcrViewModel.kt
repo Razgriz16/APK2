@@ -3,13 +3,15 @@ package com.example.oriencoop_score.view_model
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.oriencoop_score.utility.Result
+import com.example.oriencoop_score.auth.SessionManager
+import com.example.oriencoop_score.model.ApiResponse
 import com.example.oriencoop_score.model.MovimientosLcr
 import com.example.oriencoop_score.repository.MovimientosLcrRepository
-import com.example.oriencoop_score.utility.Result
-import com.example.oriencoop_score.utility.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,50 +20,70 @@ class MovimientosLcrViewModel @Inject constructor(
     private val repository: MovimientosLcrRepository,
     private val sessionManager: SessionManager
 ) : ViewModel() {
-    // Estado inicial para los productos
-    //private val _productos = MutableStateFlow<MisProductosResponse?>(null)
-    //val productos: StateFlow<MisProductosResponse?> = _productos
 
-    private val _movimientoslcr = MutableStateFlow<List<MovimientosLcr>>(emptyList())
-    val movimientoslcr: StateFlow<List<MovimientosLcr>> = _movimientoslcr
+    // Estado para los datos de movimientos de línea de crédito
+    private val _movimientosData = MutableStateFlow<ApiResponse<MovimientosLcr>?>(null)
+    val movimientosData: StateFlow<ApiResponse<MovimientosLcr>?> = _movimientosData.asStateFlow()
 
     // Estado de error
     private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
+    val error: StateFlow<String?> = _error.asStateFlow()
 
     // Estado de carga
+
+
     private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    init {
-        obtenerMovimientosLcr()
-    }
-
-    fun obtenerMovimientosLcr() {
-        val token = sessionManager.getAccessToken().toString()
+    /**
+     * Carga los movimientos de línea de crédito para un número de cuenta específico.
+     *
+     * @param numeroCuenta El número de cuenta (línea de crédito) para obtener los movimientos.
+     * @param cantidad Cantidad de movimientos a obtener (por defecto 20).
+     */
+    fun fetchMovimientosLcr(numeroCuenta: Int, cantidad: Int = 20) {
         val rut = sessionManager.getUserRut().toString()
-        if (token.isBlank() || rut.isBlank()){ //Comprueba si son blancos
-            Log.e("MovimientosLcrViewModel", "Token o Rut no pueden estar vacíos")
-            _error.value = "Token o Rut no pueden estar vacíos"
+        val accessToken = sessionManager.getAccessToken().toString()
+        if (rut.isBlank()) {
+            _error.value = "RUT no disponible"
+            Log.e("MovimientosLcrViewModel", "RUT no disponible")
             return
         }
+
         viewModelScope.launch {
-            Log.d("MovimientosLcrViewModel", "Llamando función obtenerMovimientos")
-            _isLoading.value = true // Indicar que se está cargando
-            when (val result = repository.getMovimientosLcr(token, rut)) {
+            _isLoading.value = true
+            _error.value = null
+            Log.d("MovimientosLcrViewModel", "Iniciando obtención de movimientos para cuenta: $numeroCuenta, RUT: $rut")
+
+            when (val result = repository.getMovimientosLcr(numeroCuenta, cantidad, accessToken)) {
                 is Result.Success -> {
-                    Log.d("MovimientosLcrViewModel", "Llamada exitosa. BODY: "+result.data)
-                    _movimientoslcr.value = result.data.movimientos_lcr
+                    // Asignar los movimientos obtenidos
+                    _movimientosData.value = ApiResponse<MovimientosLcr>(
+                        count = result.data.count,
+                        data = result.data.data,
+                        error_code = result.data.error_code
+                    )
                     _error.value = null
+                    Log.d("MovimientosLcrViewModel", "Movimientos obtenidos: ${result.data.count} movimientos")
                 }
                 is Result.Error -> {
-                    Log.e("MovimientosLcrViewModel", "Llamada fallida. Error: ${result.exception.message}")
-                    _error.value = result.exception.message // Guardar el mensaje de error
-                    _movimientoslcr.value = emptyList() // Limpiar los productos en caso de error
+                    _error.value = result.exception.message ?: "Error desconocido"
+                    Log.e("MovimientosLcrViewModel", "Error al obtener movimientos: ${result.exception.message}")
                 }
-                Result.Loading -> _isLoading.value=false
+                else -> {
+                    Log.d("MovimientosLcrViewModel", "Estado inesperado")
+                }
             }
-            _isLoading.value = false // Finalizar la carga
+            _isLoading.value = false
         }
+    }
+
+    /**
+     * Limpia los datos de movimientos y errores.
+     */
+    fun clearMovimientos() {
+        _movimientosData.value = null
+        _error.value = null
+        _isLoading.value = false
     }
 }

@@ -39,14 +39,6 @@ import com.example.oriencoop_score.view_model.SucursalesViewModel
 import com.example.oriencoop_score.utility.Result // Assuming Result is needed here
 import com.example.oriencoop_score.view.pantalla_principal.BottomBar
 
-// Import the composables and constants from the new file
-// If in the same package, direct use is possible, but explicit import is clearer sometimes
-// If you moved them to a different package, you'd need explicit imports here.
-// Example if in `com.example.oriencoop_score.ui.sucursal_list`:
-// import com.example.oriencoop_score.ui.sucursal_list.ExpandableRegionItem
-// import com.example.oriencoop_score.ui.sucursal_list.DEFAULT_REGION_NAME // etc.
-
-
 @RequiresApi(Build.VERSION_CODES.N)
 @OptIn(ExperimentalMaterial3Api::class) // ExperimentalAnimationApi is used in the item composables, not strictly here
 @Composable

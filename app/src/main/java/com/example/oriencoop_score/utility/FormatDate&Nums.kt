@@ -21,6 +21,12 @@ fun customDateFormat(dateString: String?): String? {
     }
 }
 
+fun getCurrentDate(): String {
+    val currentDate = Date()
+    val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+    return dateFormat.format(currentDate)
+}
+
 fun formatNumberWithDots2(number: Double): String {
     val formatter = NumberFormat.getInstance(Locale.US) // Or any locale you want
     return formatter.format(number).replace(",", ".")
@@ -30,3 +36,20 @@ fun formatCuenta(numeroCuenta: String): String {
     return "${numeroCuenta.substring(0, 2)}-${numeroCuenta.substring(2, 5)}-${numeroCuenta.substring(5, 12)}-${numeroCuenta[12]}"
 }
 
+fun parseNumeroCuenta(accountNumber: String?): Int {
+    if (accountNumber.isNullOrBlank()) {
+        return 0
+    }
+
+    val parts = accountNumber.split("-")
+    return if (parts.size == 4) {
+        parts[2].toIntOrNull() ?: 0
+    } else {
+        0
+    }
+}
+
+
+fun main(){
+    println(getCurrentDate())
+}

@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.oriencoop_score.utility.Result
-import com.example.oriencoop_score.utility.SessionManager
+import com.example.oriencoop_score.auth.SessionManager
 import com.example.oriencoop_score.model.MovimientosLcc
 import com.example.oriencoop_score.repository.MovimientosLccRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

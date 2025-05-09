@@ -33,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.oriencoop_score.model.Movimiento
 import com.example.oriencoop_score.model.MovimientosLcc
 import com.example.oriencoop_score.ui.theme.AppTheme
 import com.example.oriencoop_score.view.mis_productos.cuenta_ahorro.DetailRow

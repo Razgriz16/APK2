@@ -1,7 +1,8 @@
-package com.example.oriencoop_score.utility
+package com.example.oriencoop_score.view_model
 
 import androidx.lifecycle.ViewModel
 import com.example.oriencoop_score.model.Usuario
+import com.example.oriencoop_score.auth.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

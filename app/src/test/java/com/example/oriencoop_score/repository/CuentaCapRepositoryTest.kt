@@ -10,7 +10,7 @@ import org.junit.Assert.*
 import org.junit.Test
 import retrofit2.Response
 import com.example.oriencoop_score.utility.Result
-import com.example.oriencoop_score.utility.SessionManager
+import com.example.oriencoop_score.auth.SessionManager
 import io.mockk.MockKAnnotations
 import io.mockk.coVerify
 import io.mockk.every

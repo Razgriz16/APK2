@@ -39,7 +39,8 @@ import com.example.oriencoop_score.R
 import com.example.oriencoop_score.model.Notifications
 import com.example.oriencoop_score.navigation.Pantalla
 import com.example.oriencoop_score.ui.theme.AppTheme
-import com.example.oriencoop_score.utility.SessionViewModel
+import com.example.oriencoop_score.view_model.LoginViewModel
+import com.example.oriencoop_score.view_model.SessionViewModel
 
 
 // Función trata la fila superior de la app
@@ -106,7 +107,7 @@ fun HeaderRow(
 
 @Composable
 fun DrawerContent(onCloseDrawer: () -> Unit, navController: NavController, drawerWidth: Dp) { // Added drawerWidth parameter
-    val sessionViewModel: SessionViewModel = hiltViewModel()
+    val loginViewModel: LoginViewModel = hiltViewModel()
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -154,7 +155,7 @@ fun DrawerContent(onCloseDrawer: () -> Unit, navController: NavController, drawe
                 //DrawerMenuItem(iconId = R.drawable.soporte, text = "Contacto con ejecutivo") { /* TODO: Handle click */ }
                 DrawerMenuItem(iconId = R.drawable.ubicacion, text = "Sucursales") { navController.navigate(Pantalla.Sucursales.route) }
                 //DrawerMenuItem(iconId = R.drawable.mensaje, text = "Preguntas Frecuentes") { /* TODO: Handle click */ }
-                DrawerMenuItem(iconId = R.drawable.salir, text = "Cerrar Sesión", sessionManager = { sessionViewModel.clearSession() }) {
+                DrawerMenuItem(iconId = R.drawable.salir, text = "Cerrar Sesión", sessionManager = { loginViewModel.logout() }) {
                     navController.navigate(
                         Pantalla.Login.route
                     )

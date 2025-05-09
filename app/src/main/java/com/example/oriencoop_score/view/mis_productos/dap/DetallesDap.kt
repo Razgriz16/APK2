@@ -26,14 +26,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.oriencoop_score.R
-import com.example.oriencoop_score.model.CuentaAhorro
-import com.example.oriencoop_score.model.DapResponse
+import com.example.oriencoop_score.model.Dap
 import com.example.oriencoop_score.ui.theme.AppTheme
 import com.example.oriencoop_score.utility.formatNumberWithDots2
 
 
 @Composable
-fun DapItem(cuenta: DapResponse, isSelected: Boolean, onClick: () -> Unit) {
+fun DapItem(cuenta: Dap, isSelected: Boolean, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -74,7 +73,7 @@ fun DapItem(cuenta: DapResponse, isSelected: Boolean, onClick: () -> Unit) {
 
 @SuppressLint("DefaultLocale")
 @Composable
-fun DetallesDap(cuenta: DapResponse) {
+fun DetallesDap(cuenta: Dap) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -89,11 +88,11 @@ fun DetallesDap(cuenta: DapResponse) {
         ) {
             DetailRow(label = "Tipo:", value = cuenta.nombreProducto)
             HorizontalDivider()
-            cuenta.fechaActivacion?.let { DetailRow(label = "Fecha Activación:", value = it) }
+            DetailRow(label = "Fecha Activación:", value = cuenta.fechaActivacion.toString())
             HorizontalDivider()
-            cuenta.fechaRenovacion?.let { DetailRow(label = "Fecha Renovación:", value = it) }
+            DetailRow(label = "Fecha Renovación:", value = cuenta.fechaRenovacion.toString())
             HorizontalDivider()
-            cuenta.fechaVencimiento?.let { DetailRow(label = "Fecha Vencimiento:", value = it) }
+            DetailRow(label = "Fecha Vencimiento:", value = cuenta.fechaVencimiento.toString())
             HorizontalDivider()
             DetailRow(label = "Plazo pactado:", value = cuenta.plazoPactado.toString())
             HorizontalDivider()

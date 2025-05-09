@@ -3,49 +3,30 @@ package com.example.oriencoop_score.model
 import com.google.gson.annotations.SerializedName
 
 
-data class CuentaCapResponse(
-    val FECHAAPERTURA: String,
-    val NROCUENTA: Long,
-    val SALDOCONTABLE: String,
-    val TIPOCUENTA: String
+data class CuentaCsocial(
+    @SerializedName("cuenta") val cuenta: Long,
+    @SerializedName("fechaapertura") val fechaapertura: String,
+    @SerializedName("nombre") val nombre: String,
+    @SerializedName("saldocontable") val saldoContable: Double,
 )
 
-/*
-data class CuentaAhorro(
-    val TIPOCUENTA: String, // = nombre_producto
-    val SALDODISPONIBLE: String,  // = saldo_disponible
-    val SALDOCONTABLE: String,  // = saldo_contable
-    val SUCURSAL: String,   // = saldo_disponible
-    val FECHAAPERTURA: String,  // = fecha_apertura
-    val NROCUENTA: Long // = función número de cuenta creada del viewmodel
-)
 
-data class CuentaAhorroResponse(
-    val ahorro: List<CuentaAhorro>
-)
-*/
 
 data class CuentaAhorro(
-    @SerializedName("codigoagrupacionproducto") val codigoAgrupacionProducto: Int,
-    @SerializedName("codigoproducto") val codigoProducto: Int,
     @SerializedName("codigosistema") val codigoSistema: Int,
     @SerializedName("codigosucursal") val codigoSucursal: Int,
     @SerializedName("digitocuenta") val digitoCuenta: Int,
-    @SerializedName("estadocuenta") val estadoCuenta: Int,
-    @SerializedName("montoantdevengint") val montoAntDevengInt: Double,
-    @SerializedName("montoantdevengreaj") val montoAntDevengReaj: Double,
-    @SerializedName("montoultdevengint") val montoUltDevengInt: Double,
-    @SerializedName("montoultdevengreaj") val montoUltDevengReaj: Double,
-    @SerializedName("nombre_estado") val nombreEstado: String,
+    //@SerializedName("estadocuenta") val estadoCuenta: Int,
     @SerializedName("nombre_producto") val nombreProducto: String,
     @SerializedName("nombre_producto_abreviado") val nombreProductoAbreviado: String,
     @SerializedName("numerocuenta") val numeroCuenta: Int,
-    @SerializedName("numgirosefectuados") val numGirosEfectuados: Int,
     @SerializedName("fechaactivacion") val fechaActivacion: String? = null,
     @SerializedName("saldocontable") val saldoContable: Double,
     @SerializedName("saldodisponible") val saldoDisponible: Double,
     @SerializedName("trunc(cuentaahorro.fechaapertura)") val fechaApertura: String? = null
 )
+
+
 
 data class CreditoCuotas(
     @SerializedName("cedula") val cedula: Int,
@@ -69,86 +50,42 @@ data class CreditoCuotas(
 )
 
 
-data class DapResponse(
-    @SerializedName("CATEGORIA") val categoria: Int,
-    @SerializedName("CODIGO") val codigo: Long,
-    @SerializedName("DIRECCIONENVIO") val direccionEnvio: Int,
-    @SerializedName("EJECUTIVO") val ejecutivo: Int,
-    @SerializedName("EJECUTIVOVENTA") val ejecutivoVenta: Int,
-    @SerializedName("ENCUSTODIA") val enCustodia: String,
-    @SerializedName("ESTADO") val estado: Int,
-    @SerializedName("FECHAACTIVACION") val fechaActivacion: String?,
-    @SerializedName("FECHACREACION") val fechaCreacion: String?,
-    @SerializedName("FECHALIQUIDACION") val fechaLiquidacion: String?,
-    @SerializedName("FECHAMODIFICACION") val fechaModificacion: String?,
-    @SerializedName("FECHARENOVACION") val fechaRenovacion: String?,
-    @SerializedName("FECHAVENCIMIENTO") val fechaVencimiento: String?,
-    @SerializedName("FOLIOPAGARE") val folioPagare: Int,
-    @SerializedName("FORMAEMISION") val formaEmision: String,
-    @SerializedName("IDDIVISION") val idDivision: Int,
-    @SerializedName("IDPLATAFORMA") val idPlataforma: Int,
-    @SerializedName("MONTOINTERES") val montoInteres: Double,
-    @SerializedName("MONTOINTERESADICIONAL") val montoInteresAdicional: Double,
-    @SerializedName("MONTOINTERESADICIONALPARIDAD") val montoInteresAdicionalParidad: Double,
-    @SerializedName("MONTOINTERESPARIDAD") val montoInteresParidad: Double,
-    @SerializedName("MONTOINVERSION") val montoInversion: Double,
-    @SerializedName("MONTOINVERSIONPARIDAD") val montoInversionParidad: Double,
-    @SerializedName("MONTOREAJUSTE") val montoReajuste: Double,
-    @SerializedName("MONTOREAJUSTEADICIONAL") val montoReajusteAdicional: Double,
-    @SerializedName("NOMBRE") val nombre: String,
-    @SerializedName("NOMBRE_EJECUTIVO") val nombreEjecutivo: String,
-    @SerializedName("NOMBRE_ESTADO") val nombreEstado: String,
-    @SerializedName("NOMBRE_PRODUCTO") val nombreProducto: String,
-    @SerializedName("NOMBRE_SUC_LIQUIDACION") val nombreSucLiquidacion: String?,
-    @SerializedName("NOMBRE_SUC_ORIGEN") val nombreSucOrigen: String,
-    @SerializedName("NROBENEFICIARIOS") val nroBeneficiarios: Int,
-    @SerializedName("NROBLOQUEOSACTIVOS") val nroBloqueosActivos: Int,
-    @SerializedName("NROPERIODOSPAGRPERIODICA") val nroPeriodosPagrPeriodica: Int?,
-    @SerializedName("NROPERIODOSRPERIODICA") val nroPeriodosRPeriodica: Int?,
-    @SerializedName("NRORENOVACIONES") val nroRenovaciones: Int,
-    @SerializedName("NUMERODEPOSITO") val numeroDeposito: String,
-    @SerializedName("PERIODICIDAD") val periodicidad: String?,
-    @SerializedName("PERMITEGESTIONBLOQUEO") val permiteGestionBloqueo: String,
-    @SerializedName("PERMITELIQUIDAR") val permiteLiquidar: String,
-    @SerializedName("PERMITERETANT") val permiteRetant: String,
-    @SerializedName("PLAZOACTUAL") val plazoActual: Int,
-    @SerializedName("PLAZOPACTADO") val plazoPactado: Int,
-    @SerializedName("PREMIOPORRENOVAR") val premioPorRenovar: Double,
-    @SerializedName("PRODUCTO") val producto: Int,
-    @SerializedName("RUT") val rut: String,
-    @SerializedName("SEACOGEART57") val seAcogeArt57: String,
-    @SerializedName("SESOLICITORETANT") val seSolicitoRetant: String,
-    @SerializedName("SESOLICITOSOBRETASA") val seSolicitoSobretasa: String,
-    @SerializedName("SUCURSALLIQUIDACION") val sucursalLiquidacion: Int?,
-    @SerializedName("SUCURSALORIGEN") val sucursalOrigen: Int,
-    @SerializedName("TASABASE") val tasaBase: Double,
-    @SerializedName("TASAEQUIVALENTE") val tasaEquivalente: Double,
-    @SerializedName("TIPOPERSONA") val tipoPersona: String,
-    @SerializedName("USUARIOMODIFICACION") val usuarioModificacion: String?
+
+data class Dap(
+    @SerializedName("codigo") val codigo: Long,
+    @SerializedName("fechaActivacion") val fechaActivacion: String?,
+    @SerializedName("fechaCreacion") val fechaCreacion: String?,
+    @SerializedName("fechaLiquidacion") val fechaLiquidacion: String?,
+    @SerializedName("fechaModificacion") val fechaModificacion: String?,
+    @SerializedName("fechaRenovacion") val fechaRenovacion: String?,
+    @SerializedName("fechaVencimiento") val fechaVencimiento: String?,
+    @SerializedName("montointeres") val montoInteres: Double,
+    @SerializedName("montoinversion") val montoInversion: Double,
+    @SerializedName("nombre_estado") val nombreEstado: String,
+    @SerializedName("nombre_producto") val nombreProducto: String,
+    @SerializedName("numerodeposito") val numeroDeposito: String,
+    @SerializedName("plazopactado") val plazoPactado: Int,
 )
 
 
 
 data class Lcc(
-    @SerializedName("CUPOAUTORIZADO") val cupoautorizado: String,
-    @SerializedName("CUPOUTILIZADO") val cupoutilizado: String,
-    @SerializedName("CUPODISPONIBLE") val cupodisponible: String,
-    @SerializedName("NROCUENTA") val numerocuenta: Long
-)
-
-data class LccResponse(
-    val lcc: List<Lcc>
+    @SerializedName("codigo") val codigo: Long,
+    @SerializedName("cupootorgado") val cupoutilizado: Double,
+    @SerializedName("cupodisponible") val cupodisponible: Double,
+    @SerializedName("diasmora") val diasmora: Int,
+    @SerializedName("ultimo_pago") val ultimo_pago: String,
 )
 
 
 
-data class LcrResponse(
-    val CUPOAUTORIZADO: String,
-    val CUPODISPONIBLE: String,
-    val CUPOUTILIZADO: String,
-    val DESCRIPCIONPROD: String,
-    val FECHAATIVACION: String,
-    val NUMEROCUENTA: String,
-    val SUCURSAL: String,
-    val TIPO: String
+data class Lcr(
+    @SerializedName("cupoautorizado") val cupoautorizado: Double,
+    @SerializedName("cupodisponible") val cupodisponible: Double,
+    @SerializedName("cupoutilizado") val cupoutilizado: Double,
+    @SerializedName("descripcionprod") val descripcionprod: String,
+    @SerializedName("fechaativacion") val fechaativacion: String,
+    @SerializedName("numerocuenta") val numerocuenta: String,
+    @SerializedName("sucursal") val sucursal: String,
+    @SerializedName("tipo") val tipo: String
 )
